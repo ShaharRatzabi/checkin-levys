@@ -80,7 +80,7 @@ const FlightCardsShowcase = () => {
           modules={[Autoplay]}
           loop={deals.length > 2} // Loop only if there are enough slides
           speed={5000}
-          autoplay={{ delay: 0, disableOnInteraction: false }}
+          autoplay={{ delay: 4000, disableOnInteraction: true }}
           slidesPerView="auto"
           spaceBetween={30}
           centeredSlides={false}

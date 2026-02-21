@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Tag } from "lucide-react";
 import flightPathImage from "../../../assets/images/card-airline.png";
+import "./FlightCard.css";
 
 const FlightCard = ({
   destination,
@@ -43,6 +44,8 @@ const FlightCard = ({
         overflow: "hidden",
         transition: "all 0.3s ease",
       }}
+      role="button"
+      tabIndex={0}
     >
       <div
         style={{
@@ -71,30 +74,19 @@ const FlightCard = ({
           }}
         />
 
-        {/* --- שכבת הבלר בפייד --- */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            zIndex: 4,
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            // המסיכה יוצרת את הפייד: למעלה שקיפות מלאה (0%) ובתחתית אטימות מלאה (100%)
-            maskImage:
-              "linear-gradient(to top, black 0%, rgba(0,0,0,0.8) 40%, transparent 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to top, black 0%, rgba(0,0,0,0.8) 40%, transparent 100%)",
-          }}
-        />
+        {/* שכבת blur מדורג */}
+        <div className="blur-fade-layer" />
 
-        {/* שכבת הצבע הכהה (כדי שהטקסט יקפוץ) */}
         <div
           style={{
             position: "absolute",
-            inset: 0,
-            zIndex: 4,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: "55%",
+            zIndex: 3,
             background:
-              "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%)",
+              "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 80%)",
           }}
         />
 
