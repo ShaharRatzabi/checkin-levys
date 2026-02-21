@@ -27,7 +27,7 @@ const FlightCard = ({
     cardWidth: isMobile ? "200px" : "290px",
     cardHeight: isMobile ? "250px" : "394px",
     titleSize: isMobile ? "18px" : "28px",
-    textSize: isMobile ? "10px" : "16px",
+    textSize: isMobile ? "14px" : "16px",
     pathHeight: isMobile ? "60px" : "120px",
   };
 
@@ -197,7 +197,7 @@ const FlightCard = ({
           >
             <div style={{ textAlign: "center" }}>
               <span
-                style={{ fontSize: isMobile ? "10px" : "12px", opacity: 0.8 }}
+                style={{ fontSize: isMobile ? "14px" : "18px", opacity: 0.8 }}
               >
                 חזור
               </span>
@@ -220,7 +220,7 @@ const FlightCard = ({
 
             <div style={{ textAlign: "center" }}>
               <span
-                style={{ fontSize: isMobile ? "10px" : "12px", opacity: 0.8 }}
+                style={{ fontSize: isMobile ? "14px" : "18px", opacity: 0.8 }}
               >
                 הלוך
               </span>
