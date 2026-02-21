@@ -1,0 +1,41 @@
+.showcase-container {
+  padding: 2rem 1rem;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.showcase-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.swiper-slide {
+  width: auto !important;
+  display: flex;
+  justify-content: center;
+}
+
+.showcase-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: #000000;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05); /* צל קל לקריאות */
+}
+
+.showcase-description {
+  font-size: 1.2rem;
+  color: black;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.swiper-slide {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}

@@ -1,0 +1,349 @@
+.about-section {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  position: relative;
+  align-items: center;
+  text-align: center;
+  width: 95%;
+  margin: 0 auto;
+  height: auto;
+}
+
+.floating-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  animation: float 6s ease-in-out infinite;
+  z-index: 0;
+}
+
+.orb-1 {
+  width: 200px;
+  height: 200px;
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 150px;
+  height: 150px;
+  top: 60%;
+  right: 15%;
+  animation-delay: 2s;
+}
+
+.orb-3 {
+  width: 100px;
+  height: 100px;
+  bottom: 20%;
+  left: 60%;
+  animation-delay: 4s;
+}
+
+.about-section-content {
+  width: 100%;
+  max-width: 1400px;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(10deg);
+  }
+}
+
+.about-section h2 {
+  margin-top: 60px;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.about-section p {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  margin-bottom: 1.2rem;
+}
+
+.primary-btn {
+  background: rgba(255, 255, 255, 0.15); /* שקוף למחצה */
+  backdrop-filter: blur(12px); /* טשטוש הזכוכית */
+  -webkit-backdrop-filter: blur(12px); /* תמיכה בספארי */
+  color: black;
+  padding: 0.8rem 1.5rem;
+  width: 500px;
+  border-radius: 999px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: -10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.2); /* גבול עדין */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.primary-btn:hover {
+  transform: scale(1.2);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.about-section__image {
+  position: relative;
+  width: 100%;
+  max-width: 700px; /* שתהיה מוגבלת בגודל */
+  margin: 0 auto;
+  height: auto; /* גובה דינאמי */
+}
+
+@keyframes infoBounceIn {
+  0% {
+    transform: scale(0) translateY(-20px);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2) translateY(5px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* כפתור מידע כללי */
+.info-btn {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-image: url("../../../assets/images/info-button.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  transition: transform 0.3s ease;
+  z-index: 2;
+  animation: infoBounceIn 0.6s ease-out forwards;
+  animation-delay: 0.8s; /* שיגיע קצת אחרי שהתמונה נטענת */
+  opacity: 0; /* כדי שלא יראו לפני האנימציה */
+}
+
+.info-btn:hover {
+  transform: scale(1.3);
+}
+
+/* כפתור מידע ליד לירן (ימין) */
+.info-btn-liran {
+  top: 35%; /* מיקום אנכי */
+  right: 13%; /* מיקום אופקי מהצד הימני */
+}
+
+/* כפתור מידע ליד רועי (שמאל) */
+.info-btn-roi {
+  top: 45%;
+  left: 15%;
+  animation-delay: 1s; /* לרועי טיפה אחרי */
+}
+
+/* התמונה עצמה */
+.about-section__image img {
+  width: 100%;
+  height: auto; /* שומר פרופורציות */
+  object-fit: contain; /* תמלא בלי חיתוך */
+}
+.about-section__image p {
+  font-weight: bold;
+}
+
+.about-section__video {
+  display: none;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.7;
+  animation: float 6s ease-in-out infinite;
+}
+
+.about-orbs-background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1; /* ✔️ חשוב - כדי שיהיה מאחורי כל התוכן */
+  overflow: hidden;
+}
+
+.orb-1 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, #e76d2c 0%, #ffffff 100%);
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, #e76d2c 0%, #ffffff 100%);
+  top: 60%;
+  right: 15%;
+  animation-delay: 2s;
+}
+
+.orb-3 {
+  width: 250px;
+  height: 250px;
+  background: linear-gradient(135deg, #e76d2c 0%, #ffffff 100%);
+  bottom: 20%;
+  left: 20%;
+  animation-delay: 4s;
+}
+
+/* רקע שקוף */
+.info-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+/* תיבת הפופאפ */
+.info-popup {
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  max-width: 350px;
+  text-align: center;
+  position: relative;
+  animation: popupFade 0.3s ease;
+}
+
+.info-popup img {
+  width: 120px;
+  height: auto;
+  border-radius: 50%;
+  margin-bottom: 12px;
+}
+
+.info-popup h3 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.info-popup p {
+  font-size: 1rem;
+  color: #333;
+}
+
+/* כפתור סגירה */
+.popup-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* אנימציה */
+@keyframes popupFade {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.checkin-text {
+  color: #e76d2c; /* הכתום שלך */
+}
+
+@media (min-width: 1024px) {
+  .about-section {
+    justify-items: space-around;
+  }
+  .about-section__video {
+    display: block;
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 16 / 9;
+    margin: 2rem auto 0;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+  }
+
+  .about-section__video iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .about-section__video::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  .about-section-content {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 40px;
+    margin: 0 20px;
+  }
+
+  .primary-btn {
+    width: 80%;
+    font-size: 1.1rem;
+  }
+
+  .about-section__image img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* כפתור מידע ליד לירן (ימין) */
+  .info-btn-liran {
+    top: 35%; /* מיקום אנכי */
+    right: 14%; /* מיקום אופקי מהצד הימני */
+  }
+
+  /* כפתור מידע ליד רועי (שמאל) */
+  .info-btn-roi {
+    top: 45%;
+    left: 16%;
+  }
+}
+
+@media (min-width: 700px) {
+  .about-section h2 {
+    font-size: 3.5rem;
+  }
+}

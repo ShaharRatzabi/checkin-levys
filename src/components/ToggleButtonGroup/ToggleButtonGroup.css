@@ -1,0 +1,49 @@
+.toggle-button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 2px solid #999;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #333;
+}
+
+.toggle-btn .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.toggle-btn:hover {
+  transform: scale(1.05);
+}
+
+.active-yes {
+  border-color: #10b981;
+  background-color: #10b981;
+  color: #fff;
+}
+
+.active-yes .icon {
+  color: #fff;
+}
+
+.active-no {
+  border-color: #ef4444;
+  background-color: #ef4444;
+  color: #fff;
+}
+
+.active-no .icon {
+  color: #fff;
+}

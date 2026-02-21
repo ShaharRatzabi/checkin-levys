@@ -1,0 +1,165 @@
+.site-footer {
+  /* רקע זכוכית מודרני */
+  background-color: rgba(25, 25, 35, 0.9); /* צבע רקע כהה עם שקיפות */
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+
+  /* הגדרות כלליות (נשארות כמעט זהות) */
+  color: #ffffff;
+  padding: 50px 0 20px 0;
+  font-family: Arial, Helvetica, sans-serif;
+  direction: rtl;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  z-index: 10000;
+}
+
+.footer-column {
+  flex: 1;
+  min-width: 250px; /* רוחב מינימלי לפני שבירה */
+  margin: 20px;
+}
+
+.footer-column img {
+  width: 500px;
+}
+
+.footer-column h2 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #d46728;
+  padding-bottom: 10px;
+}
+.about-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* עמודת "אודות" */
+.about-column p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #cccccc;
+}
+
+.footer-logo {
+  max-width: 150px;
+  margin-bottom: 20px;
+}
+
+.social-icons {
+  margin-top: 20px;
+}
+
+.social-icons a {
+  color: #ffffff;
+  font-size: 20px;
+  margin-left: 15px;
+  transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: #ffc954; /* צבע למעבר עכבר */
+}
+
+/* עמודת "ניווט מהיר" */
+.links-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.links-column ul li {
+  margin-bottom: 12px;
+}
+
+.links-column ul li a {
+  color: #cccccc;
+  text-decoration: none;
+  transition:
+    color 0.3s ease,
+    padding-right 0.3s ease;
+}
+
+.links-column ul li a:hover {
+  color: #ffffff;
+  padding-right: 5px;
+}
+
+/* עמודת "יצירת קשר" */
+.contact-column p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #cccccc;
+}
+
+.contact-details {
+  margin-top: 15px;
+}
+
+.contact-details p {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.contact-details .fas {
+  font-size: 16px;
+  margin-left: 10px;
+  width: 20px; /* ליישור האייקונים */
+}
+
+/* חלק תחתון של הפוטר */
+.footer-bottom {
+  text-align: center;
+  border-top: 1px solid #000000;
+  padding-top: 20px;
+  margin-top: 30px;
+  font-size: 13px;
+  color: #cccccc;
+}
+
+.footer-bottom-links {
+  margin-top: 10px;
+}
+
+.footer-bottom-links a {
+  color: #a0a0a0;
+  text-decoration: none;
+  margin: 0 10px;
+  transition: color 0.3s ease;
+}
+
+.footer-bottom-links a:hover {
+  color: #ffffff;
+}
+
+/* רספונסיביות למובייל */
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    align-items: center; /* מרכוז העמודות */
+    text-align: center;
+  }
+
+  .footer-column {
+    margin: 20px 0;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .contact-details p {
+    justify-content: center;
+  }
+}

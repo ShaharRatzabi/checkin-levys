@@ -1,0 +1,238 @@
+.process-wrapper {
+  position: relative;
+  padding: 120px 20px;
+  background: none; /* ננטרל רקע קודם אם יש */
+  overflow: hidden;
+}
+
+/* שכבת העננים */
+.process-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("../../../assets/images/clouds.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.35; /* עדין */
+  filter: blur(6px); /* רך */
+  transform: scale(1.05); /* למנוע קצוות */
+  z-index: 0;
+}
+
+/* HEADER */
+.process-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(231, 109, 44, 0.12);
+  color: #e76d2c;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.process-header h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #000000;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.process-header p {
+  color: #555;
+  font-size: 0.8rem;
+}
+
+/* STEPS */
+.steps {
+  max-width: 720px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* FLOW LINE */
+.steps::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 36px;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(231, 109, 44, 0.5),
+    transparent
+  );
+  animation: flowPulse 4s ease-in-out infinite;
+}
+
+@keyframes flowPulse {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
+
+/* STEP CARD */
+.step-card {
+  display: flex;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(18px);
+  border-radius: 28px;
+  padding: 18px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  margin-bottom: 10px;
+  transition: box-shadow 0.3s ease;
+}
+
+.step-card:hover {
+  box-shadow:
+    0 18px 50px rgba(231, 109, 44, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* ICON */
+.icon-box {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #e76d2c, #c55a24);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.icon-box::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 26px;
+  background: radial-gradient(
+    circle,
+    rgba(231, 109, 44, 0.35),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.step-card:hover .icon-box::after {
+  opacity: 1;
+}
+
+.step-card:hover .icon-box {
+  transform: rotate(-3deg) scale(1.05);
+}
+
+.step-number {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 26px;
+  height: 26px;
+  background: #ffffff;
+  border-radius: 50%;
+  font-weight: bold;
+  color: #e76d2c;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* TEXT */
+.step-content h3 {
+  margin: 0 0 6px;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.step-content p {
+  margin: 0;
+  color: #555;
+  line-height: 1.5;
+  font-size: 0.8rem;
+}
+
+/* PLANE BETWEEN STEPS */
+.flow-arrow {
+  display: flex;
+  justify-content: center;
+  margin: 18px 0;
+  opacity: 0.9;
+}
+
+/* CTA */
+.cta {
+  display: block;
+  margin: 70px auto 0;
+  padding: 16px 42px;
+  border-radius: 999px;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(to right, #e76d2c, #c55a24);
+  cursor: pointer;
+  box-shadow: 0 15px 35px rgba(231, 109, 44, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: translateX(-100%);
+}
+
+.cta:hover::after {
+  transform: translateX(100%);
+  transition: transform 0.6s ease;
+}
+
+.process-wrapper {
+  position: relative;
+  padding: 120px 20px;
+  background: linear-gradient(to bottom, #f9fafb, #ffffff);
+}
+
+/* הבועה הגדולה */
+.process-bubble {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 40px;
+  border-radius: 48px;
+
+  background-size: cover;
+  background-position: center;
+  backdrop-filter: blur(22px);
+  box-shadow:
+    0 40px 90px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+}

@@ -1,0 +1,174 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  justify-items: space-around;
+  align-items: center;
+  margin: auto;
+  max-width: 1200px;
+}
+.main-container img {
+  width: 600px;
+  height: 500px;
+}
+.why-us-container {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  margin: 2rem auto;
+
+  max-width: 1400px;
+  width: auto;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  padding: 20px;
+  justify-self: center;
+}
+
+.why-us-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("../../../assets/images/logo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.why-us-title {
+  font-size: 2rem;
+  margin: 2rem 0;
+  font-weight: bold;
+  color: #000000;
+}
+
+.why-us-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  align-items: center;
+  max-width: 800px;
+  justify-self: center;
+}
+
+.why-us-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  background: rgba(255, 255, 255, 0.15); /* שקוף למחצה */
+  backdrop-filter: blur(12px); /* טשטוש הזכוכית */
+  -webkit-backdrop-filter: blur(12px); /* תמיכה בספארי */
+  padding: 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.why-us-card h3 {
+  font-size: 1rem;
+  color: #e76d2c;
+  font-weight: bold;
+}
+
+.why-us-card p {
+  color: black;
+  font-weight: bold;
+  font-size: 0.8rem;
+  padding: 0 10px;
+  margin-bottom: 10px;
+}
+
+/* כרטיסים אי-זוגיים (1, 3, ...) יישרו לימין */
+.what-card:nth-child(odd) {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+/* כרטיסים זוגיים (2, 4, ...) יישרו לשמאל */
+.what-card:nth-child(even) {
+  margin-left: auto;
+  margin-right: 0;
+  display: flex;
+  direction: ltr;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0;
+  height: 300px;
+}
+
+.what-title {
+  grid-area: header;
+  font-size: 2rem;
+  margin: 2rem 0;
+  color: #333;
+  text-align: center;
+}
+
+.what-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  background: rgba(255, 255, 255, 0.15); /* שקוף למחצה */
+  backdrop-filter: blur(12px); /* טשטוש הזכוכית */
+  -webkit-backdrop-filter: blur(12px); /* תמיכה בספארי */
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  margin-inline: auto;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.what-card img {
+  height: 300px;
+}
+
+@media (min-width: 1024px) {
+  .main-container {
+    flex-direction: row;
+    gap: 30px;
+  }
+
+  .why-us-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 80%;
+    margin-right: 20px;
+  }
+
+  .why-us-title {
+    font-size: 3rem;
+  }
+
+  .why-us-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .why-us-card p {
+    font-size: 0.9rem;
+  }
+}

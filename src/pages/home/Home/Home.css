@@ -1,0 +1,136 @@
+/* =========================
+   HOME CONTAINER
+========================= */
+.home-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  z-index: 2;
+  margin-top: 50px;
+  /* הרקע הכללי לבן-נייטרלי מעט חמים */
+  background-color: #fafafa;
+}
+
+/* =========================
+   BACKGROUND LAYER 
+========================= */
+.background-orbs {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* שכבת טקסטורה (Noise) - מוסיפה מראה מקצועי ומונעת Color Banding */
+.background-orbs::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.04; /* עדין מאוד */
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  filter: contrast(150%) brightness(100%);
+  z-index: 2;
+}
+
+/* אפקט עומק נוסף - וינייט לבן בשוליים */
+.background-orbs::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 100%
+  );
+  z-index: 3;
+}
+
+/* =========================
+   BASE ORB STYLE
+========================= */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  /* שימוש ב-mix-blend-mode יוצר שילוב צבעים הרבה יותר יוקרתי */
+  mix-blend-mode: multiply;
+  filter: blur(80px); /* טשטוש חזק יותר למראה ענני */
+  opacity: 0.25; /* הורדת אופסיטי למראה נקי */
+  animation: floatSlow 20s ease-in-out infinite;
+}
+
+/* צבע כתום מותאם למותג - רך ועמוק יותר */
+.orb.orange {
+  background: radial-gradient(
+    circle,
+    rgba(231, 109, 44, 0.8) 0%,
+    rgba(243, 156, 18, 0.4) 50%,
+    transparent 100%
+  );
+}
+
+/* צבע משלים בהיר מאוד (אופציונלי - נותן עושר לרקע) */
+.orb.secondary {
+  background: radial-gradient(
+    circle,
+    rgba(255, 230, 210, 0.6) 0%,
+    transparent 70%
+  );
+}
+
+/* =========================
+   ORB POSITIONS & SIZES
+========================= */
+.orb-1 {
+  top: -10%;
+  left: -5%;
+  width: 600px;
+  height: 600px;
+  animation-delay: 0s;
+}
+.orb-2 {
+  bottom: 10%;
+  right: -5%;
+  width: 500px;
+  height: 500px;
+  animation-delay: -5s;
+  opacity: 0.15;
+}
+.orb-3 {
+  top: 30%;
+  left: 40%;
+  width: 300px;
+  height: 300px;
+  animation-delay: -10s;
+  opacity: 0.1;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+@keyframes floatSlow {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 768px) {
+  .orb {
+    filter: blur(50px);
+    opacity: 0.15;
+  }
+  .orb-1 {
+    width: 300px;
+    height: 300px;
+  }
+}

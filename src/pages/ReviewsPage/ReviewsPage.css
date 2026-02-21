@@ -1,0 +1,103 @@
+.reviews-page {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 5rem;
+}
+
+.reviews-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-image: linear-gradient(to bottom right, #fff7ed 70%, #e76d2c 100%);
+}
+
+.form-chart-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "header form"
+    "chart form";
+  gap: 1rem;
+  margin: 4rem auto;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+.reviews-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end; /* מרכז אנכי */
+}
+
+.page-header img {
+  height: 300px;
+}
+
+.page-header p {
+  font-size: 1.25rem;
+  color: rgba(0, 0, 0, 0.6);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .reviews-content {
+    padding: 1rem;
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+  }
+
+  .page-header p {
+    font-size: 1.1rem;
+  }
+
+  .gradient-orb {
+    filter: blur(20px);
+  }
+
+  .orb-1 {
+    width: 200px;
+    height: 200px;
+  }
+
+  .orb-2 {
+    width: 150px;
+    height: 150px;
+  }
+
+  .orb-3 {
+    width: 180px;
+    height: 180px;
+  }
+
+  .form-chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}

@@ -1,0 +1,61 @@
+.navigation-links {
+  position: absolute;
+  transform: translateX(-50%);
+  bottom: 0;
+  left: 50%;
+  z-index: 4;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 70%;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1), 0 0 15px rgba(255, 255, 255, 0.3),
+    0 0 30px rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.navigation-links.appear {
+  opacity: 1;
+  transform: translateX(-50%);
+}
+
+.navigation-links svg {
+  display: block;
+}
+
+.navigation-links a {
+  font-size: 3rem;
+  color: #e76d2c;
+  transition: transform 0.2s ease;
+}
+
+.navigation-links a:hover {
+  transform: scale(1.2);
+}
+
+@media (min-width: 768px) {
+  .navigation-links {
+    margin-bottom: 20px;
+  }
+
+  .navigation-links a {
+    font-size: 3.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .navigation-links {
+    position: relative;
+    transform: none;
+    max-width: 100%; /* לא לעבור את המסך */
+    margin-top: -70px;
+    width: 700px;
+  }
+}

@@ -1,0 +1,288 @@
+/* DealCard.css */
+
+.dealcard-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6000;
+  padding: 50px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* =========================
+   CONTAINER – BASE (AS IS)
+========================= */
+
+.dealcard-container {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #1d3557;
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  direction: rtl;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+
+  /* ⛔ נבטל גלילה כאן במסכים רחבים בלבד בהמשך */
+  overflow-y: auto;
+  max-height: 80vh;
+
+  position: relative;
+}
+
+/* =========================
+   IMAGE SIDE
+========================= */
+
+.dealcard-image-wrapper {
+  width: 60%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.dealcard-image {
+  width: 100%;
+  height: auto; /* 🔑 גובה טבעי של התמונה */
+  object-fit: contain;
+  border-radius: 0 30px 30px 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* =========================
+   CONTENT SIDE
+========================= */
+
+.dealcard-content {
+  flex: 1;
+  padding: 30px;
+  position: relative;
+}
+
+/* =========================
+   CLOSE BUTTON
+========================= */
+
+.dealcard-close-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(128, 23, 23, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.dealcard-close-button:hover {
+  background: rgba(131, 22, 22, 0.7);
+}
+
+/* =========================
+   TYPOGRAPHY & SECTIONS
+========================= */
+
+.dealcard-title {
+  font-size: 34px;
+  font-weight: 800;
+  margin: 0 0 10px 0;
+  color: #1d3557;
+}
+
+.dealcard-price {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.price-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #1d3557;
+}
+
+.price-label {
+  font-size: 16px;
+  color: #457b9d;
+  margin-right: 10px;
+}
+
+.deal-section {
+  margin-bottom: 25px;
+}
+
+.deal-section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.deal-section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1d3557;
+  margin: 0 12px 0 0;
+}
+
+.deal-info-box {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 15px;
+  padding: 15px;
+  display: grid;
+  gap: 15px;
+}
+
+.info-label {
+  font-size: 14px;
+  opacity: 0.7;
+  direction: rtl;
+}
+
+.info-value {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.icon-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.deal-included-box {
+  display: flex;
+  align-items: center;
+  background: rgba(46, 204, 113, 0.15);
+  color: #2b9348;
+  border-radius: 12px;
+  padding: 10px 15px;
+  margin-top: 15px;
+}
+
+.deal-included-text {
+  margin-right: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.deal-stars {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.dealcard-cta {
+  margin-top: 30px;
+}
+
+.dealcard-published {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.dealcard-submit-button {
+  background: linear-gradient(to right, #4361ee, #3a0ca3);
+  color: white;
+  width: 100%;
+  border: none;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* =========================
+   🖥️ DESKTOP ONLY FIX
+========================= */
+
+@media (min-width: 1201px) {
+  .dealcard-container {
+    overflow-y: hidden; /* ❌ אין גלילה על כל הכרטיס */
+    max-height: none; /* 🔑 הגובה נקבע ע"י התמונה */
+    align-items: stretch; /* 🔑 flex נמתח לפי התמונה */
+  }
+
+  .dealcard-content {
+    overflow-y: auto; /* ✅ גלילה רק בצד הנתונים */
+  }
+}
+
+/* =========================
+   📱 MOBILE & TABLET – AS IS
+========================= */
+
+@media (max-width: 1200px) {
+  .dealcard-container {
+    flex-direction: column;
+    width: 65%;
+  }
+
+  .dealcard-image-wrapper {
+    width: 100%;
+    height: auto;
+  }
+
+  .dealcard-image {
+    border-radius: 30px 30px 0 0;
+  }
+
+  .dealcard-content {
+    padding: 25px;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 768px) {
+  .dealcard-container {
+    flex-direction: column;
+    width: 90%;
+  }
+}
+
+@media (min-width: 1201px) {
+  .dealcard-container {
+    align-items: stretch;
+    height: 77vh; /* 🔑 נסגר לפי התוכן הגבוה ביותר (התמונה) */
+    overflow: hidden;
+  }
+  .dealcard-content {
+    overflow-y: auto; /* ✅ גלילה רק כאן */
+    max-height: 100%;
+    scrollbar-width: thin; /* 🔑 מוגבל לגובה של התמונה */
+  }
+  .dealcard-image-wrapper {
+    align-self: stretch;
+  }
+
+  .dealcard-image {
+    height: 100%;
+    width: auto;
+    object-fit: cover;
+  }
+}

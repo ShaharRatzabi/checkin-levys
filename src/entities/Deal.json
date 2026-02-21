@@ -1,0 +1,64 @@
+{
+  "name": "Deal",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "שם החבילה/דיל"
+    },
+    "mainImage": {
+      "type": "string",
+      "description": "תמונה ראשית של הדיל"
+    },
+    "priceFrom": {
+      "type": "number",
+      "description": "מחיר התחלתי לאדם"
+    },
+    "days": {
+      "type": "number",
+      "description": "מספר ימים"
+    },
+    "datesRange": {
+      "type": "string",
+      "description": "טווח תאריכים"
+    },
+    "flight": {
+      "type": "object",
+      "properties": {
+        "airline": {
+          "type": "string"
+        },
+        "departure": {
+          "type": "string"
+        },
+        "return": {
+          "type": "string"
+        }
+      },
+      "default": {}
+    },
+    "hotel": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "stars": {
+          "type": "number"
+        },
+        "room": {
+          "type": "string"
+        },
+        "meals": {
+          "type": "string"
+        }
+      },
+      "default": {}
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": ["title", "priceFrom"]
+}
