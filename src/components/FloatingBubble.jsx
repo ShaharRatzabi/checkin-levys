@@ -182,11 +182,7 @@ const FloatingBubble = () => {
         .dialog-close:hover { background: var(--accent); color: white; }
 
         /* במסכים קטנים נסגר אוטומטית */
-        @media (max-width: 600px) {
-          .light-bubble-container {
-            display: none;
-          }
-        }
+    
       `}</style>
 
       <div className="floating-bubble-wrapper">

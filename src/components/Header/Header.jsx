@@ -115,9 +115,10 @@ function Header() {
         }
 
         @media (max-width: 768px) {
-
-
-
+        .logo-image-text {
+            margin-top: 1.1rem;
+            max-height: 260px;
+          }
 
           .logo-icon {
             display: none;
@@ -241,7 +242,6 @@ function Header() {
           <div className="header-actions">
             <button className="share-button" onClick={handleShare}>
               <Share className="share-icon" />
-              <span className="share-text">שיתוף</span>
             </button>
           </div>
         </div>
