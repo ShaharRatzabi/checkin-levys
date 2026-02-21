@@ -46,7 +46,7 @@
 }
 
 .why-us-title {
-  font-size: 2rem;
+  font-size: 3rem;
   margin: 2rem 0;
   font-weight: bold;
   color: #000000;
@@ -79,7 +79,7 @@
 }
 
 .why-us-card h3 {
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: #e76d2c;
   font-weight: bold;
 }
@@ -87,7 +87,7 @@
 .why-us-card p {
   color: black;
   font-weight: bold;
-  font-size: 0.8rem;
+  font-size: 1rem;
   padding: 0 10px;
   margin-bottom: 10px;
 }
