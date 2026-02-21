@@ -77,18 +77,21 @@ const FlightCard = ({
         {/* שכבת blur מדורג */}
         <div className="blur-fade-layer" />
 
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: "55%",
-            zIndex: 3,
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 80%)",
-          }}
-        />
+        {/* buffer אטום לטקסט – מובייל בלבד */}
+        {isMobile && (
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: "55%",
+              zIndex: 5,
+              background: "#000000",
+              opacity: 0.55,
+            }}
+          />
+        )}
 
         {/* תוכן הכרטיס */}
         <div
