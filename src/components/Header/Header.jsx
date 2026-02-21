@@ -4,7 +4,7 @@ import { Share } from "lucide-react";
 import Sidebar from "../Sidebar/Sidebar";
 import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";
 import LogoImg from "../../assets/images/logo.png";
-import LogoText from "../../assets/images/logo-title.jpg";
+import LogoText from "../../assets/images/logo-title.png";
 
 function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
