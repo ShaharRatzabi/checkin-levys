@@ -103,6 +103,16 @@ function Header() {
           gap: 1rem;
         }
 
+        .share-text {
+          display: none;
+        }
+
+        @media (min-width: 768px) {
+          .share-text {
+            display: inline;
+          }
+        }
+
         @media (min-width: 1024px) {
           .hamburger-mobile {
             display: none;
@@ -200,7 +210,7 @@ function Header() {
           <div className="header-actions">
             <button className="share-button" onClick={handleShare}>
               <Share className="share-icon" />
-              <span className="hidden md:inline">שיתוף</span>
+              <span className="share-text">שיתוף</span>
             </button>
           </div>
         </div>
