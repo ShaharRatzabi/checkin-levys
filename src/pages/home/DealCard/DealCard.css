@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: center;
   z-index: 6000;
-  padding: 50px;
+  padding: 15px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -36,7 +36,7 @@
 
   /* ⛔ נבטל גלילה כאן במסכים רחבים בלבד בהמשך */
   overflow-y: auto;
-  max-height: 80vh;
+  max-height: 77vh;
 
   position: relative;
 }
@@ -158,7 +158,7 @@
 }
 
 .info-value {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
 }
 
@@ -261,7 +261,7 @@
 @media (max-width: 768px) {
   .dealcard-container {
     flex-direction: column;
-    width: 90%;
+    width: 100%;
   }
 }
 

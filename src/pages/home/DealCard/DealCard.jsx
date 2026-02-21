@@ -50,10 +50,10 @@ const DealCard = ({ deal, onClose }) => {
 היי 👋
 אני מעוניין בדיל הבא:
 
-✈️ יעד: ${deal.title}
-💰 מחיר: החל מ-${deal.priceFrom}₪ לאדם
-📅 תאריכים: ${deal.datesRange}
-🏨 מלון: ${deal.hotel?.name || "—"}
+ יעד: ${deal.title}
+ מחיר: החל מ-${deal.priceFrom}₪ לאדם
+ תאריכים: ${deal.datesRange}
+ מלון: ${deal.hotel?.name || "—"}
 
 אשמח לפרטים נוספים 🙏
   `;
@@ -100,8 +100,7 @@ const DealCard = ({ deal, onClose }) => {
             <span>פורסם ב־{formattedDate}</span>
           </div>
           <div className="dealcard-price">
-            <div className="price-value">{deal.priceFrom}₪</div>
-            <div className="price-label">לאדם</div>
+            <div className="price-value">החל מ- {deal.priceFrom}₪ לאדם</div>
           </div>
 
           <Section
@@ -110,12 +109,12 @@ const DealCard = ({ deal, onClose }) => {
           >
             <InfoBox>
               <div>
-                <div className="info-label">ימים</div>
-                <div className="info-value">{deal.days}</div>
-              </div>
-              <div style={{ textAlign: "left" }}>
                 <div className="info-label">תאריכים</div>
                 <div className="info-value">{deal.datesRange}</div>
+              </div>
+              <div style={{ textAlign: "left" }}>
+                <div className="info-label">ימים</div>
+                <div className="info-value">{deal.days}</div>
               </div>
             </InfoBox>
           </Section>
@@ -160,12 +159,12 @@ const DealCard = ({ deal, onClose }) => {
             </div>
             <InfoBox>
               <div>
-                <div className="info-label">חדר</div>
-                <div className="info-value">{deal.hotel?.room}</div>
-              </div>
-              <div style={{ textAlign: "left" }}>
                 <div className="info-label">ארוחות</div>
                 <div className="info-value">{deal.hotel?.meals}</div>
+              </div>
+              <div style={{ textAlign: "left" }}>
+                <div className="info-label">חדר</div>
+                <div className="info-value">{deal.hotel?.room}</div>
               </div>
             </InfoBox>
           </Section>
@@ -190,7 +189,6 @@ const DealCard = ({ deal, onClose }) => {
               className="dealcard-submit-button"
               onClick={handleWhatsAppClick}
             >
-              <img src="/whatsapp.svg" alt="" />
               לפרטים נוספים
             </button>
           </div>

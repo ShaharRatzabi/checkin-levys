@@ -18,6 +18,11 @@ const HamburgerMenu = ({ onClick }) => {
           box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
           cursor: pointer;
           transition: all 0.3s ease;
+          height: 40px;
+          width: 48px;
+          display: flex;
+align-items: center;
+justify-content: center;
         }
 
         .hamburger-button:hover {
@@ -31,6 +36,7 @@ const HamburgerMenu = ({ onClick }) => {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
+          justify-self: center;
         }
 
         .hamburger-line {

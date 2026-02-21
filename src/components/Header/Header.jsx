@@ -4,6 +4,7 @@ import { Share } from "lucide-react";
 import Sidebar from "../Sidebar/Sidebar";
 import HamburgerMenu from "../HamburgerMenu/HamburgerMenu";
 import LogoImg from "../../assets/images/logo.png";
+import LogoText from "../../assets/images/logo-title.jpg";
 
 function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -62,7 +63,7 @@ function Header() {
           height: 100%;
           max-width: 1280px;
           margin: 0 auto;
-          padding: 0 1.5rem;
+          padding: 0 1rem;
         }
 
         .hamburger-mobile {
@@ -79,6 +80,10 @@ function Header() {
           gap: 0.75rem;
         }
 
+        .logo-image-text {
+            width: 100%;
+        }
+
         .logo-icon {
           width: 4rem;
           height: 4rem;
@@ -90,6 +95,8 @@ function Header() {
           font-weight: bold;
           font-size: 1.5rem;
         }
+        
+        
 
         .logo-text {
           display: none;
@@ -107,15 +114,27 @@ function Header() {
           display: none;
         }
 
-        @media (min-width: 768px) {
-          .share-text {
-            display: inline;
+        @media (max-width: 768px) {
+
+
+
+
+          .logo-icon {
+            display: none;
           }
         }
 
-        @media (min-width: 1024px) {
+        @media (min-width: 768px) {
           .hamburger-mobile {
             display: none;
+          }
+
+         .logo-image-text {
+            display: none;
+          }
+
+          .share-text {
+            display: inline;
           }
 
           .nav-links {
@@ -163,7 +182,7 @@ function Header() {
           background-color: #000; /* שחור ברירת מחדל */
           color: #fff;
           border: none;
-          padding: 0.75rem 1.25rem;
+          padding: 0.75rem 1rem;
           border-radius: 0.75rem;
           cursor: pointer;
           transition: all 0.3s ease;
@@ -194,6 +213,13 @@ function Header() {
           <Link to="/" className="logo-container">
             <div className="logo-icon">
               <img src={LogoImg} alt="Check-In logo" className="logo-image" />
+            </div>
+            <div className="logoText-icon">
+              <img
+                src={LogoText}
+                alt="Check-In logo Text"
+                className="logo-image-text"
+              />
             </div>
             <span className="logo-text">Check In</span>
           </Link>
