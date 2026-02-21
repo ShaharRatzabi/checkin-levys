@@ -92,7 +92,7 @@ function Header() {
         }
 
         .logo-text {
-          font-size: 1.75rem;
+          font-size: 1rem;
           font-weight: 800;
           color: var(--primary-text);
         }
@@ -122,6 +122,10 @@ function Header() {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+          }
+
+          .logo-text {
+            font-size: 1.75rem;
           }
         }
 
