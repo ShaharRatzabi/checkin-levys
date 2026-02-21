@@ -98,39 +98,6 @@ const FlightCard = ({
           }}
         />
 
-        {/* Heart Button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsLiked(!isLiked);
-          }}
-          style={{
-            position: "absolute",
-            top: isMobile ? "12px" : "20px",
-            right: isMobile ? "12px" : "20px",
-            width: isMobile ? "36px" : "44px",
-            height: isMobile ? "36px" : "44px",
-            backgroundColor: "rgba(0, 0, 0, 0.3)",
-            borderRadius: "50%",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 10,
-          }}
-        >
-          <svg
-            width={isMobile ? "18" : "22"}
-            height={isMobile ? "18" : "22"}
-            viewBox="0 0 24 24"
-            fill={isLiked ? "#ffffff" : "none"}
-            stroke="#ffffff"
-            strokeWidth="2"
-          >
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg>
-        </button>
-
         {/* תוכן הכרטיס */}
         <div
           style={{

@@ -10,7 +10,7 @@ import LogoImg from "./../assets/images/logo.png";
 
 const FloatingBubble = () => {
   const [activeForm, setActiveForm] = useState(null);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const closeDialog = () => setActiveForm(null);
   const toggleCollapse = () => setIsCollapsed(!isCollapsed);
@@ -29,7 +29,7 @@ const FloatingBubble = () => {
           position: fixed;
           bottom: 20px;
           left: 20px;
-          z-index: 1000;
+          z-index: 20;
           direction: rtl;
         }
 

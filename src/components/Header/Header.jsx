@@ -118,6 +118,7 @@ function Header() {
         .logo-image-text {
             margin-top: 1.1rem;
             max-height: 260px;
+            min-height: 220px;
           }
 
           .logo-icon {

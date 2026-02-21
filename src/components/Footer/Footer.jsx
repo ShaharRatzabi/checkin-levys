@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Footer.css";
-import logoImg from "../../assets/images/logo.png";
 
 const Footer = () => {
-  // ✅ הועתק ישירות מה-Header
+  const currentYear = new Date().getFullYear();
+
   const navigationItems = [
     { name: "בית", href: "/" },
     { name: "אודות", href: "/about" },
@@ -17,30 +17,7 @@ const Footer = () => {
   return (
     <footer className="site-footer">
       <div className="footer-container">
-        {/* עמודה 1: אודות החברה והרשתות החברתיות */}
-        <div className="footer-column about-column">
-          <img src={logoImg} alt="Check In Logo" className="footer-logo" />
-          <p>
-            Check In היא סוכנות נסיעות המתמחה בדילים שווים לחו"ל, תוך מתן שירות
-            ומענה אישי לכל לקוח. אנחנו כאן כדי לבנות לכם חוויה, לא רק חופשה.
-          </p>
-          <div className="social-icons">
-            <a href="#" aria-label="Facebook">
-              <i className="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" aria-label="Instagram">
-              <i className="fab fa-instagram"></i>
-            </a>
-            <a href="#" aria-label="TikTok">
-              <i className="fab fa-tiktok"></i>
-            </a>
-            <a href="#" aria-label="Whatsapp">
-              <i className="fab fa-whatsapp"></i>
-            </a>
-          </div>
-        </div>
-
-        {/* עמודת "ניווט מהיר" עם הקישורים מה-Header */}
+        {/* ניווט מהיר */}
         <div className="footer-column links-column">
           <h2>ניווט מהיר</h2>
           <ul>
@@ -52,32 +29,52 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* עמודה 3: יצירת קשר */}
+        {/* יצירת קשר */}
         <div className="footer-column contact-column">
           <h2>יצירת קשר</h2>
           <p>
             מוזמנים ליצור איתנו קשר בכל שאלה. הצוות שלנו זמין כדי למצוא לכם את
             החופשה המושלמת.
           </p>
+
           <div className="contact-details">
-            <p>
-              <i className="fas fa-envelope"></i> <strong>אימייל:</strong>{" "}
-              info@checkin-deals.com
-            </p>
-            <p>
-              <i className="fas fa-phone"></i> <strong>טלפון:</strong>{" "}
-              05X-XXXXXXX
-            </p>
-            <p>
-              <i className="fas fa-map-marker-alt"></i> <strong>כתובת:</strong>{" "}
-              רחוב לדוגמה 1, תל אביב
-            </p>
+            <div className="contact-row">
+              <i className="fas fa-envelope" aria-hidden="true"></i>
+              <div className="contact-text">
+                <strong>אימייל:</strong>
+                <span>Checkinota25@gmail.com</span>
+                <span>Checkinota24@gmail.com</span>
+              </div>
+            </div>
+
+            <div className="contact-row">
+              <i className="fas fa-phone" aria-hidden="true"></i>
+              <div className="contact-text">
+                <strong>טלפון:</strong>
+                <span>050-651-4500</span>
+              </div>
+            </div>
+
+            <div className="contact-row">
+              <i className="fas fa-map-marker-alt" aria-hidden="true"></i>
+              <div className="contact-text">
+                <strong>כתובת:</strong>
+                <span>שער האריות 2, חולון</span>
+              </div>
+            </div>
           </div>
+        </div>
+        {/* עמודה 1: אודות */}
+        <div className="footer-column about-column">
+          <p>
+            Check In היא סוכנות נסיעות המתמחה בדילים שווים לחו"ל, תוך מתן שירות
+            ומענה אישי לכל לקוח. אנחנו כאן כדי לבנות לכם חוויה, לא רק חופשה.
+          </p>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <p>© 2025 כל הזכויות שמורות ל-Check In</p>
+        <p>© {currentYear} כל הזכויות שמורות ל-Check In</p>
         <div className="footer-bottom-links">
           <a href="/privacy-policy">מדיניות פרטיות</a>
           <a href="/accessibility">הצהרת נגישות</a>
