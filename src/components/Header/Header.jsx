@@ -80,8 +80,8 @@ function Header() {
         }
 
         .logo-icon {
-          width: 3.5rem;
-          height: 3.5rem;
+          width: 4rem;
+          height: 4rem;
           border-radius: 0.75rem;
           display: flex;
           align-items: center;
@@ -92,7 +92,7 @@ function Header() {
         }
 
         .logo-text {
-          font-size: 1rem;
+          display: none;
           font-weight: 800;
           color: var(--primary-text);
         }
@@ -125,6 +125,7 @@ function Header() {
           }
 
           .logo-text {
+            display: inline;
             font-size: 1.75rem;
           }
         }

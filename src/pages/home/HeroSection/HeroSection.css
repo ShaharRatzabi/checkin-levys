@@ -19,7 +19,7 @@
 }
 
 .hero img {
-  height: 100%;
+  height: 250px;
   margin-bottom: 1rem;
 }
 
@@ -52,7 +52,7 @@
   font-size: 2rem;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .hero {
     flex-direction: row; /* הפוך משורה לעמודה */
     margin-top: 1rem;
@@ -64,6 +64,7 @@
   }
 
   .hero img {
+    height: 100%;
     width: 800px;
   }
 
