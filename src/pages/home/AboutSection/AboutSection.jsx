@@ -6,7 +6,7 @@ import "./AboutSection.css";
 import Dialog from "../../../components/Dialog.jsx"; // תוודא שהנתיב נכון
 import LiranImg from "../../../assets/images/Liran-Roi.png";
 import LiranPopupImg from "../../../assets/images/Liran.png";
-import RoiPopupImg from "../../../assets/images/roi.png";
+import RoiPopupImg from "../../../assets/images/Roi.png";
 
 function AboutSection() {
   const [activePerson, setActivePerson] = useState(null); // null | "liran" | "roi"
