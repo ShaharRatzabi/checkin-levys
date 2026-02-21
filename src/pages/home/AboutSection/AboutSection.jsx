@@ -5,7 +5,7 @@ import "./AboutSection.css";
 
 import Dialog from "../../../components/Dialog.jsx"; // תוודא שהנתיב נכון
 import LiranImg from "../../../assets/images/Liran-Roi.png";
-import LiranPopupImg from "../../../assets/images/liran.png";
+import LiranPopupImg from "../../../assets/images/Liran.png";
 import RoiPopupImg from "../../../assets/images/roi.png";
 
 function AboutSection() {
