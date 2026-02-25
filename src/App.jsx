@@ -23,7 +23,7 @@ import AdminPage from "./pages/AdminPage/AdminPage.jsx";
 import LoginPage from "./pages/LoginPage/LoginPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ScrollToTop from "./components/ScrollToTop";
-import AccessibilityPage from "./pages/AccessibilityPage/AccessibilityPage";
+import AccessibilityPage from "./pages/AcccessibilityPage/AccessibilityPage";
 // import PrivacyPage from "./pages/PrivacyPage/PrivacyPage.jsx";
 // import TermsPage from "./pages/TermsPage/TermsPage.jsx";
 
