@@ -7,16 +7,17 @@ import LiranAndRoieImage from "../../../assets/images/roie-liran-travel.png";
 
 export default function WhyUsSection() {
   useEffect(() => {
-    AOS.init({ duration: 1000 });
+    // ✅ AOS מכבד prefers-reduced-motion
+    AOS.init({ duration: 1000, disable: "reduced-motion" });
   }, []);
 
   return (
-    <section className="why-us">
+    <section className="why-us" aria-label="למה לבחור Check-In">
       <div className="main-container">
         <div className="why-us-container" data-aos="fade-up">
           <h2 className="why-us-title">
             למה לבחור <br />
-            <span className="checkin-text">CHECK-IN</span>{" "}
+            <span className="checkin-text">CHECK-IN</span>
           </h2>
           <div className="why-us-cards">
             <div className="why-us-card">
@@ -41,15 +42,15 @@ export default function WhyUsSection() {
               <h3>מעטפת שלמה לכל צורך</h3>
               <p>
                 הזמנת נהגים, הכוונה לאטרקציות, כרטיסים למשחקים, הצעות נישואים,
-                ביטוחים, מענה אינטרנטי, סיורים, טיולי יום ועוד.{" "}
+                ביטוחים, מענה אינטרנטי, סיורים, טיולי יום ועוד.
               </p>
             </div>
           </div>
         </div>
-        <img src={LiranAndRoieImage} alt="Liran and Roie Image" />
-      </div>
 
-      <div className="what-container" data-aos="fade-up"></div>
+        {/* ✅ alt תיאורי בעברית */}
+        <img src={LiranAndRoieImage} alt="לירן ורועי בטיול" />
+      </div>
 
       <ProcessPage />
     </section>

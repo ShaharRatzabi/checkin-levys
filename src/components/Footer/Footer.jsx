@@ -42,8 +42,13 @@ const Footer = () => {
               <i className="fas fa-envelope" aria-hidden="true"></i>
               <div className="contact-text">
                 <strong>אימייל:</strong>
-                <span>Checkinota25@gmail.com</span>
-                <span>Checkinota24@gmail.com</span>
+                {/* ✅ קישורי mailto לנגישות */}
+                <a href="mailto:Checkinota25@gmail.com">
+                  Checkinota25@gmail.com
+                </a>
+                <a href="mailto:Checkinota24@gmail.com">
+                  Checkinota24@gmail.com
+                </a>
               </div>
             </div>
 
@@ -51,7 +56,8 @@ const Footer = () => {
               <i className="fas fa-phone" aria-hidden="true"></i>
               <div className="contact-text">
                 <strong>טלפון:</strong>
-                <span>050-651-4500</span>
+                {/* ✅ קישור tel לנגישות */}
+                <a href="tel:0506514500">050-651-4500</a>
               </div>
             </div>
 
@@ -64,8 +70,11 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        {/* עמודה 1: אודות */}
+
+        {/* אודות */}
         <div className="footer-column about-column">
+          {/* ✅ נוספה כותרת לעמודה */}
+          <h2>אודותינו</h2>
           <p>
             Check In היא סוכנות נסיעות המתמחה בדילים שווים לחו"ל, תוך מתן שירות
             ומענה אישי לכל לקוח. אנחנו כאן כדי לבנות לכם חוויה, לא רק חופשה.
@@ -73,12 +82,14 @@ const Footer = () => {
         </div>
       </div>
 
+      {/* ✅ חלק תחתון עם כל הקישורים המשפטיים */}
       <div className="footer-bottom">
         <p>© {currentYear} כל הזכויות שמורות ל-Check In</p>
-        <div className="footer-bottom-links">
-          <a href="/privacy-policy">מדיניות פרטיות</a>
-          <a href="/accessibility">הצהרת נגישות</a>
-        </div>
+        <nav className="footer-bottom-links" aria-label="קישורים משפטיים">
+          <Link to="/accessibility">הצהרת נגישות</Link>
+          <Link to="/privacy-policy">מדיניות פרטיות</Link>
+          <Link to="/terms">תקנון שימוש</Link>
+        </nav>
       </div>
     </footer>
   );

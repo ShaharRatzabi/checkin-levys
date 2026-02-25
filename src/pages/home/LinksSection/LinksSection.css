@@ -44,16 +44,6 @@
   transform: scale(1.2);
 }
 
-@media (min-width: 768px) {
-  .navigation-links {
-    margin-bottom: 20px;
-  }
-
-  .navigation-links a {
-    font-size: 3.5rem;
-  }
-}
-
 @media (min-width: 1024px) {
   .navigation-links {
     position: relative;
@@ -61,5 +51,8 @@
     max-width: 100%; /* לא לעבור את המסך */
     margin-top: -70px;
     width: 700px;
+  }
+  .navigation-links a {
+    font-size: 3.5rem;
   }
 }

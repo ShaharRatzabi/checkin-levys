@@ -13,7 +13,6 @@ const FlightCard = ({
   arrivalTime,
   onClick,
 }) => {
-  const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -44,8 +43,6 @@ const FlightCard = ({
         overflow: "hidden",
         transition: "all 0.3s ease",
       }}
-      role="button"
-      tabIndex={0}
     >
       <div
         style={{
@@ -57,12 +54,12 @@ const FlightCard = ({
           cursor: "pointer",
           fontFamily: "'Inter', sans-serif",
         }}
-        onClick={onClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* תמונת רקע */}
+        {/* ✅ תמונת רקע דקורטיבית — aria-hidden */}
         <div
+          aria-hidden="true"
           style={{
             position: "absolute",
             inset: 0,
@@ -74,12 +71,12 @@ const FlightCard = ({
           }}
         />
 
-        {/* שכבת blur מדורג */}
-        <div className="blur-fade-layer" />
+        <div className="blur-fade-layer" aria-hidden="true" />
 
         {/* buffer אטום לטקסט – מובייל בלבד */}
         {isMobile && (
           <div
+            aria-hidden="true"
             style={{
               position: "absolute",
               left: 0,
@@ -106,7 +103,8 @@ const FlightCard = ({
           }}
         >
           <div style={{ marginBottom: isMobile ? "6px" : "10px" }}>
-            <h2
+            {/* ✅ h3 במקום h2 — היררכיה נכונה (h2 כבר ב-showcase) */}
+            <h3
               style={{
                 fontSize: sizes.titleSize,
                 fontWeight: "bold",
@@ -115,7 +113,7 @@ const FlightCard = ({
               }}
             >
               {destination}
-            </h2>
+            </h3>
             <div
               style={{
                 display: "flex",
@@ -124,7 +122,8 @@ const FlightCard = ({
                 marginTop: "4px",
               }}
             >
-              <Tag size={isMobile ? 14 : 16} />
+              {/* ✅ אייקון דקורטיבי */}
+              <Tag size={isMobile ? 14 : 16} aria-hidden="true" />
               <span style={{ fontSize: sizes.textSize }}>
                 החל מ ₪{priceFrom}
               </span>
@@ -168,9 +167,11 @@ const FlightCard = ({
               </div>
             </div>
 
+            {/* ✅ תמונת נתיב טיסה דקורטיבית */}
             <img
               src={flightPathImage}
-              alt="Flight Path"
+              alt=""
+              aria-hidden="true"
               style={{
                 flexGrow: 1,
                 height: sizes.pathHeight,

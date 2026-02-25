@@ -1,20 +1,5 @@
-.whatsapp-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 6000;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
 .whatsapp-modal {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
+  background: #ffffff;
   border-radius: 30px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #1d3557;
@@ -22,11 +7,11 @@
   width: 100%;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
   direction: rtl;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
   padding: 40px;
-  max-height: 90vh;
-  overflow-y: auto;
+  /* ✅ הוסרו max-height ו-overflow-y — הדיאלוג החיצוני ב-FloatingBubble מטפל בזה */
   position: relative;
 }
 
@@ -36,25 +21,20 @@
   }
 }
 
-.whatsapp-close-button {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: rgba(172, 29, 29, 0.4);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: rgba(71, 13, 13, 0.6);
+/* ✅ focus-visible לכל האלמנטים האינטראקטיביים */
+.whatsapp-close-button:focus-visible,
+.whatsapp-input:focus-visible,
+.whatsapp-select:focus-visible,
+.whatsapp-textarea:focus-visible,
+.whatsapp-toggle-button:focus-visible,
+.whatsapp-submit-button:focus-visible {
+  outline: 3px solid #4361ee;
+  outline-offset: 2px;
 }
 
-.whatsapp-close-button:hover {
-  background: rgba(172, 29, 29, 0.2);
-  color: rgba(71, 13, 13, 0.8);
+.whatsapp-checkbox-group input[type="checkbox"]:focus-visible {
+  outline: 3px solid #4361ee;
+  outline-offset: 2px;
 }
 
 .whatsapp-form-title {
@@ -69,6 +49,15 @@
   margin-bottom: 20px;
 }
 
+/* ✅ label מעוצב */
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d3557;
+  margin-bottom: 4px;
+}
+
 .whatsapp-input,
 .whatsapp-select,
 .whatsapp-textarea {
@@ -80,6 +69,8 @@
   background: rgba(255, 255, 255, 0.85);
   font-family: inherit;
   margin-bottom: 16px;
+  color: #1d3557;
+  box-sizing: border-box;
 }
 
 .whatsapp-textarea {
@@ -90,6 +81,8 @@
   cursor: pointer;
   text-align: center;
   background: rgba(255, 255, 255, 0.9);
+  color: #4361ee;
+  font-weight: 600;
 }
 
 .whatsapp-submit-button {
@@ -103,18 +96,21 @@
   border-radius: 20px;
   cursor: pointer;
   margin-top: 20px;
-  transition: background 0.3s ease, opacity 0.3s ease;
+  transition:
+    background 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .whatsapp-submit-button:disabled {
   background: #a8dadc;
-  cursor: not-allowed !important;
+  cursor: not-allowed;
   opacity: 0.4;
 }
 
 .whatsapp-checkbox-group {
   display: flex;
   align-items: center;
+  gap: 10px;
   margin-top: 20px;
   margin-bottom: 20px;
 }
@@ -122,22 +118,119 @@
 .whatsapp-checkbox-group input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  margin-left: 10px;
+  min-width: 18px;
   cursor: pointer;
+  accent-color: #4361ee;
 }
 
 .whatsapp-checkbox-group label {
   font-size: 14px;
   color: #457b9d;
   cursor: pointer;
+  margin-bottom: 0;
 }
 
+/* ✅ קישור למדיניות פרטיות */
 .whatsapp-checkbox-group a {
   color: #1d3557;
   text-decoration: underline;
-  margin-right: 5px;
 }
 
 .whatsapp-checkbox-group a:hover {
   color: #4361ee;
+}
+
+.whatsapp-checkbox-group a:focus-visible {
+  outline: 3px solid #4361ee;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ✅ prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-submit-button {
+    transition: none;
+  }
+}
+
+/* ✅ שדות חובה */
+.required-star {
+  color: #e53e3e;
+  margin-right: 2px;
+}
+
+.required-note {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.required-note span {
+  color: #e53e3e;
+}
+
+/* ✅ הודעת סטטוס כמודאל מרכזי */
+.status-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.status-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2rem 2.5rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  position: relative;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1d3557;
+  animation: popIn 0.2s ease-out;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.status-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: rgba(0, 0, 0, 0.06);
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+}
+
+.status-modal-close:focus-visible {
+  outline: 3px solid #4361ee;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-modal {
+    animation: none;
+  }
 }

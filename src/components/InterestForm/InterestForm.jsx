@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
+import { Link } from "react-router-dom";
 import "./InterestForm.css";
 
 export default function InterestForm({ onClose }) {
@@ -17,12 +17,10 @@ export default function InterestForm({ onClose }) {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = (e) => {
@@ -53,11 +51,9 @@ ${formData.mainOrSideJob}
 ${formData.passion}
 
 תודה 🙏
-`.trim();
+    `.trim();
 
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-      message
-    )}`;
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
     setTimeout(() => {
       window.open(whatsappUrl, "_blank");
@@ -67,125 +63,194 @@ ${formData.passion}
   };
 
   return (
-    <div className="interest-overlay" onClick={onClose}>
-      <div className="interest-modal" onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className="interest-close-button">
-          <X size={20} color="rgba(71, 13, 13, 0.6)" />
-        </button>
+    <div className="interest-modal">
+      {/* ✅ הוסרו interest-overlay וכפתור סגירה כפול — הדיאלוג החיצוני מטפל בזה */}
 
-        <h1 className="interest-title">הצטרפות לצוות שלנו ✈️</h1>
-        <p className="interest-subtitle">בוא להכיר את עולם התיירות מבפנים</p>
+      {/* ✅ h2 במקום h1 — נכון היררכית */}
+      <h2 className="interest-title">הצטרפות לצוות שלנו ✈️</h2>
+      <p className="interest-subtitle">בוא להכיר את עולם התיירות מבפנים</p>
 
-        <form onSubmit={handleSubmit}>
-          <Input
-            label="שם מלא *"
-            value={formData.fullName}
-            onChange={(v) => handleInputChange("fullName", v)}
-            required
-          />
-          <Input
-            label="טלפון *"
-            value={formData.phone}
-            onChange={(v) => handleInputChange("phone", v)}
-            required
-          />
-          <Input
-            label="מייל *"
-            type="email"
-            value={formData.email}
-            onChange={(v) => handleInputChange("email", v)}
-            required
-          />
-          <Input
-            label="עיר מגורים *"
-            value={formData.city}
-            onChange={(v) => handleInputChange("city", v)}
-            required
-          />
-          <Input
-            label="גיל *"
-            type="number"
-            value={formData.age}
-            onChange={(v) => handleInputChange("age", v)}
-            required
-          />
-
-          <Textarea
-            label="ניסיון בתיירות"
-            value={formData.tourismExperience}
-            onChange={(v) => handleInputChange("tourismExperience", v)}
-          />
-          <Textarea
-            label="ניהול צוותים / מכירות?"
-            value={formData.teamSalesExperience}
-            onChange={(v) => handleInputChange("teamSalesExperience", v)}
-          />
-
-          <Input
-            label="עבודה עיקרית או השלמת הכנסה? *"
-            value={formData.mainOrSideJob}
-            onChange={(v) => handleInputChange("mainOrSideJob", v)}
-            required
-          />
-
-          <Textarea
-            label="תשוקה לעולם התיירות *"
-            value={formData.passion}
-            onChange={(v) => handleInputChange("passion", v)}
-            required
-          />
-
-          <div className="interest-checkbox-group">
-            <input
-              type="checkbox"
-              checked={formData.privacyPolicyAccepted}
-              onChange={(e) =>
-                handleInputChange("privacyPolicyAccepted", e.target.checked)
-              }
-              required
-            />
-            <label>
-              אני מאשר למסור את פרטיי בהתאם ל
-              <a href="/privacy-policy" target="_blank" rel="noreferrer">
-                מדיניות הפרטיות
-              </a>
-            </label>
+      {statusMessage && (
+        <div className="status-modal-overlay" aria-hidden="true">
+          <div className="status-modal" role="alert" aria-live="assertive">
+            <p>{statusMessage}</p>
+            <button
+              className="status-modal-close"
+              onClick={() => setStatusMessage("")}
+              aria-label="סגירת הודעה"
+            >
+              ✕
+            </button>
           </div>
+        </div>
+      )}
 
-          <button
-            type="submit"
-            disabled={isSubmitting || !formData.privacyPolicyAccepted}
-            className="interest-submit-button"
-          >
-            {isSubmitting ? "פותח WhatsApp..." : "שלח ב-WhatsApp"}
-          </button>
-        </form>
-      </div>
+      <p className="required-note">
+        <span aria-hidden="true">*</span> שדות חובה
+      </p>
+
+      {/* ✅ noValidate — validation מטופל ב-JS */}
+      <form onSubmit={handleSubmit} noValidate>
+        <FormInput
+          id="fullName"
+          label="שם מלא"
+          value={formData.fullName}
+          onChange={(v) => handleInputChange("fullName", v)}
+          required
+          autoComplete="name"
+        />
+        <FormInput
+          id="phone"
+          label="טלפון"
+          type="tel"
+          value={formData.phone}
+          onChange={(v) => handleInputChange("phone", v)}
+          required
+          autoComplete="tel"
+          dir="ltr"
+        />
+        <FormInput
+          id="email"
+          label="מייל"
+          type="email"
+          value={formData.email}
+          onChange={(v) => handleInputChange("email", v)}
+          required
+          autoComplete="email"
+        />
+        <FormInput
+          id="city"
+          label="עיר מגורים"
+          value={formData.city}
+          onChange={(v) => handleInputChange("city", v)}
+          required
+          autoComplete="address-level2"
+        />
+        <FormInput
+          id="age"
+          label="גיל"
+          type="number"
+          value={formData.age}
+          onChange={(v) => handleInputChange("age", v)}
+          required
+          min="18"
+          max="120"
+        />
+        <FormTextarea
+          id="tourismExperience"
+          label="ניסיון בתיירות"
+          value={formData.tourismExperience}
+          onChange={(v) => handleInputChange("tourismExperience", v)}
+        />
+        <FormTextarea
+          id="teamSalesExperience"
+          label="ניהול צוותים / מכירות?"
+          value={formData.teamSalesExperience}
+          onChange={(v) => handleInputChange("teamSalesExperience", v)}
+        />
+        <FormInput
+          id="mainOrSideJob"
+          label="עבודה עיקרית או השלמת הכנסה?"
+          value={formData.mainOrSideJob}
+          onChange={(v) => handleInputChange("mainOrSideJob", v)}
+          required
+        />
+        <FormTextarea
+          id="passion"
+          label="תשוקה לעולם התיירות"
+          value={formData.passion}
+          onChange={(v) => handleInputChange("passion", v)}
+          required
+        />
+
+        {/* ✅ checkbox מקושר ל-label + Link אמיתי */}
+        <div className="interest-checkbox-group">
+          <input
+            id="privacyPolicyAccepted"
+            type="checkbox"
+            checked={formData.privacyPolicyAccepted}
+            onChange={(e) =>
+              handleInputChange("privacyPolicyAccepted", e.target.checked)
+            }
+            required
+            aria-required="true"
+          />
+          <label htmlFor="privacyPolicyAccepted">
+            אני מאשר למסור את פרטיי בהתאם ל
+            <Link
+              to="/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              מדיניות הפרטיות
+            </Link>
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          disabled={isSubmitting || !formData.privacyPolicyAccepted}
+          className="interest-submit-button"
+          aria-busy={isSubmitting}
+        >
+          {isSubmitting ? "פותח WhatsApp..." : "שלח ב-WhatsApp"}
+        </button>
+      </form>
     </div>
   );
 }
 
-const Input = ({ label, type = "text", value, onChange, required }) => (
+/* ✅ קומפוננטות עזר — כל label מקושר ל-input עם htmlFor + id + aria-required */
+const FormInput = ({
+  id,
+  label,
+  type = "text",
+  value,
+  onChange,
+  required,
+  ...rest
+}) => (
   <div className="interest-form-group">
-    <label style={{ fontWeight: 600, marginBottom: 8 }}>{label}</label>
+    <label htmlFor={id}>
+      {label}
+      {required && (
+        <span aria-hidden="true" className="required-star">
+          {" "}
+          *
+        </span>
+      )}
+    </label>
     <input
+      id={id}
       type={type}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       required={required}
+      aria-required={required ? "true" : undefined}
       className="interest-input"
+      {...rest}
     />
   </div>
 );
 
-const Textarea = ({ label, value, onChange, required }) => (
+const FormTextarea = ({ id, label, value, onChange, required }) => (
   <div className="interest-form-group">
-    <label style={{ fontWeight: 600, marginBottom: 8 }}>{label}</label>
+    <label htmlFor={id}>
+      {label}
+      {required && (
+        <span aria-hidden="true" className="required-star">
+          {" "}
+          *
+        </span>
+      )}
+    </label>
     <textarea
+      id={id}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       rows="4"
       required={required}
+      aria-required={required ? "true" : undefined}
       className="interest-textarea"
     />
   </div>

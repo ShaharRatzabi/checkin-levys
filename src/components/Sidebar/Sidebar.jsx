@@ -1,9 +1,68 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Sidebar = ({ isOpen, onClose, navigationItems }) => {
+  const sidebarRef = useRef(null);
+
   const isInternalLink = (href) => href.startsWith("#");
+
+  // ✅ ESC לסגירה
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  // ✅ Focus trap + פוקוס אוטומטי על כפתור הסגירה בפתיחה
+  useEffect(() => {
+    if (!isOpen || !sidebarRef.current) return;
+
+    // ✅ setTimeout מחכה ל-visibility:visible לפני query + פוקוס
+    //    בלי זה הפוקוס נכשל כי האלמנט עדיין hidden
+    setTimeout(() => {
+      if (!sidebarRef.current) return;
+      const focusableElements = sidebarRef.current.querySelectorAll(
+        'a[href], button:not([disabled]), [tabindex="0"]',
+      );
+      if (focusableElements.length) focusableElements[0].focus();
+    }, 50);
+
+    const focusableElements = sidebarRef.current.querySelectorAll(
+      'a[href], button:not([disabled]), [tabindex="0"]',
+    );
+    if (!focusableElements.length) return;
+
+    const handleTab = (e) => {
+      if (e.key !== "Tab") return;
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    const el = sidebarRef.current;
+    el.addEventListener("keydown", handleTab);
+    return () => el.removeEventListener("keydown", handleTab);
+  }, [isOpen]);
+
+  // ✅ נעילת גלילת body
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  // ✅ הערה: פוקוס החזרה מטופל ב-Header.jsx דרך hamburgerRef — אין צורך לטפל כאן
 
   return (
     <>
@@ -30,15 +89,29 @@ const Sidebar = ({ isOpen, onClose, navigationItems }) => {
           border-left: 1px solid rgba(255, 255, 255, 0.2);
           box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
           z-index: 70;
-          transition: right 0.3s ease;
           overflow-y: auto;
           display: flex;
           flex-direction: column;
+          /* ✅ visibility: hidden מוציא את כל הילדים מרצף ה-Tab כשסגור */
+          visibility: hidden;
         }
 
         .sidebar-open {
           right: 0;
+          visibility: visible;
         }
+
+        @media (prefers-reduced-motion: no-preference) {
+          .sidebar { transition: right 0.3s ease; }
+          .sidebar-close { transition: all 0.2s ease; }
+          .sidebar-nav-item {
+            animation: slideIn 0.3s ease forwards;
+            opacity: 0;
+            transform: translateX(20px);
+          }
+        }
+
+
 
         .sidebar-header {
           display: flex;
@@ -82,12 +155,20 @@ const Sidebar = ({ isOpen, onClose, navigationItems }) => {
           border-radius: 8px;
           padding: 8px;
           cursor: pointer;
-          transition: all 0.2s ease;
         }
 
-        .sidebar-close:hover {
-          background: rgba(255, 255, 255, 0.3);
-          transform: scale(1.05);
+        @media (prefers-reduced-motion: no-preference) {
+          .sidebar-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+          }
+        }
+
+        /* ✅ hover ללא transform כשמשתמש ביקש הפחתת תנועה */
+        @media (prefers-reduced-motion: reduce) {
+          .sidebar-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+          }
         }
 
         .close-icon {
@@ -96,10 +177,7 @@ const Sidebar = ({ isOpen, onClose, navigationItems }) => {
           color: #1f2937;
         }
 
-        .sidebar-nav {
-          padding: 24px 0;
-          flex-grow: 1;
-        }
+        .sidebar-nav { padding: 24px 0; flex-grow: 1; }
 
         .sidebar-nav-item {
           display: block;
@@ -108,19 +186,8 @@ const Sidebar = ({ isOpen, onClose, navigationItems }) => {
           text-decoration: none;
           font-size: 16px;
           font-weight: 500;
-          transition: all 0.2s ease;
           border-right: 3px solid transparent;
-          animation: slideIn 0.3s ease forwards;
-          opacity: 0;
-          transform: translateX(20px);
           border-radius: 20px;
-        }
-
-        @keyframes slideIn {
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
         }
 
         .sidebar-nav-item:hover {
@@ -128,24 +195,22 @@ const Sidebar = ({ isOpen, onClose, navigationItems }) => {
           border-right-color: #fe782f;
         }
 
-        .sidebar-nav-text {
-          display: block;
+        @keyframes slideIn {
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ✅ ללא אנימציה */
+        @media (prefers-reduced-motion: reduce) {
+          .sidebar-nav-item {
+            opacity: 1;
+            transform: none;
+            animation: none;
+          }
         }
 
         .sidebar-footer {
           padding: 24px;
           border-top: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .sidebar-admin-link {
-          background-color: #e9ecef;
-          color: #495057;
-          font-weight: 600;
-        }
-        
-        .sidebar-admin-link:hover {
-          background-color: #dee2e6;
-          border-right-color: #495057;
         }
 
         .sidebar-signup-button {
@@ -163,69 +228,96 @@ const Sidebar = ({ isOpen, onClose, navigationItems }) => {
           align-items: center;
           justify-content: center;
           gap: 8px;
-          transition: all 0.2s ease;
+          font-family: inherit;
         }
 
-        .sidebar-signup-button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .sidebar-signup-icon {
-          width: 18px;
-          height: 18px;
+        .sidebar a:focus-visible,
+        .sidebar button:focus-visible {
+          outline: 3px solid #000;
+          outline-offset: 4px;
+          border-radius: 4px;
         }
       `}</style>
 
-      {/* Backdrop */}
-      {isOpen && <div className="sidebar-backdrop" onClick={onClose} />}
+      {isOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
 
-      {/* Sidebar */}
-      <div className={`sidebar ${isOpen ? "sidebar-open" : ""}`}>
-        {/* Header */}
+      {/*
+        ✅ inert מנוהל רק כאן ב-JSX — הוסר ה-useEffect הכפול
+        ✅ aria-hidden כשסגור — מסתיר מקוראי מסך
+      */}
+      <div
+        ref={sidebarRef}
+        className={`sidebar ${isOpen ? "sidebar-open" : ""}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="תפריט ניווט"
+        aria-hidden={!isOpen}
+        {...(!isOpen && { inert: "" })}
+      >
         <div className="sidebar-header">
           <div className="sidebar-title">
-            <div className="sidebar-logo">C</div>
+            <div className="sidebar-logo" aria-hidden="true">
+              C
+            </div>
             <span className="sidebar-title-text">Check In</span>
           </div>
-          <button onClick={onClose} className="sidebar-close">
-            <X className="close-icon" />
+          <button
+            onClick={onClose}
+            className="sidebar-close"
+            aria-label="סגירת תפריט"
+          >
+            <X className="close-icon" aria-hidden="true" />
           </button>
         </div>
 
-        {/* Navigation Items */}
-        <div className="sidebar-nav">
-          {navigationItems.map((item, index) =>
-            isInternalLink(item.href) ? (
-              <a
-                key={item.name}
-                href={item.href}
-                onClick={onClose}
-                className="sidebar-nav-item"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <span className="sidebar-nav-text">{item.name}</span>
-              </a>
-            ) : (
-              <Link
-                key={item.name}
-                to={item.href}
-                onClick={onClose}
-                className={`sidebar-nav-item ${
-                  item.name === "ניהול" ? "sidebar-admin-link" : ""
-                }`}
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <span className="sidebar-nav-text">{item.name}</span>
-              </Link>
-            )
-          )}
-        </div>
+        <nav aria-label="קישורי ניווט מובייל">
+          <div className="sidebar-nav">
+            {navigationItems.map((item, index) =>
+              isInternalLink(item.href) ? (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  onClick={onClose}
+                  className="sidebar-nav-item"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  {item.name}
+                </a>
+              ) : (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={onClose}
+                  className="sidebar-nav-item"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  {item.name}
+                </Link>
+              ),
+            )}
+          </div>
+        </nav>
 
-        {/* Call to Action */}
         <div className="sidebar-footer">
-          <button className="sidebar-signup-button">
-            <span>התחילו לתכנן טיול</span>
+          <button
+            className="sidebar-signup-button"
+            onClick={() => {
+              window.open(
+                "https://wa.me/972506514500",
+                "_blank",
+                "noopener,noreferrer",
+              );
+              onClose();
+            }}
+            aria-label="פתח שיחת וואטסאפ לתכנון טיול (נפתח בלשונית חדשה)"
+          >
+            התחילו לתכנן טיול
           </button>
         </div>
       </div>

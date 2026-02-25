@@ -1,5 +1,4 @@
 .site-footer {
-  /* רקע זכוכית כהה */
   background-color: rgba(25, 25, 35, 0.9);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
@@ -37,7 +36,7 @@
 }
 
 /* ========================= */
-/* עמודת אודות */
+/* עמודת אודות               */
 /* ========================= */
 
 .about-column {
@@ -75,7 +74,7 @@
 }
 
 /* ========================= */
-/* ניווט מהיר */
+/* ניווט מהיר                */
 /* ========================= */
 
 .links-column ul {
@@ -102,7 +101,7 @@
 }
 
 /* ========================= */
-/* יצירת קשר – מסודר */
+/* יצירת קשר                 */
 /* ========================= */
 
 .contact-column p {
@@ -146,8 +145,21 @@
   color: #dddddd;
 }
 
+/* ✅ קישורי אימייל וטלפון */
+.contact-text a {
+  font-size: 14px;
+  color: #dddddd;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.contact-text a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
 /* ========================= */
-/* חלק תחתון */
+/* חלק תחתון                 */
 /* ========================= */
 
 .footer-bottom {
@@ -161,6 +173,10 @@
 
 .footer-bottom-links {
   margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 .footer-bottom-links a {
@@ -174,8 +190,15 @@
   color: #ffffff;
 }
 
+/* ✅ focus-visible לכל הקישורים בפוטר */
+.site-footer a:focus-visible {
+  outline: 3px solid #ffc954;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
 /* ========================= */
-/* רספונסיביות */
+/* רספונסיביות               */
 /* ========================= */
 
 @media (max-width: 768px) {
@@ -197,5 +220,11 @@
 
   .contact-row i {
     margin-top: 2px;
+  }
+
+  .footer-bottom-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
   }
 }

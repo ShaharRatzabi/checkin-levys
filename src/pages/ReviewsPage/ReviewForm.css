@@ -58,6 +58,7 @@
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(10px);
   font-size: 1rem;
+  box-sizing: border-box;
 }
 
 .input-group textarea {
@@ -165,6 +166,140 @@
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ✅ focus-visible */
+.input-group input:focus-visible,
+.input-group textarea:focus-visible {
+  outline: 3px solid #e76d2c;
+  outline-offset: 2px;
+}
+
+.star:focus-visible {
+  outline: 3px solid #e76d2c;
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.submit-button:focus-visible {
+  outline: 3px solid #e76d2c;
+  outline-offset: 3px;
+}
+
+.remove-image:focus-visible {
+  outline: 3px solid #e76d2c;
+  outline-offset: 2px;
+}
+
+/* ✅ image-button reset */
+.image-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.image-button:focus-visible {
+  outline: 3px solid #e76d2c;
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+/* ✅ שדות חובה */
+.required-star {
+  color: #e53e3e;
+  margin-right: 2px;
+}
+
+.required-note {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.required-note span {
+  color: #e53e3e;
+}
+
+/* ✅ הודעת סטטוס כמודאל מרכזי */
+.status-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.status-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2rem 2.5rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  position: relative;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1d3557;
+  animation: popIn 0.2s ease-out;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.status-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: rgba(0, 0, 0, 0.06);
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+}
+
+.status-modal-close:focus-visible {
+  outline: 3px solid #e76d2c;
+  outline-offset: 2px;
+}
+
+/* ✅ prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .submit-button {
+    transition: none;
+  }
+  .status-modal {
+    animation: none;
+  }
 }
 
 @media (max-width: 768px) {
@@ -175,12 +310,10 @@
     grid-template-columns: 1fr;
     margin: 0;
   }
-
   .star-icon {
     width: 1.5rem;
     height: 1.5rem;
   }
-
   .upload-icon {
     width: 2rem;
     height: 2rem;

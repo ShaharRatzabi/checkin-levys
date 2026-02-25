@@ -2,7 +2,6 @@ import React from "react";
 import {
   ExternalLink,
   Clock,
-  DollarSign,
   AlertCircle,
   CheckCircle,
   Coins,
@@ -14,7 +13,6 @@ const VisaDetailView = ({ visa }) => {
       <style>{`
         .visa-detail-view {
           padding: 1rem;
-          height:90%;
         }
         .visa-detail-title {
           font-size: 1.5rem;
@@ -56,81 +54,94 @@ const VisaDetailView = ({ visa }) => {
           color: #1f2937;
         }
         .visa-row-requirements-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 1rem;
+          font-size: 1.125rem;
+          font-weight: 600;
+          color: #1f2937;
+          margin-bottom: 1rem;
         }
         .visa-row-requirements-list {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 1.5rem 0;
+          list-style: none;
+          padding: 0;
+          margin: 0 0 1.5rem 0;
         }
         .visa-row-requirement {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
-            color: #374151;
+          display: flex;
+          align-items: flex-start;
+          gap: 0.75rem;
+          margin-bottom: 0.75rem;
+          font-size: 0.9rem;
+          color: #374151;
         }
         .visa-row-requirement-icon {
-            width: 1rem;
-            height: 1rem;
-            color: #f59e0b;
-            flex-shrink: 0;
-            margin-top: 0.2rem;
+          width: 1rem;
+          height: 1rem;
+          color: #f59e0b;
+          flex-shrink: 0;
+          margin-top: 0.2rem;
         }
         .visa-row-links {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
         }
         .visa-row-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.25rem;
-            background: linear-gradient(135deg, #ff7b54, #ea580c);
-            color: white;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 500;
-            transition: all 0.3s ease;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          padding: 0.75rem 1.25rem;
+          background: linear-gradient(135deg, #ff7b54, #ea580c);
+          color: white;
+          text-decoration: none;
+          border-radius: 12px;
+          font-weight: 500;
+          transition: all 0.3s ease;
         }
         .visa-row-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 123, 84, 0.4);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(255, 123, 84, 0.4);
+        }
+        .visa-row-link:focus-visible {
+          outline: 3px solid #ea580c;
+          outline-offset: 3px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .visa-row-link { transition: none; }
+          .visa-row-link:hover { transform: none; }
         }
       `}</style>
+
       <div className="visa-detail-view">
-        <h3 className="visa-detail-title">{visa.title}</h3>
+        <h2 className="visa-detail-title">{visa.title}</h2>
         <p className="visa-detail-subtitle">{visa.subtitle}</p>
 
-        <div className="visa-row-details-grid">
+        {/* ✅ גריד פרטים עם aria-label */}
+        <dl className="visa-row-details-grid" aria-label="פרטי הויזה">
           <div className="visa-row-detail-item">
-            <Coins className="visa-row-detail-icon" />
-            <div className="visa-row-detail-label">עלות</div>
-            <div className="visa-row-detail-value">{visa.cost}</div>
+            <Coins className="visa-row-detail-icon" aria-hidden="true" />
+            <dt className="visa-row-detail-label">עלות</dt>
+            <dd className="visa-row-detail-value">{visa.cost}</dd>
           </div>
           <div className="visa-row-detail-item">
-            <CheckCircle className="visa-row-detail-icon" />
-            <div className="visa-row-detail-label">תוקף</div>
-            <div className="visa-row-detail-value">{visa.validity}</div>
+            <CheckCircle className="visa-row-detail-icon" aria-hidden="true" />
+            <dt className="visa-row-detail-label">תוקף</dt>
+            <dd className="visa-row-detail-value">{visa.validity}</dd>
           </div>
           <div className="visa-row-detail-item">
-            <Clock className="visa-row-detail-icon" />
-            <div className="visa-row-detail-label">זמן עיבוד</div>
-            <div className="visa-row-detail-value">{visa.processingTime}</div>
+            <Clock className="visa-row-detail-icon" aria-hidden="true" />
+            <dt className="visa-row-detail-label">זמן עיבוד</dt>
+            <dd className="visa-row-detail-value">{visa.processingTime}</dd>
           </div>
-        </div>
+        </dl>
 
-        <h4 className="visa-row-requirements-title">דרישות חשובות</h4>
-        <ul className="visa-row-requirements-list">
+        <h3 className="visa-row-requirements-title">דרישות חשובות</h3>
+        <ul className="visa-row-requirements-list" aria-label="דרישות לכניסה">
           {visa.requirements.map((req, i) => (
             <li key={i} className="visa-row-requirement">
-              <AlertCircle className="visa-row-requirement-icon" />
+              <AlertCircle
+                className="visa-row-requirement-icon"
+                aria-hidden="true"
+              />
               <span>{req}</span>
             </li>
           ))}
@@ -144,8 +155,10 @@ const VisaDetailView = ({ visa }) => {
               target="_blank"
               rel="noopener noreferrer"
               className="visa-row-link"
+              // ✅ הודעה לקורא מסך שנפתח בלשונית חדשה
+              aria-label={`${link.name} (נפתח בלשונית חדשה)`}
             >
-              <ExternalLink size={16} />
+              <ExternalLink size={16} aria-hidden="true" />
               <span>{link.name}</span>
             </a>
           ))}

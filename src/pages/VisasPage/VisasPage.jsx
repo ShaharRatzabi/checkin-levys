@@ -11,7 +11,6 @@ import ZanzibarImage from "../../assets/images/visas-zanzibar.jpg";
 import AzerbaijanImage from "../../assets/images/visas-azerbaijan.jpg";
 import SingaporeImage from "../../assets/images/visas-singapore.jpg";
 import VisasHeaderImage from "../../assets/images/visas-header-image.jpg";
-import VisasMapImage from "../../assets/images/visas-map.jpg";
 
 const VISA_DATA = [
   {
@@ -78,12 +77,7 @@ const VISA_DATA = [
       "במידה ומטרות הטיול הנן לימודים או עבודה נדרשת ויזה מהסוג המתאים",
       "מאפשרת שהייה של עד 180 עם אפשרות להארכה",
     ],
-    links: [
-      {
-        name: "מילוי טופס מקוון DC160",
-        url: "https://did.li/VisaUSA",
-      },
-    ],
+    links: [{ name: "מילוי טופס מקוון DC160", url: "https://did.li/VisaUSA" }],
   },
   {
     id: 32,
@@ -105,12 +99,7 @@ const VISA_DATA = [
       "מתאימה ל3 סוגי נסיעות - טיול, קונקשיין ועסקים",
       "מאפשרת שהייה של עד 90 יום רצופים, ללא אפשרות להארכה",
     ],
-    links: [
-      {
-        name: "מילוי טופס ESTA",
-        url: "https://did.li/ESTAUSA",
-      },
-    ],
+    links: [{ name: "מילוי טופס ESTA", url: "https://did.li/ESTAUSA" }],
   },
   {
     id: 4,
@@ -175,7 +164,6 @@ const VISA_DATA = [
       { name: "הנפקת ויזה אלקטרונית", url: "https://did.li/VisaAzerbaijan" },
     ],
   },
-  // --- הוספת כרטיס סינגפור ---
   {
     id: 7,
     country: "סינגפור",
@@ -202,7 +190,6 @@ const VISA_DATA = [
   },
 ];
 
-// --- סידור המערך לפי סדר א'-ב' ---
 VISA_DATA.sort((a, b) => a.country.localeCompare(b.country, "he"));
 
 export default function VisasPage() {
@@ -214,18 +201,13 @@ export default function VisasPage() {
   return (
     <div style={{ direction: "rtl" }}>
       <style>{`
-        /* ... (כל שאר ה-CSS נשאר ללא שינוי) ... */
         .visas-page {
           background-color: #f8f9fa;
           padding: 4rem 2rem;
           min-height: 100vh;
-          position: relative; 
+          position: relative;
           overflow: hidden;
-                    background-image: linear-gradient(
-  to bottom right,
-  #fff7ed 70%,
-  #e76d2c 100%
-);
+          background-image: linear-gradient(to bottom right, #fff7ed 70%, #e76d2c 100%);
         }
 
         .visas-grid-layout {
@@ -240,51 +222,62 @@ export default function VisasPage() {
         }
 
         .visas-list-header {
-           background-color: #ffffff71;
-            border-radius: 24px;
-            padding: 5rem 4rem;
-            margin-bottom: 3rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            align-self: center;
+          background-color: #ffffff71;
+          border-radius: 24px;
+          padding: 5rem 4rem;
+          margin-bottom: 3rem;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          align-self: center;
         }
 
         .header-image {
-            position: absolute;
-            bottom: -20px;
-            right: -30px;
-            width: 250px;
-            height: auto;
-            opacity: 0.7;
-            z-index: 1;
-            transform: rotate(-15deg);
-            transition: transform 0.4s ease-in-out;
+          position: absolute;
+          bottom: -20px;
+          right: -30px;
+          width: 250px;
+          height: auto;
+          opacity: 0.7;
+          z-index: 1;
+          transform: rotate(-15deg);
+        }
+
+        /* ✅ prefers-reduced-motion */
+        @media (prefers-reduced-motion: no-preference) {
+          .header-image {
             animation: floatImage 6s ease-in-out infinite;
+          }
+          .header-decoration {
+            animation: pulse 3s ease-in-out infinite;
+          }
+          .header-text h2 .highlight::after {
+            animation: sparkle 1.5s ease-in-out infinite;
+          }
         }
 
         @keyframes floatImage {
-            0%, 100% { transform: translateY(0) rotate(-15deg); }
-            50% { transform: translateY(-15px) rotate(-12deg); }
+          0%, 100% { transform: translateY(0) rotate(-15deg); }
+          50% { transform: translateY(-15px) rotate(-12deg); }
         }
 
         .header-content {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            align-items: center;
+          position: relative;
+          z-index: 2;
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+          align-items: center;
         }
 
         .header-icons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+          display: flex;
+          gap: 1rem;
+          margin-top: 1rem;
         }
 
         .header-icon {
@@ -297,7 +290,6 @@ export default function VisasPage() {
           justify-content: center;
           backdrop-filter: blur(10px);
           border: 1px solid rgba(1, 1, 1, 0.3);
-          transition: all 0.3s ease;
         }
 
         .header-icon svg {
@@ -309,10 +301,9 @@ export default function VisasPage() {
         .header-text h2 {
           font-size: 3.2rem;
           font-weight: 800;
-          color: white;
+          color: #333;
           margin: 0 0 0.5rem 0;
           line-height: 1.2;
-          color: #333;
         }
 
         .header-text h2 .highlight {
@@ -329,7 +320,6 @@ export default function VisasPage() {
           top: -8px;
           right: -25px;
           font-size: 1.2rem;
-          animation: sparkle 1.5s ease-in-out infinite;
         }
 
         @keyframes sparkle {
@@ -353,7 +343,6 @@ export default function VisasPage() {
           background: linear-gradient(45deg, #FFD700, #FFA500);
           border-radius: 50%;
           opacity: 0.1;
-          animation: pulse 3s ease-in-out infinite;
         }
 
         @keyframes pulse {
@@ -379,59 +368,38 @@ export default function VisasPage() {
           flex-direction: column;
           gap: 1.5rem;
         }
-        
+
         @media (max-width: 1024px) {
-          .visas-grid-layout {
-            grid-template-columns: 1fr;
-          }
-          .visas-list-column {
-            order: 2;
-            position: static;
-            top: auto;
-          }
+          .visas-grid-layout { grid-template-columns: 1fr; }
+          .visas-list-column { order: 2; position: static; top: auto; }
         }
 
         @media (max-width: 768px) {
-          .visas-page {
-            padding: 2rem 1rem;
-          }
-          .header-content {
-            flex-direction: column;
-            text-align: center;
-          }
-          .header-icons {
-            flex-direction: row;
-            margin-left: 0;
-            margin-top: 1rem;
-          }
-          .header-text h2 {
-            font-size: 2.2rem;
-          }
-
-          .header-image {
-            display: none;
-          }
-          
-          .visas-map-background {
-            display: none;
-          }
+          .visas-page { padding: 2rem 1rem; }
+          .header-content { flex-direction: column; text-align: center; }
+          .header-icons { flex-direction: row; margin-left: 0; margin-top: 1rem; }
+          .header-text h2 { font-size: 2.2rem; }
+          .header-image { display: none; }
         }
       `}</style>
 
-      <div className="visas-page">
+      {/* ✅ section סמנטי */}
+      <section className="visas-page" aria-label="מידע על ויזות ואישורי כניסה">
         <div className="visas-grid-layout">
-          <div className="visas-list-header">
+          {/* כותרת */}
+          <header className="visas-list-header">
             <div className="header-content">
               <div className="header-text">
-                <h2>
+                <h1>
                   כל המידע על <span className="highlight">ויזות</span> ואישורי
                   כניסה
-                </h2>
+                </h1>
                 <p className="header-subtitle">
                   מדריך מפורט ועדכני לכל המסמכים הנדרשים לנסיעה בטוחה ומוכנה
                 </p>
               </div>
-              <div className="header-icons">
+              {/* ✅ אייקוני header דקורטיביים */}
+              <div className="header-icons" aria-hidden="true">
                 <div className="header-icon">
                   <BookUser />
                 </div>
@@ -443,27 +411,36 @@ export default function VisasPage() {
                 </div>
               </div>
             </div>
+            {/* ✅ תמונה דקורטיבית */}
             <img
               src={VisasHeaderImage}
-              alt="Travel Documents"
+              alt=""
+              aria-hidden="true"
               className="header-image"
             />
-            <div className="header-decoration"></div>
-          </div>
+            {/* ✅ עיטור דקורטיבי */}
+            <div className="header-decoration" aria-hidden="true"></div>
+          </header>
 
+          {/* רשימת ויזות */}
           <div className="visas-list-column">
-            <div className="visas-scroll-pane">
+            <div
+              className="visas-scroll-pane"
+              role="list"
+              aria-label="רשימת ויזות ואישורי כניסה"
+            >
               {VISA_DATA.map((visa) => (
-                <VisaListItem
-                  key={visa.id}
-                  visa={visa}
-                  onDiscoverMore={() => handleOpenDialog(visa)}
-                />
+                <div role="listitem" key={visa.id}>
+                  <VisaListItem
+                    visa={visa}
+                    onDiscoverMore={() => handleOpenDialog(visa)}
+                  />
+                </div>
               ))}
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <Dialog
         isOpen={!!selectedVisa}

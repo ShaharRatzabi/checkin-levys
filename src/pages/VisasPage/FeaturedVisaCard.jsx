@@ -16,8 +16,8 @@ const FeaturedVisaCard = ({ visa, onDiscoverMore }) => {
           transition: all 0.3s ease;
         }
         .featured-visa-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+          transform: translateY(-5px);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
         }
         .featured-image-container {
           height: 300px;
@@ -75,30 +75,53 @@ const FeaturedVisaCard = ({ visa, onDiscoverMore }) => {
           transform: translateY(-2px);
           box-shadow: 0 7px 20px rgba(251, 146, 60, 0.4);
         }
+        .discover-more-btn:focus-visible {
+          outline: 3px solid #ea580c;
+          outline-offset: 3px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .featured-visa-card { transition: none; }
+          .featured-visa-card:hover { transform: none; }
+          .discover-more-btn { transition: none; }
+          .discover-more-btn:hover { transform: none; }
+        }
       `}</style>
-      <div className="featured-visa-card">
+
+      {/* ✅ article סמנטי */}
+      <article className="featured-visa-card">
         <div className="featured-image-container">
-          <img src={visa.image} alt={visa.country} />
+          {/* ✅ alt תיאורי */}
+          <img src={visa.image} alt={`תמונה מ${visa.country}`} />
         </div>
         <div className="featured-content">
-          <div className="featured-meta">
+          {/* ✅ אייקוני meta דקורטיביים */}
+          <div className="featured-meta" aria-hidden="true">
             <span className="featured-meta-item">
-              <MapPin size={16} /> {visa.country}
+              <MapPin size={16} aria-hidden="true" /> {visa.country}
             </span>
             <span className="featured-meta-item">
-              <Calendar size={16} /> {visa.validity}
+              <Calendar size={16} aria-hidden="true" /> {visa.validity}
             </span>
             <span className="featured-meta-item">
-              <Tag size={16} /> {visa.cost.split("|")[0].trim()}
+              <Tag size={16} aria-hidden="true" />{" "}
+              {visa.cost.split("|")[0].trim()}
             </span>
           </div>
+
           <h3 className="featured-title">{visa.title}</h3>
           <p className="featured-subtitle">{visa.subtitle}</p>
-          <button onClick={onDiscoverMore} className="discover-more-btn">
+
+          {/* ✅ aria-label עם שם הויזה + aria-haspopup */}
+          <button
+            onClick={onDiscoverMore}
+            className="discover-more-btn"
+            aria-label={`גלה עוד על ${visa.country}: ${visa.title}`}
+            aria-haspopup="dialog"
+          >
             גלה עוד
           </button>
         </div>
-      </div>
+      </article>
     </>
   );
 };

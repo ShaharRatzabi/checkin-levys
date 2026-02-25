@@ -3,32 +3,41 @@ import FlightCard from "../home/FlightCard/FlightCard.jsx";
 import DealCard from "../home/DealCard/DealCard.jsx";
 import { db } from "../../firebase";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { Search, X } from "lucide-react"; // הוספנו אייקונים
+import { Search, X } from "lucide-react";
 import planeVideo from "../../assets/videos/overlay.mp4";
 
 const CountrySection = ({ country, deals, onDealClick }) => {
   return (
-    <section className="country-section">
+    <section className="country-section" aria-label={`דילים ל${country}`}>
       <div className="country-header-container">
-        <div className="country-line"></div>
+        <div className="country-line" aria-hidden="true"></div>
         <div className="country-header">
           <h2 className="country-title">{country}</h2>
-          <span className="deals-tag">{deals.length} דילים חמים</span>
+          <span className="deals-tag" aria-label={`${deals.length} דילים חמים`}>
+            {deals.length} דילים חמים
+          </span>
         </div>
       </div>
       <div className="deals-grid">
         {deals.map((deal) => (
-          <FlightCard
+          // ✅ button עוטף את FlightCard — נגיש למקלדת
+          <button
             key={deal.id}
-            destination={deal.title}
-            imageUrl={deal.mainImage}
-            priceFrom={deal.priceFrom}
-            airportCode={deal.airportCode || "TLV"}
-            departureTime={deal.departureTime || "08:00"}
-            arrivalTime={deal.arrivalTime || "12:00"}
-            flightClass={deal.flightClass || "מחלקת תיירים"}
+            className="deal-card-trigger"
             onClick={() => onDealClick(deal)}
-          />
+            aria-label={`פתח פרטים על ${deal.title}`}
+            aria-haspopup="dialog"
+          >
+            <FlightCard
+              destination={deal.title}
+              imageUrl={deal.mainImage}
+              priceFrom={deal.priceFrom}
+              airportCode={deal.airportCode || "TLV"}
+              departureTime={deal.departureTime || "08:00"}
+              arrivalTime={deal.arrivalTime || "12:00"}
+              flightClass={deal.flightClass || "מחלקת תיירים"}
+            />
+          </button>
         ))}
       </div>
     </section>
@@ -38,10 +47,10 @@ const CountrySection = ({ country, deals, onDealClick }) => {
 export default function Deals() {
   const [groupedDeals, setGroupedDeals] = useState({});
   const [countries, setCountries] = useState([]);
-  const [filteredCountries, setFilteredCountries] = useState([]); // רשימה מסוננת
+  const [filteredCountries, setFilteredCountries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState("all");
-  const [searchTerm, setSearchTerm] = useState(""); // טקסט החיפוש
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedDeal, setSelectedDeal] = useState(null);
 
   useEffect(() => {
@@ -68,7 +77,7 @@ export default function Deals() {
         const countryList = Object.keys(dealsByCountry);
         setGroupedDeals(dealsByCountry);
         setCountries(countryList);
-        setFilteredCountries(countryList); // בהתחלה כולם מוצגים
+        setFilteredCountries(countryList);
       } catch (error) {
         console.error("Error fetching deals:", error);
       } finally {
@@ -78,7 +87,6 @@ export default function Deals() {
     fetchDeals();
   }, []);
 
-  // פונקציית הסינון
   useEffect(() => {
     if (searchTerm === "") {
       setFilteredCountries(countries);
@@ -89,12 +97,17 @@ export default function Deals() {
     }
   }, [searchTerm, countries]);
 
-  if (loading) return <div className="loader">טוען חוויות חדשות...</div>;
+  // ✅ מצב טעינה נגיש
+  if (loading)
+    return (
+      <div className="loader" role="status" aria-live="polite">
+        טוען חוויות חדשות...
+      </div>
+    );
 
   return (
     <div className="deals-page-wrapper" style={{ direction: "rtl" }}>
       <style>{`
-        /* General Config */
         :root {
           --primary-orange: #e76d2c;
           --dark-text: #1a1a1a;
@@ -107,7 +120,6 @@ export default function Deals() {
           font-family: 'Assistant', sans-serif;
         }
 
-        /* Hero Styles */
         .hero-viewport {
           position: relative;
           height: 60vh;
@@ -119,19 +131,6 @@ export default function Deals() {
           color: white;
           text-align: center;
           background-color: #000;
-        }
-
-        .hero-video {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          min-width: 100%;
-          min-height: 100%;
-          width: auto;
-          height: auto;
-          z-index: 1;
-          transform: translate(-50%, -50%);
-          object-fit: cover;
         }
 
         .hero-overlay {
@@ -156,11 +155,24 @@ export default function Deals() {
           color: white;
         }
 
-        .orange-text {
-          color: var(--primary-orange);
+        .orange-text { color: var(--primary-orange); }
+
+        .hero-animation {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          pointer-events: none;
         }
 
-        /* --- Search & Filter Section --- */
+        .plane-video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          opacity: 0.35;
+          mix-blend-mode: screen;
+        }
+
+        /* Filter */
         .filter-wrapper {
           position: sticky;
           top: 20px;
@@ -174,7 +186,6 @@ export default function Deals() {
           gap: 15px;
         }
 
-        /* שדה החיפוש */
         .search-container {
           position: relative;
           width: 100%;
@@ -183,7 +194,7 @@ export default function Deals() {
 
         .search-input {
           width: 100%;
-          padding: 12px 45px 12px 20px;
+          padding: 12px 45px 12px 45px;
           border-radius: 50px;
           border: 1px solid rgba(255, 255, 255, 0.8);
           background: rgba(255, 255, 255, 0.9);
@@ -192,13 +203,17 @@ export default function Deals() {
           color: var(--dark-text);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
           transition: all 0.3s ease;
-          outline: none;
+          box-sizing: border-box;
         }
 
         .search-input:focus {
           box-shadow: 0 8px 32px rgba(255, 107, 53, 0.2);
           border-color: var(--primary-orange);
-          transform: scale(1.02);
+        }
+
+        .search-input:focus-visible {
+          outline: 3px solid var(--primary-orange);
+          outline-offset: 2px;
         }
 
         .search-icon {
@@ -209,20 +224,31 @@ export default function Deals() {
           color: #888;
           pointer-events: none;
         }
-        
-        .clear-icon {
+
+        /* ✅ כפתור ניקוי — נגיש */
+        .clear-button {
           position: absolute;
           left: 10px;
           top: 50%;
           transform: translateY(-50%);
-          color: #888;
-          cursor: pointer;
           background: #eee;
+          border: none;
           border-radius: 50%;
-          padding: 2px;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          padding: 0;
+          color: #888;
         }
 
-        /* רשימת המדינות (Chips) */
+        .clear-button:focus-visible {
+          outline: 3px solid var(--primary-orange);
+          outline-offset: 2px;
+        }
+
         .filter-scroll-container {
           width: 100%;
           background: rgba(255, 255, 255, 0.8);
@@ -235,15 +261,12 @@ export default function Deals() {
           box-shadow: 0 10px 30px rgba(0,0,0,0.05);
           overflow-x: auto;
           white-space: nowrap;
-          justify-content: flex-start; /* או center אם רוצים ממורכז */
         }
-        
-        .filter-scroll-container::-webkit-scrollbar {
-            height: 4px;
-        }
+
+        .filter-scroll-container::-webkit-scrollbar { height: 4px; }
         .filter-scroll-container::-webkit-scrollbar-thumb {
-            background: #ccc; 
-            border-radius: 4px;
+          background: #ccc;
+          border-radius: 4px;
         }
 
         .filter-nav-item {
@@ -260,8 +283,8 @@ export default function Deals() {
         }
 
         .filter-nav-item:hover {
-            background: white;
-            border-color: #ddd;
+          background: white;
+          border-color: #ddd;
         }
 
         .filter-nav-item.active {
@@ -270,7 +293,27 @@ export default function Deals() {
           box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
         }
 
-        /* Section Styles */
+        .filter-nav-item:focus-visible {
+          outline: 3px solid var(--primary-orange);
+          outline-offset: 3px;
+        }
+
+        /* ✅ deal-card-trigger reset */
+        .deal-card-trigger {
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          display: block;
+          text-align: inherit;
+        }
+
+        .deal-card-trigger:focus-visible {
+          outline: 3px solid var(--primary-orange);
+          outline-offset: 4px;
+          border-radius: 34px;
+        }
+
         .container-custom {
           max-width: 1300px;
           margin: 0 auto;
@@ -279,9 +322,7 @@ export default function Deals() {
           z-index: 4;
         }
 
-        .country-section {
-          margin-bottom: 80px;
-        }
+        .country-section { margin-bottom: 80px; }
 
         .country-header-container {
           display: flex;
@@ -332,27 +373,17 @@ export default function Deals() {
         }
 
         .no-results {
-            text-align: center;
-            padding: 50px;
-            font-size: 1.2rem;
-            color: #666;
+          text-align: center;
+          padding: 50px;
+          font-size: 1.2rem;
+          color: #666;
         }
 
-        .hero-animation {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.plane-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.35; /* אפשר לשחק בין 0.2–0.5 */
-  mix-blend-mode: screen;
-}
-
+        /* ✅ prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+          .search-input,
+          .filter-nav-item { transition: none; }
+        }
 
         @media (max-width: 768px) {
           .hero-viewport { height: 50vh; }
@@ -363,73 +394,74 @@ export default function Deals() {
       `}</style>
 
       {/* Hero Section */}
-      <section className="hero-viewport">
-        <div className="hero-overlay"></div>
-        {/* Plane animation layer */}
-        <div className="hero-animation">
+      <section className="hero-viewport" aria-label="כותרת עמוד דילים">
+        <div className="hero-overlay" aria-hidden="true"></div>
+        {/* ✅ וידאו דקורטיבי */}
+        <div className="hero-animation" aria-hidden="true">
           <video autoPlay muted loop playsInline className="plane-video">
             <source src={planeVideo} type="video/mp4" />
           </video>
         </div>
-
         <div className="hero-content">
           <h1 className="hero-main-title">
-            לאן תרצו <span className="orange-text">לטוס</span> היום?
+            לאן תרצו <span className="orange-text">לטוס</span> הפעם?
           </h1>
         </div>
       </section>
 
-      {/* Main Content & Search */}
       <div className="container-custom">
-        {/* אזור החיפוש והסינון */}
         <div className="filter-wrapper">
-          {/* שורת חיפוש */}
+          {/* ✅ שדה חיפוש נגיש */}
           <div className="search-container">
-            <Search className="search-icon" size={20} />
+            <Search className="search-icon" size={20} aria-hidden="true" />
             <input
-              type="text"
+              type="search"
               placeholder="חפש מדינה..."
               className="search-input"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              aria-label="חיפוש מדינה"
             />
+            {/* ✅ כפתור ניקוי נגיש */}
             {searchTerm && (
-              <X
-                className="clear-icon"
-                size={16}
+              <button
+                className="clear-button"
                 onClick={() => setSearchTerm("")}
-              />
+                aria-label="נקה חיפוש"
+              >
+                <X size={14} aria-hidden="true" />
+              </button>
             )}
           </div>
 
-          {/* כפתורי מדינות (Chips) שמתעדכנים לפי החיפוש */}
-          <div className="filter-scroll-container">
-            <button
-              className={`filter-nav-item ${
-                selectedCountry === "all" ? "active" : ""
-              }`}
-              onClick={() => setSelectedCountry("all")}
-            >
-              הכל
-            </button>
-            {filteredCountries.map((country) => (
+          {/* ✅ ניווט מדינות נגיש */}
+          <nav aria-label="סינון לפי מדינה">
+            <div className="filter-scroll-container">
               <button
-                key={country}
-                className={`filter-nav-item ${
-                  selectedCountry === country ? "active" : ""
-                }`}
-                onClick={() => setSelectedCountry(country)}
+                className={`filter-nav-item ${selectedCountry === "all" ? "active" : ""}`}
+                onClick={() => setSelectedCountry("all")}
+                aria-pressed={selectedCountry === "all"}
               >
-                {country}
+                הכל
               </button>
-            ))}
-          </div>
+              {filteredCountries.map((country) => (
+                <button
+                  key={country}
+                  className={`filter-nav-item ${selectedCountry === country ? "active" : ""}`}
+                  onClick={() => setSelectedCountry(country)}
+                  aria-pressed={selectedCountry === country}
+                >
+                  {country}
+                </button>
+              ))}
+            </div>
+          </nav>
         </div>
 
         <main className="deals-main">
-          {/* אם אין תוצאות בחיפוש */}
+          {/* ✅ אין תוצאות — aria-live */}
           {filteredCountries.length === 0 && (
-            <div className="no-results">
+            <div className="no-results" role="status" aria-live="polite">
               לא מצאנו דילים למדינה "{searchTerm}" 😔
             </div>
           )}

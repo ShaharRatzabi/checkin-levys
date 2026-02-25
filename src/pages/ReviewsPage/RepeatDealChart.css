@@ -1,120 +1,275 @@
-.repeat-deal-chart {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  padding: 40px;
+/* === RepeatDealChart.css === */
+
+/* ✅ sr-only — נגישות */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ═══════════════════════════════
+   Wrapper
+═══════════════════════════════ */
+.rdc-wrapper {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  padding: 2rem 2rem 1.75rem;
   margin: 2rem;
   max-width: 700px;
   color: #1f2937;
-  font-family: "Segoe UI", sans-serif;
+  font-family: "Assistant", "Segoe UI", sans-serif;
   grid-area: chart;
 }
 
-.chart-header {
+/* ═══════════════════════════════
+   Header
+═══════════════════════════════ */
+.rdc-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.rdc-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ec8d68 0%, #d4703f 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(212, 112, 63, 0.3);
+}
+
+.rdc-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+  line-height: 1.3;
+}
+
+.rdc-subtitle {
+  font-size: 0.88rem;
+  color: #9ca3af;
+  margin: 0.15rem 0 0 0;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════
+   Stat Cards
+═══════════════════════════════ */
+.rdc-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.rdc-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.rdc-stat-positive {
+  background: linear-gradient(
+    135deg,
+    rgba(232, 119, 58, 0.1) 0%,
+    rgba(232, 119, 58, 0.04) 100%
+  );
+}
+
+.rdc-stat-neutral {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.rdc-stat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rdc-stat-positive .rdc-stat-icon {
+  background: rgba(232, 119, 58, 0.15);
+  color: #d4703f;
+}
+
+.rdc-stat-neutral .rdc-stat-icon {
+  background: rgba(0, 0, 0, 0.06);
+  color: #6b7280;
+}
+
+.rdc-stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.rdc-stat-number {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #1f2937;
+}
+
+.rdc-stat-label {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════
+   Chart Area
+═══════════════════════════════ */
+.rdc-chart-area {
+  margin-bottom: 1.25rem;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  padding: 1rem 0.5rem 0.5rem 0;
+}
+
+/* ═══════════════════════════════
+   Tooltip
+═══════════════════════════════ */
+.rdc-tooltip {
+  background: white;
+  padding: 0.65rem 0.9rem;
+  border-radius: 14px;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 110px;
+}
+
+.rdc-tooltip-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.88rem;
+}
+
+.rdc-tooltip-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.rdc-tooltip-count {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+/* ═══════════════════════════════
+   Insight Bar (progress strip)
+═══════════════════════════════ */
+.rdc-insight-bar {
+  position: relative;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 14px;
+  overflow: hidden;
+  padding: 0.85rem 1rem;
+}
+
+.rdc-insight-fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(232, 119, 58, 0.12) 0%,
+    rgba(232, 119, 58, 0.06) 100%
+  );
+  border-radius: 14px;
+  transition: width 0.6s ease;
+}
+
+.rdc-insight-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-  gap: 1rem;
 }
 
-.chart-header-title {
+.rdc-insight-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-}
-
-.chart-header h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-.chart-header p {
-  margin: 0;
-  font-size: 1rem;
-  color: #6b7280;
-}
-
-.stats-summary {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
+  gap: 0.4rem;
+  font-size: 0.88rem;
   color: #4b5563;
+  font-weight: 500;
 }
 
-.icon {
-  color: #3b82f6;
-  width: 24px;
-  height: 24px;
+.rdc-insight-item strong {
+  color: #d4703f;
+  font-weight: 800;
 }
 
-.icon-sm {
-  color: #6b7280;
-  width: 18px;
-  height: 18px;
+.rdc-insight-no strong {
+  color: #9ca3af;
 }
 
-.chart-container {
-  margin-bottom: 2rem;
-}
-
-.custom-tooltip {
-  background: #ffffff;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  border: 1px solid #e5e7eb;
-}
-
-.tooltip-label {
-  font-weight: 600;
-  color: #374151;
-}
-
-.tooltip-value {
-  font-size: 1.25rem;
-  font-weight: bold;
-}
-
-.chart-insights {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  font-size: 0.95rem;
-}
-
-.insight-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
-.positive .dot {
-  background-color: #10b981;
-}
-
-.negative .dot {
-  background-color: #ef4444;
-}
-
+/* ═══════════════════════════════
+   Responsive
+═══════════════════════════════ */
 @media (max-width: 768px) {
-  .repeat-deal-chart {
+  .rdc-wrapper {
     margin: 0;
+    padding: 1.5rem 1.25rem;
   }
 
-  .chart-header {
+  .rdc-title {
+    font-size: 1.15rem;
+  }
+
+  .rdc-stats-row {
+    gap: 0.5rem;
+  }
+
+  .rdc-stat-card {
+    padding: 0.7rem 0.75rem;
+  }
+
+  .rdc-stat-number {
+    font-size: 1.15rem;
+  }
+
+  .rdc-insight-content {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.35rem;
+  }
+}
+
+/* ═══════════════════════════════
+   Reduced Motion
+═══════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .rdc-insight-fill {
+    transition: none;
   }
 }

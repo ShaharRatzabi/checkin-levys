@@ -11,9 +11,9 @@ function Home() {
 
   useEffect(() => {
     const onScroll = () => {
-      const maxScroll = 600; // כמה גלילה משפיעה
+      const maxScroll = 600;
       const scrolled = Math.min(window.scrollY / maxScroll, 1);
-      setScrollFactor(1 - scrolled * 0.6); // נחלש עד 40%
+      setScrollFactor(1 - scrolled * 0.6);
     };
 
     window.addEventListener("scroll", onScroll);
@@ -22,9 +22,10 @@ function Home() {
 
   return (
     <div className="home-container">
-      {/* BACKGROUND ORBS */}
+      {/* BACKGROUND ORBS — דקורטיבי בלבד, מוסתר מקוראי מסך */}
       <div
         className="background-orbs"
+        aria-hidden="true"
         style={{
           opacity: scrollFactor,
           filter: `blur(${60 + (1 - scrollFactor) * 20}px)`,

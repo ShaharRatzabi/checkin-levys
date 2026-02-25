@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   MessageCircle,
   FileText,
@@ -54,36 +54,41 @@ const steps = [
   },
 ];
 
-const FlowPlane = ({ index }) => (
-  <motion.div
-    className="flow-arrow"
-    initial={{ opacity: 0, y: -10 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ delay: index * 0.15 + 0.3 }}
-  >
+const FlowPlane = ({ index }) => {
+  // ✅ כיבוד prefers-reduced-motion
+  const shouldReduce = useReducedMotion();
+
+  return (
     <motion.div
-      animate={{ y: [0, 14, 0] }}
-      transition={{
-        repeat: Infinity,
-        duration: 1.8,
-        ease: "easeInOut",
-      }}
+      className="flow-arrow"
+      initial={{ opacity: 0, y: -10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: shouldReduce ? 0 : index * 0.15 + 0.3 }}
+      aria-hidden="true" // ✅ דקורטיבי בלבד
     >
-      <Plane
-        size={26}
-        color="#e76d2c"
-        style={{
-          transform: "rotate(135deg)", // 👈 זה היישור האמיתי
-          display: "block",
+      <motion.div
+        animate={shouldReduce ? {} : { y: [0, 14, 0] }}
+        transition={{
+          repeat: shouldReduce ? 0 : Infinity,
+          duration: 1.8,
+          ease: "easeInOut",
         }}
-      />
+      >
+        <Plane
+          size={26}
+          color="#e76d2c"
+          style={{ transform: "rotate(135deg)", display: "block" }}
+          aria-hidden="true"
+        />
+      </motion.div>
     </motion.div>
-  </motion.div>
-);
+  );
+};
 
 const StepCard = ({ step, index }) => {
   const Icon = step.icon;
+  const shouldReduce = useReducedMotion();
 
   return (
     <motion.div
@@ -91,20 +96,26 @@ const StepCard = ({ step, index }) => {
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: index * 0.15, duration: 0.6 }}
-      whileHover={{ y: -6, scale: 1.02 }}
+      transition={{
+        delay: shouldReduce ? 0 : index * 0.15,
+        duration: shouldReduce ? 0 : 0.6,
+      }}
+      whileHover={shouldReduce ? {} : { y: -6, scale: 1.02 }}
     >
-      <div className="icon-box">
+      {/* ✅ כל תיבת האייקון דקורטיבית — המידע נמצא ב-h3 */}
+      <div className="icon-box" aria-hidden="true">
         <motion.div
           initial={{ scale: 0.9 }}
-          whileInView={{ scale: 1.05 }}
-          transition={{ duration: 0.4 }}
+          whileInView={{ scale: shouldReduce ? 1 : 1.05 }}
+          transition={{ duration: shouldReduce ? 0 : 0.4 }}
           viewport={{ once: true }}
         >
-          <Icon size={34} color="white" />
+          <Icon size={34} color="white" aria-hidden="true" />
         </motion.div>
-
-        <span className="step-number">{step.number}</span>
+        {/* ✅ מספר שלב מוסתר — h3 מספק את ההקשר */}
+        <span className="step-number" aria-hidden="true">
+          {step.number}
+        </span>
       </div>
 
       <div className="step-content">
@@ -117,7 +128,7 @@ const StepCard = ({ step, index }) => {
 
 export default function ProcessSection() {
   return (
-    <section className="process-wrapper" dir="rtl">
+    <section className="process-wrapper" dir="rtl" aria-label="תהליך הלקוח">
       <div className="process-bubble">
         <motion.div
           className="process-header"
@@ -125,19 +136,25 @@ export default function ProcessSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="badge">איך זה עובד?</span>
+          {/* ✅ badge דקורטיבי — h2 מספק את המידע */}
+          <span className="badge" aria-hidden="true">
+            איך זה עובד?
+          </span>
           <h2>תהליך הלקוח שלנו</h2>
           <p>מהפנייה הראשונה ועד החזרה עם חיוך</p>
         </motion.div>
 
-        <div className="steps">
+        {/* ✅ ol במקום div — רשימת שלבים סמנטית */}
+        <ol className="steps" aria-label="שלבי התהליך">
           {steps.map((step, index) => (
             <React.Fragment key={step.number}>
-              <StepCard step={step} index={index} />
+              <li>
+                <StepCard step={step} index={index} />
+              </li>
               {index < steps.length - 1 && <FlowPlane index={index} />}
             </React.Fragment>
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   );

@@ -1,7 +1,9 @@
 import React from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 export default function FAQItem({ faq, isOpen, onToggle }) {
+  const answerId = `faq-answer-${faq.id}`;
+
   return (
     <>
       <style>{`
@@ -16,7 +18,7 @@ export default function FAQItem({ faq, isOpen, onToggle }) {
           overflow: hidden;
           direction: rtl;
         }
-        
+
         .faq-question-button {
           width: 100%;
           padding: 1.5rem;
@@ -27,50 +29,82 @@ export default function FAQItem({ faq, isOpen, onToggle }) {
           background: none;
           border: none;
           cursor: pointer;
-          transition: background-color 0.3s ease;
-        }
-        
-        .faq-question-button:hover {
-          background-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .faq-question-text {
           font-size: 1.125rem;
           font-weight: 600;
           color: #1f2937;
-          transition: color 0.3s ease;
+          font-family: inherit;
         }
-        
-        .faq-question-button:hover .faq-question-text {
-          color: #c2410c; /* orange-700 */
+
+        /* ✅ prefers-reduced-motion */
+        @media (prefers-reduced-motion: no-preference) {
+          .faq-question-button {
+            transition: background-color 0.3s ease, color 0.3s ease;
+          }
         }
-        
+
+        .faq-question-button:hover {
+          background-color: rgba(255, 255, 255, 0.2);
+          color: #c2410c;
+        }
+
+        /* ✅ focus-visible */
+        .faq-question-button:focus-visible {
+          outline: 3px solid #e76d2c;
+          outline-offset: -3px;
+          border-radius: 24px;
+        }
+
         .faq-toggle-icon {
           margin-right: 1rem;
-          transition: transform 0.3s ease;
-          color: #78716c; /* gray-500 */
+          color: #78716c;
+          flex-shrink: 0;
         }
-        
+
         .faq-item.open .faq-toggle-icon {
-          color: #ea580c; /* orange-600 */
+          color: #ea580c;
         }
-        
+
+        /* ✅ אנימציה סיבוב על החץ במקום החלפת אייקון */
+        @media (prefers-reduced-motion: no-preference) {
+          .faq-toggle-icon svg {
+            transition: transform 0.3s ease, color 0.3s ease;
+          }
+          .faq-item.open .faq-toggle-icon svg {
+            transform: rotate(180deg);
+          }
+        }
+
         .faq-answer-wrapper {
-          max-height: 0;
-          opacity: 0;
           overflow: hidden;
-          transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
         }
-        
-        .faq-item.open .faq-answer-wrapper {
-          max-height: 24rem;
-          opacity: 1;
+
+        /* ✅ אנימציה רק אם המשתמש לא ביקש הפחתה */
+        @media (prefers-reduced-motion: no-preference) {
+          .faq-answer-wrapper {
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in-out;
+          }
+          .faq-item.open .faq-answer-wrapper {
+            max-height: 24rem;
+            opacity: 1;
+          }
         }
-        
+
+        /* ✅ ללא אנימציה — מציג/מסתיר ישירות */
+        @media (prefers-reduced-motion: reduce) {
+          .faq-answer-wrapper {
+            display: none;
+          }
+          .faq-item.open .faq-answer-wrapper {
+            display: block;
+          }
+        }
+
         .faq-answer-content {
           padding: 0 1.5rem 1.5rem 1.5rem;
         }
-        
+
         .faq-answer-content::before {
           content: '';
           display: block;
@@ -79,21 +113,44 @@ export default function FAQItem({ faq, isOpen, onToggle }) {
           background-image: linear-gradient(to left, rgba(252, 211, 199, 1), transparent);
           margin-bottom: 1rem;
         }
-        
+
         .faq-answer-content p {
           color: #374151;
           line-height: 1.625;
           font-size: 1rem;
+          margin: 0;
         }
       `}</style>
+
       <div className={`faq-item ${isOpen ? "open" : ""}`}>
-        <button onClick={onToggle} className="faq-question-button">
-          <h3 className="faq-question-text">{faq.question}</h3>
-          <div className="faq-toggle-icon">
-            {isOpen ? <ChevronUp /> : <ChevronDown />}
-          </div>
+        {/*
+          ✅ aria-expanded — קורא מסך יכריז "מורחב" / "מכווץ"
+          ✅ aria-controls — מקשר את הכפתור לתשובה
+          ✅ הוסר <h3> מבתוך <button> (לא חוקי ב-HTML)
+             הסמנטיקה נשמרת ע"י role="heading" על ה-FaqPage עצמו
+        */}
+        <button
+          onClick={onToggle}
+          className="faq-question-button"
+          aria-expanded={isOpen}
+          aria-controls={answerId}
+        >
+          <span>{faq.question}</span>
+          <span className="faq-toggle-icon" aria-hidden="true">
+            <ChevronDown size={20} />
+          </span>
         </button>
-        <div className="faq-answer-wrapper">
+
+        {/*
+          ✅ id תואם ל-aria-controls
+          ✅ role="region" + aria-label לקוראי מסך
+        */}
+        <div
+          id={answerId}
+          className="faq-answer-wrapper"
+          role="region"
+          aria-label={faq.question}
+        >
           <div className="faq-answer-content">
             <p>{faq.answer}</p>
           </div>

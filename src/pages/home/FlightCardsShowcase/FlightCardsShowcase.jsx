@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+import { Autoplay, A11y, Keyboard } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/autoplay";
+import "swiper/css/a11y";
 import FlightCard from "../FlightCard/FlightCard";
 import DealCard from "../DealCard/DealCard.jsx";
 import "./FlightCardsShowcase.css";
 
-// ייבוא שירותי Firebase
-import { db } from "../../../firebase"; // ודא שהנתיב נכון
+import { db } from "../../../firebase";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 
 const FlightCardsShowcase = () => {
@@ -20,14 +20,12 @@ const FlightCardsShowcase = () => {
     const fetchDeals = async () => {
       try {
         const dealsCollectionRef = collection(db, "deals");
-        // Query to get the last 6 deals added
         const dealsQuery = query(
           dealsCollectionRef,
           orderBy("createdAt", "desc"),
           limit(6),
         );
         const querySnapshot = await getDocs(dealsQuery);
-
         const fetchedDeals = querySnapshot.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
@@ -43,73 +41,80 @@ const FlightCardsShowcase = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedDeal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = selectedDeal ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
   }, [selectedDeal]);
 
-  const handleCardClick = (deal) => {
-    setSelectedDeal(deal);
-  };
+  const handleCardClick = (deal) => setSelectedDeal(deal);
+  const closeCard = () => setSelectedDeal(null);
 
-  const closeCard = () => {
-    setSelectedDeal(null);
-  };
-
+  // ✅ מצב טעינה נגיש
   if (loading) {
-    return <div>טוען הצעות מיוחדות...</div>;
+    return (
+      <div role="status" aria-live="polite" aria-label="טוען הצעות מיוחדות">
+        טוען הצעות מיוחדות...
+      </div>
+    );
   }
 
   return (
-    <div className="showcase-container">
+    // ✅ section במקום div + aria-label
+    <section className="showcase-container" aria-label="יעדי חלומות">
       <div className="showcase-content">
         <div className="showcase-header">
-          <h1 className="showcase-title"> יעדי חלומות</h1>
+          {/* ✅ h2 במקום h1 */}
+          <h2 className="showcase-title">יעדי חלומות</h2>
           <p className="showcase-description">
             גלה הצעות מדהימות ליעדים החביבים עליך. הזמן עכשיו וחסוך בהרפתקה הבאה
             שלך!
           </p>
         </div>
 
+        {/* ✅ A11y + Keyboard modules לנגישות מקלדת */}
         <Swiper
-          modules={[Autoplay]}
-          loop={deals.length > 2} // Loop only if there are enough slides
-          speed={5000}
+          modules={[Autoplay, A11y, Keyboard]}
+          loop={false}
+          speed={500}
           autoplay={{ delay: 4000, disableOnInteraction: true }}
           slidesPerView="auto"
           spaceBetween={30}
           centeredSlides={false}
           allowTouchMove={true}
           grabCursor={true}
+          watchSlidesProgress={true}
+          keyboard={{ enabled: true, onlyInViewport: false }}
+          a11y={{
+            prevSlideMessage: "שקופית קודמת",
+            nextSlideMessage: "שקופית הבאה",
+          }}
         >
           {deals.map((deal) => (
             <SwiperSlide key={deal.id}>
-              <div
+              {/* ✅ button במקום div — נגיש למקלדת */}
+              <button
+                className="deal-card-trigger"
                 onClick={() => handleCardClick(deal)}
-                style={{ cursor: "pointer" }}
+                aria-label={`פתח פרטים על ${deal.title}`}
+                aria-haspopup="dialog"
               >
                 <FlightCard
                   destination={deal.title}
                   imageUrl={deal.mainImage}
                   priceFrom={deal.priceFrom}
                   period={deal.datesRange}
-                  departureTime={deal.flight?.departure} // יציאה
+                  departureTime={deal.flight?.departure}
                   arrivalTime={deal.flight?.return}
-                  // You can add other props like discount if they exist in your deal object
                 />
-              </div>
+              </button>
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
 
       {selectedDeal && <DealCard deal={selectedDeal} onClose={closeCard} />}
-    </div>
+    </section>
   );
 };
 

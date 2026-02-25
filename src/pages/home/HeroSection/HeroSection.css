@@ -4,8 +4,8 @@
   align-items: center;
   justify-content: center;
   direction: rtl;
-  padding: 1rem;
-  width: 100%;
+  padding: 2rem 0;
+  width: 95%;
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
@@ -28,12 +28,12 @@
   flex-direction: column;
   align-items: center;
 }
+
 .hero-title {
   padding: 1rem;
 }
 
-.hero-title h1,
-.hero-title h2 {
+.hero-title h1 {
   font-weight: 800;
   text-align: center;
   background-image: linear-gradient(135deg, #e76d2c 20%, rgb(83, 39, 19) 100%);
@@ -42,19 +42,26 @@
   -webkit-text-fill-color: transparent;
   color: transparent;
   line-height: 1;
-}
-
-.hero-title h1 {
   font-size: 2.5rem;
 }
 
-.hero-title h2 {
+/* ✅ hero-subtitle במקום h2 — עיצוב זהה, סמנטיקה נכונה */
+.hero-subtitle {
+  font-weight: 800;
+  text-align: center;
+  background-image: linear-gradient(135deg, #e76d2c 20%, rgb(83, 39, 19) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  line-height: 1;
   font-size: 2rem;
+  margin: 0;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .hero {
-    flex-direction: row; /* הפוך משורה לעמודה */
+    flex-direction: row;
     margin-top: 1rem;
   }
 
@@ -73,7 +80,7 @@
     text-align: start;
   }
 
-  .hero-title h2 {
+  .hero-subtitle {
     font-size: 2.5rem;
     text-align: start;
   }

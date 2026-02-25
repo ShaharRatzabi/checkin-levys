@@ -8,42 +8,49 @@ function LinksSection() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(true);
-    }, 100); // אפשר גם 0 אם רוצים מיד
+    }, 100);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className={`navigation-links ${visible ? "appear" : ""}`}>
+    <nav
+      className={`navigation-links ${visible ? "appear" : ""}`}
+      aria-label="רשתות חברתיות"
+    >
       <a
         href="https://www.facebook.com/CHECKIN.OTA/"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="עמוד הפייסבוק שלנו (נפתח בלשונית חדשה)"
       >
-        <FaFacebook />
+        <FaFacebook aria-hidden="true" />
       </a>
       <a
         href="https://www.instagram.com/CHECK_IN_levys/"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="עמוד האינסטגרם שלנו (נפתח בלשונית חדשה)"
       >
-        <FaInstagram />
+        <FaInstagram aria-hidden="true" />
       </a>
       <a
         href="https://api.whatsapp.com/send?phone=972506514500"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="צור קשר בוואטסאפ (נפתח בלשונית חדשה)"
       >
-        <FaWhatsapp />
+        <FaWhatsapp aria-hidden="true" />
       </a>
       <a
         href="https://www.tiktok.com/@checkin2024"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="עמוד הטיקטוק שלנו (נפתח בלשונית חדשה)"
       >
-        <FaTiktok />
+        <FaTiktok aria-hidden="true" />
       </a>
-    </div>
+    </nav>
   );
 }
 

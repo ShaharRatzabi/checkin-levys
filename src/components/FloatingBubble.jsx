@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { X, Phone } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -12,14 +12,84 @@ const FloatingBubble = () => {
   const [activeForm, setActiveForm] = useState(null);
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const closeDialog = () => setActiveForm(null);
-  const toggleCollapse = () => setIsCollapsed(!isCollapsed);
+  const showBubbleRef = useRef(null); // כפתור פתיחת הבועה
+  const hideBubbleRef = useRef(null); // כפתור סגירת הבועה
+  const dialogRef = useRef(null); // הדיאלוג עצמו
+  const triggerRef = useRef(null); // הכפתור שפתח את הדיאלוג
 
+  const closeDialog = () => {
+    setActiveForm(null);
+    // החזרת פוקוס לכפתור שפתח את הדיאלוג
+    setTimeout(() => triggerRef.current?.focus(), 50);
+  };
+
+  const openForm = (formName, buttonRef) => {
+    triggerRef.current = buttonRef;
+    setActiveForm(formName);
+  };
+
+  const toggleCollapse = () => {
+    setIsCollapsed((prev) => {
+      if (prev) {
+        // נפתח — פוקוס יעבור לכפתור הסגירה
+        setTimeout(() => hideBubbleRef.current?.focus(), 50);
+      } else {
+        // נסגר — פוקוס יחזור לכפתור הפתיחה
+        setTimeout(() => showBubbleRef.current?.focus(), 50);
+      }
+      return !prev;
+    });
+  };
+
+  /* נעילת גלילה כשדיאלוג פתוח */
   useEffect(() => {
     document.body.style.overflow = activeForm ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
+  }, [activeForm]);
+
+  /* ESC לסגירת דיאלוג */
+  useEffect(() => {
+    if (!activeForm) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") closeDialog();
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [activeForm]);
+
+  /* פוקוס ל-dialog + focus trap */
+  useEffect(() => {
+    if (!activeForm || !dialogRef.current) return;
+
+    const focusableElements = dialogRef.current.querySelectorAll(
+      'a[href], button:not([disabled]), input, textarea, select, [tabindex="0"]',
+    );
+
+    if (focusableElements.length > 0) {
+      focusableElements[0].focus();
+    }
+
+    const handleTab = (e) => {
+      if (e.key !== "Tab") return;
+
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    dialogRef.current.addEventListener("keydown", handleTab);
+    return () => dialogRef.current?.removeEventListener("keydown", handleTab);
   }, [activeForm]);
 
   return (
@@ -35,9 +105,9 @@ const FloatingBubble = () => {
 
         .light-bubble-container {
           width: 280px;
-          background: rgba(255, 255, 255, 0.6);
-          backdrop-filter: blur(15px);
-          -webkit-backdrop-filter: blur(15px);
+          background: #ffffff;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
           border-radius: 24px;
           border: 2px solid rgba(200, 200, 200, 0.8);
           box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
@@ -50,7 +120,6 @@ const FloatingBubble = () => {
           overflow: hidden;
         }
 
-        /* הלוגו ברקע */
         .light-bubble-container::before {
           content: "";
           position: absolute;
@@ -126,7 +195,6 @@ const FloatingBubble = () => {
           color: var(--accent);
         }
 
-        /* כפתור עגול כשסגור */
         .show-bubble-btn {
           width: 70px;
           height: 70px;
@@ -148,7 +216,6 @@ const FloatingBubble = () => {
           box-shadow: 0 12px 35px rgba(255, 123, 84, 0.7);
         }
 
-        /* עיגול לבן בפנים לאייקון */
         .phone-icon-wrapper {
           width: 42px;
           height: 42px;
@@ -159,66 +226,108 @@ const FloatingBubble = () => {
           justify-content: center;
         }
 
-        /* Dialog */
         .dialog-overlay {
           position: fixed;
           top: 0; left: 0; width: 100vw; height: 100vh;
-          background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);
-          display: flex; justify-content: center; align-items: center;
+          background: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(5px);
+          display: flex;
+          justify-content: center;
+          align-items: center;
           z-index: 2000;
         }
-        .dialog {
-          background: white; max-height: 90vh; overflow-y: auto; padding: 24px;
-          border-radius: 20px; max-width: 650px; width: 90%;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); position: relative;
-          text-align: right; direction: rtl;
-        }
-        .dialog-close {
-          position: absolute; top: 15px; left: 15px; width: 32px; height: 32px;
-          background: #f3f4f6; border: none; border-radius: 50%;
-          display: flex; align-items: center; justify-content: center; cursor: pointer;
-          color: #6b7280; transition: all 0.3s ease;
-        }
-        .dialog-close:hover { background: var(--accent); color: white; }
 
-        /* במסכים קטנים נסגר אוטומטית */
-    
+        .dialog {
+          background: #ffffff;
+          max-height: 90vh;
+          overflow-y: auto;
+          padding: 0;
+          border-radius: 20px;
+          max-width: 650px;
+          width: 90%;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+          position: relative;
+          text-align: right;
+          direction: rtl;
+        }
+
+        .dialog-close {
+          position: sticky;
+          top: 15px;
+          left: 15px;
+          float: left;
+          width: 32px;
+          height: 32px;
+          background: #f3f4f6;
+          border: none;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #6b7280;
+          transition: all 0.3s ease;
+          z-index: 10;
+          margin: 15px 0 -47px 15px;
+        }
+
+        .dialog-close:hover {
+          background: var(--accent);
+          color: white;
+        }
+
+        .floating-bubble-wrapper button:focus-visible,
+        .dialog button:focus-visible {
+          outline: 3px solid #000;
+          outline-offset: 4px;
+        }
       `}</style>
 
       <div className="floating-bubble-wrapper">
         {isCollapsed ? (
           <button
+            ref={showBubbleRef}
             className="show-bubble-btn"
             onClick={toggleCollapse}
-            aria-label="הצג צ'אט"
+            aria-label="פתח תפריט צור קשר"
+            aria-expanded={false}
           >
-            <div className="phone-icon-wrapper">
+            <div className="phone-icon-wrapper" aria-hidden="true">
               <Phone size={28} color="#333" />
             </div>
           </button>
         ) : (
-          <div className="light-bubble-container">
+          <div
+            className="light-bubble-container"
+            role="region"
+            aria-label="צור קשר"
+          >
             <button
+              ref={hideBubbleRef}
               className="hide-bubble-btn"
               onClick={toggleCollapse}
-              aria-label="הסתר צ'אט"
+              aria-label="סגור תפריט צור קשר"
+              aria-expanded={true}
             >
-              <X size={16} />
+              <X size={16} aria-hidden="true" />
             </button>
+
             <div className="bubble-content">
               <button
                 className="light-bubble-button"
-                onClick={() => setActiveForm("whatsapp")}
+                onClick={(e) => openForm("whatsapp", e.currentTarget)}
+                aria-haspopup="dialog"
               >
-                <img src={WhatsappFormImg} alt="WhatsApp form" />
-                <span> לחופשה בהתאמה אישית</span>
+                <img src={WhatsappFormImg} alt="" aria-hidden="true" />
+                <span>לחופשה בהתאמה אישית</span>
               </button>
 
               <button
                 className="light-bubble-button"
-                onClick={() => setActiveForm("join")}
+                onClick={(e) => openForm("join", e.currentTarget)}
+                aria-haspopup="dialog"
               >
-                <img src={JoiningFormImg} alt="Join form" />
+                <img src={JoiningFormImg} alt="" aria-hidden="true" />
                 <span>הצטרפו לצוות שלנו</span>
               </button>
             </div>
@@ -226,22 +335,54 @@ const FloatingBubble = () => {
         )}
       </div>
 
+      {/* דיאלוג WhatsApp */}
       {activeForm === "whatsapp" && (
-        <div className="dialog-overlay" onClick={closeDialog}>
-          <div className="dialog" onClick={(e) => e.stopPropagation()}>
-            <button className="dialog-close" onClick={closeDialog}>
-              <X size={16} />
+        <div
+          className="dialog-overlay"
+          onClick={closeDialog}
+          aria-hidden="true"
+        >
+          <div
+            ref={dialogRef}
+            className="dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-label="טופס חופשה בהתאמה אישית"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="dialog-close"
+              onClick={closeDialog}
+              aria-label="סגירת טופס"
+            >
+              <X size={16} aria-hidden="true" />
             </button>
             <WhatsappForm onClose={closeDialog} />
           </div>
         </div>
       )}
 
+      {/* דיאלוג הצטרפות */}
       {activeForm === "join" && (
-        <div className="dialog-overlay" onClick={closeDialog}>
-          <div className="dialog" onClick={(e) => e.stopPropagation()}>
-            <button className="dialog-close" onClick={closeDialog}>
-              <X size={16} />
+        <div
+          className="dialog-overlay"
+          onClick={closeDialog}
+          aria-hidden="true"
+        >
+          <div
+            ref={dialogRef}
+            className="dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-label="טופס הצטרפות לצוות"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="dialog-close"
+              onClick={closeDialog}
+              aria-label="סגירת טופס"
+            >
+              <X size={16} aria-hidden="true" />
             </button>
             <InterestForm onClose={closeDialog} />
           </div>

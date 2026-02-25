@@ -1,15 +1,34 @@
 @import url("https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700&display=swap");
 
 :root {
-  --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   --primary-color: #4a00e0;
   --secondary-color: #8e2de2;
   --text-color: #333;
   --glass-bg: rgba(255, 255, 255, 0.25);
   --glass-border: 1px solid rgba(255, 255, 255, 0.4);
   --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  --error-color: #c0392b;
+  --error-bg: #fdecea;
 }
 
+/* ════════════════════════════════════════════
+   נגישות: הסתרה ויזואלית
+════════════════════════════════════════════ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ════════════════════════════════════════════
+   בסיס
+════════════════════════════════════════════ */
 body {
   font-family: "Assistant", sans-serif;
 }
@@ -27,13 +46,22 @@ body {
   align-items: center;
 }
 
-h1 {
-  font-size: 2.5rem;
+.admin-container h1,
+.admin-container h2 {
   font-weight: 700;
   color: #2c3e50;
   margin: 2rem;
 }
+.admin-container h1 {
+  font-size: 2.5rem;
+}
+.admin-container h2 {
+  font-size: 2rem;
+}
 
+/* ════════════════════════════════════════════
+   כפתור הוספת דיל
+════════════════════════════════════════════ */
 .add-deal-btn {
   background: linear-gradient(
     45deg,
@@ -50,12 +78,19 @@ h1 {
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
-
 .add-deal-btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
 }
+.add-deal-btn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px var(--primary-color);
+}
 
+/* ════════════════════════════════════════════
+   טבלה
+════════════════════════════════════════════ */
 .deals-table-container {
   background: var(--glass-bg);
   border-radius: 20px;
@@ -77,14 +112,12 @@ td {
   text-align: right;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
-
 th {
   font-weight: 700;
   font-size: 0.9rem;
   text-transform: uppercase;
   color: #444;
 }
-
 tbody tr:last-child td {
   border-bottom: none;
 }
@@ -96,6 +129,7 @@ tbody tr:hover {
   display: flex;
   gap: 8px;
   justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 .action-btn {
@@ -119,14 +153,25 @@ tbody tr:hover {
   transform: scale(1.05);
   opacity: 0.9;
 }
+.action-btn:focus-visible {
+  outline: 3px solid #2c3e50;
+  outline-offset: 2px;
+}
 
+.loading-indicator {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+/* ════════════════════════════════════════════
+   מודאל
+════════════════════════════════════════════ */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
@@ -135,60 +180,280 @@ tbody tr:hover {
 }
 
 .modal-content {
-  background: var(--glass-bg);
+  background: white;
   padding: 30px;
   border-radius: 20px;
   border: var(--glass-border);
   width: 90%;
-  max-width: 600px;
+  max-width: 620px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: var(--shadow);
+  outline: none;
+  direction: rtl;
 }
 .modal-content h2 {
   margin-top: 0;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   color: #2c3e50;
   text-align: center;
 }
 
+/* ════════════════════════════════════════════
+   מודאל אישור
+════════════════════════════════════════════ */
+.confirm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.confirm-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  direction: rtl;
+  outline: none;
+}
+
+.confirm-modal h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
+  color: #2c3e50;
+}
+
+.confirm-modal p {
+  color: #555;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.confirm-modal-actions button {
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-family: "Assistant", sans-serif;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.confirm-cancel-btn {
+  background: #eee;
+  color: #333;
+}
+.confirm-cancel-btn:hover {
+  background: #ddd;
+}
+
+.confirm-delete-btn {
+  background: #c0392b;
+  color: white;
+}
+.confirm-delete-btn:hover {
+  background: #a93226;
+}
+
+.confirm-modal-actions button:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ════════════════════════════════════════════
+   הודעת סטטוס
+════════════════════════════════════════════ */
+.status-toast-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-toast {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  position: relative;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #c0392b;
+  direction: rtl;
+}
+
+.status-toast-close {
+  margin-top: 1rem;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background: #eee;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: "Assistant", sans-serif;
+}
+.status-toast-close:hover {
+  background: #ddd;
+}
+.status-toast-close:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ════════════════════════════════════════════
+   סיכום שגיאות
+════════════════════════════════════════════ */
+.error-summary {
+  background: var(--error-bg);
+  border: 2px solid var(--error-color);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  color: var(--error-color);
+  font-size: 0.95rem;
+}
+.error-summary strong {
+  display: block;
+  margin-bottom: 8px;
+}
+.error-summary ul {
+  margin: 0;
+  padding-right: 20px;
+}
+.error-summary li {
+  margin-bottom: 4px;
+}
+
+/* ════════════════════════════════════════════
+   טופס
+════════════════════════════════════════════ */
 .deal-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 4px;
 }
-.deal-form input {
-  padding: 12px;
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.form-field label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.req {
+  color: var(--error-color);
+  margin-right: 2px;
+}
+
+.optional {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: #777;
+  margin-right: 4px;
+}
+
+.required-note {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 4px 0 12px;
+}
+
+.deal-form input,
+.deal-form textarea,
+.deal-form select {
+  padding: 11px 13px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.4);
+  border: 1.5px solid #ccc;
+  background: #fafafa;
   font-size: 1rem;
   color: var(--text-color);
   font-family: "Assistant", sans-serif;
+  direction: rtl;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
-.deal-form input::placeholder {
-  color: #555;
+.deal-form input::placeholder,
+.deal-form textarea::placeholder {
+  color: #aaa;
 }
-.deal-form input:focus {
+
+.deal-form input:focus,
+.deal-form textarea:focus,
+.deal-form select:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(74, 0, 224, 0.2);
+  box-shadow: 0 0 0 3px rgba(74, 0, 224, 0.18);
+  background: #fff;
+}
+
+.deal-form input.input-invalid,
+.deal-form textarea.input-invalid {
+  border-color: var(--error-color);
+  background: #fff8f8;
+}
+.deal-form input.input-invalid:focus,
+.deal-form textarea.input-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.2);
+}
+
+.field-error-msg {
+  font-size: 0.85rem;
+  color: var(--error-color);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.field-error-msg::before {
+  content: "⚠";
+  font-size: 0.9rem;
 }
 
 .deal-form fieldset {
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
-  padding: 15px;
+  border: 1.5px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
 }
 .deal-form legend {
   padding: 0 10px;
-  color: #444;
-  font-weight: 600;
+  color: #333;
+  font-weight: 700;
+  font-size: 1rem;
 }
 
+/* ════════════════════════════════════════════
+   אזור העלאת תמונה (דילים)
+════════════════════════════════════════════ */
 .upload-area {
   border: 2px dashed #ccc;
   border-radius: 10px;
@@ -196,24 +461,35 @@ tbody tr:hover {
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: #fafafa;
 }
 .upload-area:hover {
   border-color: var(--primary-color);
-  background-color: rgba(74, 0, 224, 0.05);
+  background: rgba(74, 0, 224, 0.04);
 }
+.upload-area:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+  border-color: var(--primary-color);
+}
+.upload-area.upload-invalid {
+  border-color: var(--error-color);
+  background: #fff8f8;
+}
+
 .image-preview {
   max-width: 100%;
   max-height: 200px;
   border-radius: 8px;
   object-fit: cover;
 }
+
 .upload-placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #555;
+  color: #777;
   min-height: 100px;
 }
 .upload-placeholder span {
@@ -221,9 +497,12 @@ tbody tr:hover {
   margin-bottom: 5px;
 }
 .upload-placeholder small {
-  color: #777;
+  color: #aaa;
 }
 
+/* ════════════════════════════════════════════
+   פעולות מודאל
+════════════════════════════════════════════ */
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -231,13 +510,14 @@ tbody tr:hover {
   margin-top: 20px;
 }
 .modal-actions button {
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 11px 22px;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
   font-weight: 700;
   font-size: 1rem;
   font-family: "Assistant", sans-serif;
+  transition: all 0.2s ease;
 }
 .modal-actions button[type="submit"] {
   background: linear-gradient(
@@ -247,7 +527,191 @@ tbody tr:hover {
   );
   color: white;
 }
+.modal-actions button[type="submit"]:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+.modal-actions button[type="submit"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 .modal-actions button[type="button"] {
   background: #eee;
   color: #333;
+}
+.modal-actions button[type="button"]:hover {
+  background: #ddd;
+}
+.modal-actions button:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ════════════════════════════════════════════
+   ✅ מודאל עריכת ביקורת — כוכבי דירוג
+════════════════════════════════════════════ */
+.review-edit-stars {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.review-edit-star {
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 1.75rem;
+  color: #ccc;
+  padding: 2px 4px;
+  border-radius: 6px;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.review-edit-star.active {
+  color: #ffc107;
+}
+
+.review-edit-star:hover {
+  color: #ffc107;
+}
+
+.review-edit-star:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ════════════════════════════════════════════
+   ✅ מודאל עריכת ביקורת — ניהול תמונות
+════════════════════════════════════════════ */
+.review-images-fieldset {
+  border: 1.5px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 10px;
+}
+
+.review-images-fieldset legend {
+  padding: 0 10px;
+  color: #333;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.review-edit-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.75rem;
+}
+
+.review-edit-image-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #eee;
+}
+
+.review-edit-image-item.new-image {
+  border-color: #2980b9;
+}
+
+.review-edit-image-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.review-edit-image-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(192, 57, 43, 0.9);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.review-edit-image-remove:hover {
+  background: #c0392b;
+}
+
+.review-edit-image-remove:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 1px;
+}
+
+.new-image-badge {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  background: #2980b9;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.review-add-images-btn {
+  margin-top: 0.75rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  border: 2px dashed #aaa;
+  background: transparent;
+  color: #555;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: "Assistant", sans-serif;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.review-add-images-btn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: rgba(74, 0, 224, 0.04);
+}
+
+.review-add-images-btn:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ════════════════════════════════════════════
+   מודאל עריכת ביקורת — רוחב נוסף
+════════════════════════════════════════════ */
+.review-edit-modal {
+  max-width: 650px;
+}
+
+/* ════════════════════════════════════════════
+   הסרת outline כשאין focus-visible
+════════════════════════════════════════════ */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .add-deal-btn,
+  .action-btn,
+  .modal-actions button,
+  .review-edit-star {
+    transition: none;
+  }
+  .add-deal-btn:hover,
+  .action-btn:hover {
+    transform: none;
+  }
 }

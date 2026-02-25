@@ -1,7 +1,10 @@
+/* ===========================
+   WRAPPER
+=========================== */
 .process-wrapper {
   position: relative;
-  padding: 60px 20px;
-  background: none; /* ננטרל רקע קודם אם יש */
+  padding: 120px 20px;
+  background: linear-gradient(to bottom, #f9fafb, #ffffff);
   overflow: hidden;
 }
 
@@ -14,13 +17,31 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.35; /* עדין */
-  filter: blur(6px); /* רך */
-  transform: scale(1.05); /* למנוע קצוות */
+  opacity: 0.35;
+  filter: blur(6px);
+  transform: scale(1.05);
   z-index: 0;
 }
 
-/* HEADER */
+/* ===========================
+   BUBBLE
+=========================== */
+.process-bubble {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  border-radius: 48px;
+  backdrop-filter: blur(22px);
+  box-shadow:
+    0 40px 90px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+}
+
+/* ===========================
+   HEADER
+=========================== */
 .process-header {
   text-align: center;
   margin-bottom: 30px;
@@ -49,14 +70,18 @@
   font-size: 0.8rem;
 }
 
-/* STEPS */
+/* ===========================
+   STEPS (ol)
+=========================== */
 .steps {
   max-width: 720px;
   margin: 0 auto;
   position: relative;
+  list-style: none;
+  padding: 0;
 }
 
-/* FLOW LINE */
+/* קו זרימה */
 .steps::before {
   content: "";
   position: absolute;
@@ -85,7 +110,9 @@
   }
 }
 
-/* STEP CARD */
+/* ===========================
+   STEP CARD
+=========================== */
 .step-card {
   display: flex;
   gap: 14px;
@@ -106,7 +133,9 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
-/* ICON */
+/* ===========================
+   ICON BOX
+=========================== */
 .icon-box {
   position: relative;
   width: 72px;
@@ -136,7 +165,6 @@
 .step-card:hover .icon-box::after {
   opacity: 1;
 }
-
 .step-card:hover .icon-box {
   transform: rotate(-3deg) scale(1.05);
 }
@@ -157,7 +185,9 @@
   justify-content: center;
 }
 
-/* TEXT */
+/* ===========================
+   STEP CONTENT
+=========================== */
 .step-content h3 {
   margin: 0 0 6px;
   font-size: 23px;
@@ -171,7 +201,9 @@
   font-size: 0.8rem;
 }
 
-/* PLANE BETWEEN STEPS */
+/* ===========================
+   FLOW ARROW
+=========================== */
 .flow-arrow {
   display: flex;
   justify-content: center;
@@ -179,7 +211,9 @@
   opacity: 0.9;
 }
 
-/* CTA */
+/* ===========================
+   CTA
+=========================== */
 .cta {
   display: block;
   margin: 70px auto 0;
@@ -214,25 +248,17 @@
   transition: transform 0.6s ease;
 }
 
-.process-wrapper {
-  position: relative;
-  padding: 120px 20px;
-  background: linear-gradient(to bottom, #f9fafb, #ffffff);
-}
-
-/* הבועה הגדולה */
-.process-bubble {
-  position: relative;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  border-radius: 48px;
-
-  background-size: cover;
-  background-position: center;
-  backdrop-filter: blur(22px);
-  box-shadow:
-    0 40px 90px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  overflow: hidden;
+/* ===========================
+   ✅ prefers-reduced-motion
+=========================== */
+@media (prefers-reduced-motion: reduce) {
+  .steps::before {
+    animation: none;
+  }
+  .step-card,
+  .icon-box,
+  .icon-box::after,
+  .cta::after {
+    transition: none;
+  }
 }
