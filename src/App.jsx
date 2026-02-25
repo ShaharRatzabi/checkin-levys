@@ -22,7 +22,7 @@ import FloatingBubble from "./components/FloatingBubble.jsx";
 import AdminPage from "./pages/AdminPage/AdminPage.jsx";
 import LoginPage from "./pages/LoginPage/LoginPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import ScrollToTop from "./components/ScrollToTop.jsx";
+import ScrollToTop from "./components/Scrolltotop";
 import AccessibilityPage from "./pages/AcccessibilityPage/Accessibilitypage";
 // import PrivacyPage from "./pages/PrivacyPage/PrivacyPage.jsx";
 // import TermsPage from "./pages/TermsPage/TermsPage.jsx";
