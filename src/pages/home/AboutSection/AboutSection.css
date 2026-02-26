@@ -193,10 +193,6 @@
   font-weight: bold;
 }
 
-.about-section__video {
-  display: none;
-}
-
 .gradient-orb {
   position: absolute;
   border-radius: 50%;
@@ -338,39 +334,107 @@
   left: auto;
 }
 
-/* ✅ כפתור עצירת וידאו */
-.video-wrapper {
+/* ═══════════════════════════════
+   📺 Radio Card (About page style)
+═══════════════════════════════ */
+.about-section__video {
+  display: none;
+}
+
+.radio-card {
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.1)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.radio-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.radio-card:focus-within {
+  outline: 3px solid #e76d2c;
+  outline-offset: 2px;
+  border-radius: 24px;
+}
+
+.radio-iframe-wrapper {
   position: relative;
   width: 100%;
-  height: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
 }
 
-.video-pause-btn {
+.radio-iframe-wrapper iframe {
   position: absolute;
-  bottom: 0.75rem;
-  left: 0.75rem;
-  z-index: 10;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   border: none;
-  border-radius: 8px;
-  padding: 0.4rem 0.75rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  backdrop-filter: blur(4px);
 }
 
-.video-pause-btn:hover {
-  background: rgba(0, 0, 0, 0.8);
+.radio-caption {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  direction: rtl;
 }
 
-.video-pause-btn:focus-visible {
-  outline: 3px solid white;
-  outline-offset: 2px;
+.radio-caption-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(231, 109, 44, 0.12);
+  color: #d4703f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
+.radio-caption-text {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.radio-caption-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #1f2937;
+}
+
+.radio-caption-sub {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════
+   Reduced Motion
+═══════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .radio-card {
+    transition: none;
+  }
+  .radio-card:hover {
+    transform: none;
+  }
+}
+
+/* ═══════════════════════════════
+   Responsive
+═══════════════════════════════ */
 @media (min-width: 768px) {
   .about-section h2 {
     font-size: 3.5rem;
@@ -401,20 +465,7 @@
     position: relative;
     width: 100%;
     max-width: 550px;
-    aspect-ratio: 16 / 9;
     margin: 2rem auto 0;
-    border-radius: 22px;
-    overflow: hidden;
-    background: #000;
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
-  }
-
-  .about-section__video iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
   }
 
   .about-section-content {

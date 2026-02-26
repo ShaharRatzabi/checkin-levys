@@ -1,46 +1,32 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import "./AboutSection.css";
 import { Link } from "react-router-dom";
+import { Radio } from "lucide-react";
 
 import Dialog from "../../../components/Dialog.jsx";
 import LiranImg from "../../../assets/images/Liran-Roi.png";
 import LiranPopupImg from "../../../assets/images/Liran.png";
 import RoiPopupImg from "../../../assets/images/Roi.png";
 
+const RADIO_VIDEO = {
+  id: "YCakIeX9ZMI",
+  title: "Check-In בשידור רדיו",
+};
+
 function AboutSection() {
   const [activePerson, setActivePerson] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const iframeRef = useRef(null);
 
   useEffect(() => {
     AOS.init({ duration: 1000, disable: "reduced-motion" });
-
-    // ✅ אם המשתמש ביקש הפחתת תנועה — לא מריצים אוטומטית
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (prefersReduced) setIsPlaying(false);
   }, []);
 
-  // ✅ שליטה בנגינה דרך YouTube postMessage API
-  const handleVideoToggle = () => {
-    if (!iframeRef.current) return;
-    const command = isPlaying ? "pauseVideo" : "playVideo";
-    iframeRef.current.contentWindow.postMessage(
-      JSON.stringify({ event: "command", func: command }),
-      "https://www.youtube.com",
-    );
-    setIsPlaying(!isPlaying);
-  };
-
-  // ✅ src עם enablejsapi=1 לשליטה + controls=1 לנגישות
-  const videoSrc = `https://www.youtube.com/embed/Ra-5BWqqulc?autoplay=${isPlaying ? 1 : 0}&mute=1&controls=1&modestbranding=1&rel=0&playsinline=1&loop=1&playlist=Ra-5BWqqulc&enablejsapi=1`;
+  const videoSrc = `https://www.youtube.com/embed/${RADIO_VIDEO.id}?controls=1&modestbranding=1&rel=0&playsinline=1`;
 
   return (
     <section className="about-section" aria-label="אודות Check-In">
-      {/* ✅ כדורי רקע דקורטיביים */}
+      {/* כדורי רקע דקורטיביים */}
       <div className="about-orbs-background" aria-hidden="true">
         <div className="floating-orb orb-1"></div>
         <div className="floating-orb orb-2"></div>
@@ -129,29 +115,29 @@ function AboutSection() {
           </p>
         </Dialog>
 
-        {/*
-          ✅ video-wrapper עם כפתור עצירה נגיש
-          ✅ הוסר ::after שחסם את כפתורי YouTube
-          ✅ controls=1 — משתמש יכול לשלוט
-          ✅ enablejsapi=1 — שליטה דרך postMessage
-        */}
-        <div className="about-section__video">
-          <div className="video-wrapper">
-            <iframe
-              ref={iframeRef}
-              src={videoSrc}
-              title="קטע רדיו של Check-In — סוכנות הנסיעות שלנו"
-              allow="autoplay; encrypted-media; picture-in-picture"
-              allowFullScreen
-            />
-            {/* ✅ כפתור עצירה נגיש — חובה לפי WCAG */}
-            <button
-              className="video-pause-btn"
-              onClick={handleVideoToggle}
-              aria-label={isPlaying ? "השהיית הסרטון" : "הפעלת הסרטון"}
-            >
-              {isPlaying ? "⏸ השהה" : "▶ הפעל"}
-            </button>
+        {/* סרטון רדיו — בסגנון עמוד האודות */}
+        <div className="about-section__video" data-aos="fade-up">
+          <div className="radio-card">
+            <div className="radio-iframe-wrapper">
+              <iframe
+                src={videoSrc}
+                title={RADIO_VIDEO.title}
+                allow="encrypted-media; picture-in-picture"
+                allowFullScreen
+                loading="lazy"
+              />
+            </div>
+            <div className="radio-caption">
+              <div className="radio-caption-icon" aria-hidden="true">
+                <Radio size={18} />
+              </div>
+              <div className="radio-caption-text">
+                <span className="radio-caption-title">הראיון שלנו ברדיו</span>
+                <span className="radio-caption-sub">
+                  בעלי Check-In מספרים על החזון והחוויה
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

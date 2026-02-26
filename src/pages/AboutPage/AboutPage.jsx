@@ -6,6 +6,7 @@ import {
   PlayCircle,
   Radio,
   Clapperboard,
+  UsersRound,
 } from "lucide-react";
 import logoImg from "../../assets/images/logo.png";
 import backgroundImage from "../../assets/images/background-about.png";
@@ -25,14 +26,14 @@ import backgroundImage from "../../assets/images/background-about.png";
 */
 
 const SHORTS_VIDEOS = [
-  { id: "SHORT_ID_1", title: "שורט 1 – Check-In" },
-  { id: "SHORT_ID_2", title: "שורט 2 – Check-In" },
-  { id: "SHORT_ID_3", title: "שורט 3 – Check-In" },
-  { id: "SHORT_ID_4", title: "שורט 4 – Check-In" },
+  { id: "4p_oA-xNzAc", title: "הצטרפו לצוות שלנו" },
+  { id: "iT40MbjMQQs", title: "הדיל הבא שלכם רק דרכנו" },
+  // { id: "SHORT_ID_3", title: "שורט 3 – Check-In" },
+  // { id: "SHORT_ID_4", title: "שורט 4 – Check-In" },
 ];
 
 const RADIO_VIDEO = {
-  id: "RADIO_VIDEO_ID",
+  id: "YCakIeX9ZMI",
   title: "Check-In בשידור רדיו",
 };
 
@@ -250,6 +251,7 @@ export default function AboutPage() {
         .text-red-500 { color: #ef4444; }
         .text-amber-500 { color: #f59e0b; }
         .text-pink-500 { color: #ec4899; }
+        .text-blue-500 { color: #3b82f6; }
 
         .promise-tagline {
           font-size: 1.5rem;
@@ -498,13 +500,9 @@ export default function AboutPage() {
                 role="list"
                 aria-label="סרטונים קצרים"
               >
-                {SHORTS_VIDEOS.map((short, index) => (
+                {SHORTS_VIDEOS.map((short) => (
                   <div key={short.id} className="short-card" role="listitem">
                     <div className="short-iframe-wrapper">
-                      {/* 
-                        📌 החלף SHORT_ID_1 וכו׳ ב-ID האמיתי מ-YouTube
-                        לדוגמה: https://youtube.com/shorts/abc123 → id = "abc123"
-                      */}
                       <iframe
                         src={`https://www.youtube.com/embed/${short.id}`}
                         title={short.title}
@@ -540,14 +538,10 @@ export default function AboutPage() {
 
               <div className="radio-card">
                 <div className="radio-iframe-wrapper">
-                  {/* 
-                    📌 החלף RADIO_VIDEO_ID ב-ID האמיתי מ-YouTube
-                    לדוגמה: https://youtube.com/watch?v=xyz789 → id = "xyz789"
-                  */}
                   <iframe
-                    src={`https://www.youtube.com/embed/${RADIO_VIDEO.id}`}
+                    src={`https://www.youtube.com/embed/${RADIO_VIDEO.id}?controls=1&modestbranding=1&rel=0&playsinline=1`}
                     title={RADIO_VIDEO.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="encrypted-media; picture-in-picture"
                     allowFullScreen
                     loading="lazy"
                   />
@@ -603,11 +597,11 @@ export default function AboutPage() {
                     <h3>חבילות ספורט</h3>
                   </li>
                   <li className="glass-card expertise-item">
-                    <Heart
-                      className="expertise-icon text-amber-500"
+                    <UsersRound
+                      className="expertise-icon text-blue-500"
                       aria-hidden="true"
                     />
-                    <h3>זוגות</h3>
+                    <h3>חברים</h3>
                   </li>
                   <li className="glass-card expertise-item">
                     <Heart
