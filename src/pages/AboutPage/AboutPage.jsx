@@ -250,6 +250,7 @@ export default function AboutPage() {
         }
 
 
+
         .about-hero-subtitle {
           font-size: 1.5rem;
           color: #1f2937;
@@ -288,7 +289,8 @@ export default function AboutPage() {
         @media (min-width: 768px) {
           .expertise-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
           .hero-glass { flex-direction: row; }
-          .background-img { width: 900px; align-self: center; }
+          .background-img {  width:498px;
+        height:498px;  align-self: center; }
         }
 
         .expertise-items-grid {
