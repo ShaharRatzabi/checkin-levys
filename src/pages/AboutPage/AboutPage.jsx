@@ -290,7 +290,7 @@ export default function AboutPage() {
           .expertise-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
           .hero-glass { flex-direction: row; }
           .background-img {  width:498px;
-        height:498px;  align-self: center; }
+        height:498px;  align-self: center; padding:30px;}
         }
 
         .expertise-items-grid {
