@@ -403,10 +403,11 @@ export default function Deals() {
           border-color: #ddd;
         }
 
+        /* ✅ תוקן: רקע כהה יותר לניגודיות 4.61:1 */
         .filter-nav-item.active {
-          background: var(--primary-orange);
+          background: #b8521b;
           color: white;
-          box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+          box-shadow: 0 4px 15px rgba(184, 82, 27, 0.3);
         }
 
         .filter-nav-item:focus-visible {
@@ -462,14 +463,15 @@ export default function Deals() {
           color: #2d3748;
         }
 
+        /* ✅ תוקן: טקסט כהה יותר לניגודיות 5.2:1 */
         .deals-tag {
-          background: rgba(255, 107, 53, 0.1);
-          color: var(--primary-orange);
+          background: rgba(255, 107, 53, 0.14);
+          color: #9a4a1b;
           padding: 6px 14px;
           border-radius: 8px;
           font-size: 0.95rem;
           font-weight: 700;
-          border: 1px solid rgba(255, 107, 53, 0.2);
+          border: 1px solid rgba(255, 107, 53, 0.25);
         }
 
         .deals-grid {

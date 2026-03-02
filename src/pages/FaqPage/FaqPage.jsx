@@ -66,6 +66,182 @@ const FAQ_DATA = [
   },
 ];
 
+/* ✅ סימני שאלה קטנים — ברקע העמוד כולו */
+const BG_QUESTION_MARKS = [
+  {
+    id: 1,
+    top: "5%",
+    right: "4%",
+    size: "1.8rem",
+    opacity: 0.08,
+    delay: "0s",
+    duration: "9s",
+  },
+  {
+    id: 2,
+    top: "12%",
+    left: "6%",
+    size: "1.4rem",
+    opacity: 0.06,
+    delay: "-2s",
+    duration: "11s",
+  },
+  {
+    id: 3,
+    top: "28%",
+    right: "8%",
+    size: "2rem",
+    opacity: 0.07,
+    delay: "-4s",
+    duration: "8s",
+  },
+  {
+    id: 4,
+    top: "38%",
+    left: "3%",
+    size: "1.5rem",
+    opacity: 0.05,
+    delay: "-1s",
+    duration: "10s",
+  },
+  {
+    id: 5,
+    top: "52%",
+    right: "2%",
+    size: "1.3rem",
+    opacity: 0.07,
+    delay: "-3s",
+    duration: "9.5s",
+  },
+  {
+    id: 6,
+    top: "65%",
+    left: "7%",
+    size: "1.8rem",
+    opacity: 0.06,
+    delay: "-5s",
+    duration: "8.5s",
+  },
+  {
+    id: 7,
+    top: "75%",
+    right: "6%",
+    size: "1.6rem",
+    opacity: 0.08,
+    delay: "-6s",
+    duration: "10.5s",
+  },
+  {
+    id: 8,
+    top: "85%",
+    left: "4%",
+    size: "1.2rem",
+    opacity: 0.05,
+    delay: "-1.5s",
+    duration: "7.5s",
+  },
+  {
+    id: 9,
+    top: "20%",
+    left: "15%",
+    size: "1.1rem",
+    opacity: 0.04,
+    delay: "-3.5s",
+    duration: "12s",
+  },
+  {
+    id: 10,
+    top: "45%",
+    right: "12%",
+    size: "1.6rem",
+    opacity: 0.06,
+    delay: "-7s",
+    duration: "9s",
+  },
+  {
+    id: 11,
+    top: "92%",
+    right: "15%",
+    size: "1.4rem",
+    opacity: 0.05,
+    delay: "-2.5s",
+    duration: "11s",
+  },
+  {
+    id: 12,
+    top: "58%",
+    left: "12%",
+    size: "1.3rem",
+    opacity: 0.07,
+    delay: "-4.5s",
+    duration: "8s",
+  },
+];
+
+/* ✅ סימני שאלה גדולים — בתוך דיב הכותרת (hero) */
+const HERO_QUESTION_MARKS = [
+  {
+    id: 1,
+    top: "5%",
+    right: "4%",
+    size: "5rem",
+    opacity: 0.12,
+    delay: "0s",
+    duration: "8s",
+    rotate: "-15deg",
+  },
+  {
+    id: 2,
+    top: "10%",
+    left: "5%",
+    size: "4.5rem",
+    opacity: 0.09,
+    delay: "-2s",
+    duration: "10s",
+    rotate: "20deg",
+  },
+  {
+    id: 3,
+    top: "55%",
+    right: "6%",
+    size: "5.5rem",
+    opacity: 0.1,
+    delay: "-4s",
+    duration: "9s",
+    rotate: "10deg",
+  },
+  {
+    id: 4,
+    top: "60%",
+    left: "3%",
+    size: "4rem",
+    opacity: 0.08,
+    delay: "-1s",
+    duration: "11s",
+    rotate: "-25deg",
+  },
+  {
+    id: 5,
+    top: "30%",
+    right: "2%",
+    size: "3.5rem",
+    opacity: 0.11,
+    delay: "-5s",
+    duration: "7.5s",
+    rotate: "30deg",
+  },
+  {
+    id: 6,
+    top: "75%",
+    left: "10%",
+    size: "3.8rem",
+    opacity: 0.07,
+    delay: "-3s",
+    duration: "9.5s",
+    rotate: "-10deg",
+  },
+];
+
 export default function FaqPage() {
   const [openItems, setOpenItems] = useState(new Set([1]));
 
@@ -152,6 +328,89 @@ export default function FaqPage() {
           66% { transform: translateY(-10px) rotate(-1deg); }
         }
 
+        /* ✅ סימני שאלה קטנים ברקע העמוד */
+        .bg-qmarks-container {
+          position: fixed;
+          inset: 0;
+          overflow: hidden;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .bg-qmark {
+          position: absolute;
+          font-weight: 700;
+          color: #e76d2c;
+          user-select: none;
+          line-height: 1;
+        }
+
+        /* ✅ סימני שאלה גדולים בכותרת */
+        .hero-qmarks-container {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .hero-qmark {
+          position: absolute;
+          font-weight: 800;
+          color: #e76d2c;
+          user-select: none;
+          line-height: 1;
+        }
+
+        /*
+         * ✅ נגישות — תקן ישראלי IS 5568 (מבוסס WCAG 2.1 AA):
+         * - קריטריון 2.3.1: אין הבהוב מעל 3 פעמים בשנייה
+         * - קריטריון 2.3.3: אנימציה מבוטלת בהעדפת המשתמש
+         * האנימציות איטיות (7-12 שניות למחזור), עדינות ולא מהבהבות
+         */
+        @media (prefers-reduced-motion: no-preference) {
+          .bg-qmark {
+            animation: bgQmarkFloat ease-in-out infinite;
+          }
+          .hero-qmark {
+            animation: heroQmarkFloat ease-in-out infinite;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .bg-qmark,
+          .hero-qmark {
+            animation: none !important;
+          }
+        }
+
+        @keyframes bgQmarkFloat {
+          0%, 100% {
+            transform: translateY(0) rotate(0deg);
+          }
+          25% {
+            transform: translateY(-8px) rotate(5deg);
+          }
+          50% {
+            transform: translateY(-4px) rotate(-3deg);
+          }
+          75% {
+            transform: translateY(-10px) rotate(2deg);
+          }
+        }
+
+        @keyframes heroQmarkFloat {
+          0%, 100% {
+            transform: translateY(0) scale(1);
+          }
+          30% {
+            transform: translateY(-18px) scale(1.04);
+          }
+          60% {
+            transform: translateY(-8px) scale(0.97);
+          }
+        }
+
         .gradient-text {
           background-image: linear-gradient(135deg, #e76d2c 0%, #e76d2c 100%);
           -webkit-background-clip: text;
@@ -166,6 +425,7 @@ export default function FaqPage() {
           border: 1px solid rgba(255, 255, 255, 0.3);
           border-radius: 24px;
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          flex-direction: column;
         }
 
         .hero-glass {
@@ -178,6 +438,8 @@ export default function FaqPage() {
           max-width: 56rem;
           margin: 0 auto;
           padding: 3rem;
+          position: relative;
+          overflow: hidden;
         }
 
         .page-header {
@@ -189,6 +451,8 @@ export default function FaqPage() {
           font-size: 3.75rem;
           font-weight: 700;
           margin-bottom: 1.5rem;
+          position: relative;
+          z-index: 2;
         }
 
         .hero-subtitle {
@@ -197,12 +461,16 @@ export default function FaqPage() {
           max-width: 48rem;
           margin: 0 auto;
           line-height: 1.625;
+          position: relative;
+          z-index: 2;
         }
 
         .hero-icon-wrapper {
           display: flex;
           justify-content: center;
           margin-bottom: 1.5rem;
+          position: relative;
+          z-index: 2;
         }
 
         .service-icon {
@@ -218,6 +486,8 @@ export default function FaqPage() {
           justify-content: center;
           gap: 2rem;
           margin-top: 3rem;
+          position: relative;
+          z-index: 2;
         }
 
         .feature-item {
@@ -315,16 +585,65 @@ export default function FaqPage() {
       `}</style>
 
       <div className="page-container">
-        {/* ✅ רקע דקורטיבי */}
+        {/* ✅ רקע דקורטיבי — גרדיאנטים */}
         <div className="floating-bg-container" aria-hidden="true">
           <div className="floating-element"></div>
           <div className="floating-element"></div>
           <div className="floating-element"></div>
         </div>
 
+        {/* ✅ סימני שאלה קטנים ברקע כל העמוד */}
+        <div className="bg-qmarks-container" aria-hidden="true">
+          {BG_QUESTION_MARKS.map((qm) => (
+            <span
+              key={qm.id}
+              className="bg-qmark"
+              style={{
+                top: qm.top,
+                right: qm.right || "auto",
+                left: qm.left || "auto",
+                fontSize: qm.size,
+                opacity: qm.opacity,
+                animationDuration: qm.duration,
+                animationDelay: qm.delay,
+              }}
+            >
+              ?
+            </span>
+          ))}
+        </div>
+
         <div className="content-wrapper">
           <header className="page-header">
             <div className="hero-glass">
+              {/*
+               * ✅ סימני שאלה גדולים דקורטיביים בכותרת
+               * - aria-hidden="true" — מוסתר מקוראי מסך
+               * - pointer-events: none — לא חוסם אינטראקציה
+               * - אנימציה מבוטלת ב-prefers-reduced-motion: reduce (IS 5568 / WCAG 2.3.3)
+               * - אין הבהוב — עומד בקריטריון WCAG 2.3.1
+               */}
+              <div className="hero-qmarks-container" aria-hidden="true">
+                {HERO_QUESTION_MARKS.map((qm) => (
+                  <span
+                    key={qm.id}
+                    className="hero-qmark"
+                    style={{
+                      top: qm.top,
+                      right: qm.right || "auto",
+                      left: qm.left || "auto",
+                      fontSize: qm.size,
+                      opacity: qm.opacity,
+                      animationDuration: qm.duration,
+                      animationDelay: qm.delay,
+                      transform: `rotate(${qm.rotate})`,
+                    }}
+                  >
+                    ?
+                  </span>
+                ))}
+              </div>
+
               {/* ✅ אייקון דקורטיבי */}
               <div className="hero-icon-wrapper" aria-hidden="true">
                 <div className="service-icon">
@@ -332,7 +651,6 @@ export default function FaqPage() {
                 </div>
               </div>
 
-              {/* ✅ הוסר אמוג'י מהכותרת — קוראי מסך יקראו "נצנצים שאלות ותשובות" */}
               <h1 className="hero-title gradient-text">שאלות ותשובות</h1>
               <p className="hero-subtitle">
                 מצאו תשובות לכל השאלות שלכם על שירותי הנסיעות והטיולים שלנו
@@ -392,7 +710,6 @@ export default function FaqPage() {
                 הצוות שלנו כאן כדי לעזור לכם בכל שאלה או בקשה מיוחדת
               </p>
               <div className="cta-buttons">
-                {/* ✅ כפתור עם פעולה אמיתית */}
                 <button
                   className="button-primary"
                   onClick={handleContact}

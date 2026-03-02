@@ -53,7 +53,7 @@ function AboutSection() {
           >
             <h3 className="person-name">לירן לוי</h3>
             <p className="person-role">יועץ תיירות מוסמך</p>
-            <p className="person-quote">"הסיפוק שלי זה הכיף ונחת שלכם"</p>
+            <p className="person-quote">"הסיפוק שלי זה הכיף והנחת שלכם"</p>
             <button
               className="info-btn info-btn-liran"
               onClick={() => setActivePerson("liran")}

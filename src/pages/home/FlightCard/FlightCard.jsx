@@ -71,24 +71,27 @@ const FlightCard = ({
           }}
         />
 
+        {/* ✅ שכבת blur — זהה בכל גודל מסך */}
         <div className="blur-fade-layer" aria-hidden="true" />
 
-        {/* buffer אטום לטקסט – מובייל בלבד */}
-        {isMobile && (
-          <div
-            aria-hidden="true"
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: "55%",
-              zIndex: 5,
-              background: "#000000",
-              opacity: 0.55,
-            }}
-          />
-        )}
+        {/*
+         * ✅ שכבת ניגודיות — מבטיחה קריאות טקסט לבן
+         * על כל תמונת רקע (WCAG 1.4.3, ניגודיות 4.5:1)
+         */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: "70%",
+            zIndex: 4,
+            background:
+              "linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 60%, transparent 100%)",
+            pointerEvents: "none",
+          }}
+        />
 
         {/* תוכן הכרטיס */}
         <div

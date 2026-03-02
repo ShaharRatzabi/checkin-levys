@@ -10,6 +10,7 @@ import SriLankaImage from "../../assets/images/visas-srilanka.jpg";
 import ZanzibarImage from "../../assets/images/visas-zanzibar.jpg";
 import AzerbaijanImage from "../../assets/images/visas-azerbaijan.jpg";
 import SingaporeImage from "../../assets/images/visas-singapore.jpg";
+import PhilippinesImage from "../../assets/images/visas-philippines.jpg";
 import VisasHeaderImage from "../../assets/images/visas-header-image.jpg";
 
 const VISA_DATA = [
@@ -185,6 +186,29 @@ const VISA_DATA = [
       {
         name: "מילוי טופס SGAC אונליין",
         url: "https://did.li/SingaporeArrivalCard",
+      },
+    ],
+  },
+  {
+    id: 8,
+    country: "פיליפינים",
+    flag: "https://flagcdn.com/w40/ph.png",
+    title: "טופס e-Travel",
+    subtitle: "טופס כניסה אלקטרוני",
+    image: PhilippinesImage,
+    cost: "חינמי",
+    validity: "שהייה של עד 59 יום",
+    processingTime: "מינימום 72 שעות (3 ימים) לפני ההגעה",
+    requirements: [
+      "כל אדם הנכנס למדינה מחויב למלא טופס זה",
+      "כל נוסע חייב טופס נפרד וקוד אישי משלו",
+      "יש למלא את הטופס 72 שעות (3 ימים) לפני ההגעה למדינה",
+      "הטופס הינו חינמי לחלוטין",
+    ],
+    links: [
+      {
+        name: "מילוי טופס e-Travel אונליין",
+        url: "https://etravel.gov.ph/",
       },
     ],
   },

@@ -103,7 +103,7 @@
   border-radius: 12px;
 }
 
-/* ✅ footer עם שני תאריכים */
+/* ✅ תוקן: ניגודיות צבע מ-rgba(0,0,0,0.5) (#808080, 3.94:1) ל-#595959 (5.9:1) — עובר WCAG AA */
 .review-footer {
   margin-top: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -113,7 +113,7 @@
   align-items: center;
   gap: 1rem;
   font-size: 0.9rem;
-  color: rgba(0, 0, 0, 0.5);
+  color: #595959;
 }
 
 .review-footer-item {

@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Users,
   Heart,
   Award,
-  PlayCircle,
   Radio,
   Clapperboard,
   UsersRound,
+  ChevronLeft,
+  ChevronRight,
+  Film,
 } from "lucide-react";
 import logoImg from "../../assets/images/logo.png";
 import backgroundImage from "../../assets/images/background-about.png";
@@ -19,7 +21,11 @@ import backgroundImage from "../../assets/images/background-about.png";
      כתובת YouTube Short: https://youtube.com/shorts/ABC123
      → תשים רק את ה-ID: "ABC123"
   
-  2. סרטון רדיו — החלף את ה-VIDEO_ID ב-RADIO_VIDEO:
+  2. סרטונים קצרים — החלף את ה-VIDEO_ID ב-EXTRA_VIDEOS:
+     כתובת YouTube: https://www.youtube.com/watch?v=XYZ789
+     → תשים רק את ה-ID: "XYZ789"
+
+  3. סרטון רדיו — החלף את ה-VIDEO_ID ב-RADIO_VIDEO:
      כתובת YouTube: https://www.youtube.com/watch?v=XYZ789
      → תשים רק את ה-ID: "XYZ789"
   ═══════════════════════════════════════════════════
@@ -28,8 +34,14 @@ import backgroundImage from "../../assets/images/background-about.png";
 const SHORTS_VIDEOS = [
   { id: "4p_oA-xNzAc", title: "הצטרפו לצוות שלנו" },
   { id: "iT40MbjMQQs", title: "הדיל הבא שלכם רק דרכנו" },
-  // { id: "SHORT_ID_3", title: "שורט 3 – Check-In" },
-  // { id: "SHORT_ID_4", title: "שורט 4 – Check-In" },
+  { id: "e1QcBJ14Lbc", title: "הצטרפו לקבוצת הווצאפ" },
+  { id: "XBXpZZllBPQ", title: "הצטרפו לקבוצת הווצאפ" },
+  { id: "_I4wxm0aDnA", title: "הצטרפו לקבוצת הווצאפ" },
+];
+
+const EXTRA_VIDEOS = [
+  { id: "TqspSOd-bK0", title: "למה לסגור אצלנו" },
+  { id: "EqcLKCOE0bg", title: "Check-In כאן בשבילכם" },
 ];
 
 const RADIO_VIDEO = {
@@ -38,6 +50,51 @@ const RADIO_VIDEO = {
 };
 
 export default function AboutPage() {
+  const swiperRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  const updateScrollState = useCallback(() => {
+    const el = swiperRef.current;
+    if (!el) return;
+
+    const scrollLeft = el.scrollLeft;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+
+    setCanScrollRight(scrollLeft < -2);
+    setCanScrollLeft(Math.abs(scrollLeft) < maxScroll - 2);
+
+    /* Progress bar: 0 = start, 1 = end */
+    const progress = maxScroll > 0 ? Math.abs(scrollLeft) / maxScroll : 0;
+    setScrollProgress(Math.min(Math.max(progress, 0), 1));
+  }, []);
+
+  useEffect(() => {
+    const el = swiperRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("resize", updateScrollState);
+    return () => {
+      el.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [updateScrollState]);
+
+  const scroll = (direction) => {
+    const el = swiperRef.current;
+    if (!el) return;
+    const slides = el.querySelectorAll(".swiper-slide");
+    if (!slides.length) return;
+    const slideWidth = slides[0].offsetWidth + 16;
+    /* RTL: positive direction means scroll left (more negative scrollLeft) */
+    el.scrollBy({
+      left: -direction * slideWidth * 2,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <div style={{ direction: "rtl" }}>
       <style>{`
@@ -86,7 +143,12 @@ export default function AboutPage() {
           position: absolute;
           border-radius: 9999px;
           filter: blur(70px);
-          animation: float 6s ease-in-out infinite;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+          .floating-element {
+            animation: float 6s ease-in-out infinite;
+          }
         }
 
         .floating-element:nth-child(1) {
@@ -114,10 +176,15 @@ export default function AboutPage() {
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .floating-element { animation: none; }
-          .glass-card { transition: none; }
-          .video-bg { transition: none; }
-          .video-play-icon { transition: none; }
+          .floating-element { animation: none !important; }
+          .glass-card { transition: none !important; }
+          .short-card,
+          .radio-card,
+          .extra-video-card { transition: none !important; }
+          .short-card:hover,
+          .radio-card:hover,
+          .extra-video-card:hover { transform: none; }
+          .swiper-track { scroll-behavior: auto; }
         }
 
         /* ═══════════════════════════════
@@ -209,7 +276,6 @@ export default function AboutPage() {
         }
 
         .card-padding { padding: 2.5rem; }
-        .card-padding-sm { padding: 1rem; }
 
         /* ═══════════════════════════════
            Expertise
@@ -249,7 +315,6 @@ export default function AboutPage() {
 
         .text-orange-500 { color: #f97316; }
         .text-red-500 { color: #ef4444; }
-        .text-amber-500 { color: #f59e0b; }
         .text-pink-500 { color: #ec4899; }
         .text-blue-500 { color: #3b82f6; }
 
@@ -261,7 +326,7 @@ export default function AboutPage() {
         }
 
         /* ═══════════════════════════════
-           📹 Video Section Header
+           Video Section Header
         ═══════════════════════════════ */
         .video-section-header {
           display: flex;
@@ -292,18 +357,67 @@ export default function AboutPage() {
           color: white;
         }
 
+        .video-section-icon--warm {
+          background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+          color: white;
+        }
+
         /* ═══════════════════════════════
-           📹 Shorts Grid (4 videos)
+           🎠 Shorts Swiper (Instagram-style)
         ═══════════════════════════════ */
-        .shorts-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 1rem;
+        .swiper-container {
+          position: relative;
+        }
+
+        .swiper-track {
+          display: flex;
+          gap: 16px;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
+          padding: 8px 4px 16px 4px;
+          min-height: 360px;
+
+          /* Hide scrollbar */
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+
+        .swiper-track::-webkit-scrollbar {
+          display: none;
+        }
+
+        .swiper-track:focus-visible {
+          outline: 3px solid #e76d2c;
+          outline-offset: 3px;
+          border-radius: 12px;
+        }
+
+        .swiper-slide {
+          flex: 0 0 190px;
+          height: 340px;
+          scroll-snap-align: start;
+        }
+
+        @media (min-width: 769px) {
+          .swiper-slide {
+            flex: 0 0 190px;
+            height: 340px;
+          }
         }
 
         @media (max-width: 768px) {
-          .shorts-grid {
-            grid-template-columns: repeat(2, 1fr);
+          .swiper-slide {
+            flex: 0 0 160px;
+            height: 285px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .swiper-slide {
+            flex: 0 0 150px;
+            height: 268px;
           }
         }
 
@@ -314,6 +428,8 @@ export default function AboutPage() {
           border: 1px solid rgba(255, 255, 255, 0.25);
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
           transition: transform 0.3s ease, box-shadow 0.3s ease;
+          width: 100%;
+          height: 100%;
         }
 
         .short-card:hover {
@@ -324,22 +440,155 @@ export default function AboutPage() {
         .short-card:focus-within {
           outline: 3px solid #e76d2c;
           outline-offset: 2px;
-          border-radius: 20px;
         }
 
         .short-iframe-wrapper {
-          position: relative;
           width: 100%;
-          aspect-ratio: 9 / 16;
+          height: 100%;
           background: #000;
+          overflow: hidden;
         }
 
         .short-iframe-wrapper iframe {
+          width: 100%;
+          height: 100%;
+          border: none;
+          display: block;
+        }
+
+        /* Swiper Navigation Buttons */
+        .swiper-nav {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 20;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(10px);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+          color: #e76d2c;
+          transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .swiper-nav:hover {
+          background: white;
+          transform: translateY(-50%) scale(1.08);
+        }
+
+        .swiper-nav:focus-visible {
+          outline: 3px solid #e76d2c;
+          outline-offset: 3px;
+        }
+
+        .swiper-nav:disabled {
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        .swiper-nav--right {
+          right: -16px;
+        }
+
+        .swiper-nav--left {
+          left: -16px;
+        }
+
+        @media (max-width: 768px) {
+          .swiper-nav--right { right: -6px; }
+          .swiper-nav--left { left: -6px; }
+        }
+
+        /* Progress Bar */
+        .swiper-progress-track {
+          width: 120px;
+          height: 4px;
+          background: rgba(231, 109, 44, 0.15);
+          border-radius: 4px;
+          margin: 20px auto 0 auto;
+          overflow: hidden;
+        }
+
+        .swiper-progress-fill {
+          height: 100%;
+          background: linear-gradient(to right, #fb923c, #e76d2c);
+          border-radius: 4px;
+          transition: width 0.15s ease-out;
+          min-width: 20%;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .swiper-nav {
+            transition: none;
+          }
+          .swiper-nav:hover {
+            transform: translateY(-50%);
+          }
+          .swiper-progress-fill {
+            transition: none;
+          }
+        }
+
+        /* ═══════════════════════════════
+           📹 Extra Videos Grid (2 videos)
+        ═══════════════════════════════ */
+        .extra-videos-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1.25rem;
+        }
+
+        @media (max-width: 600px) {
+          .extra-videos-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .extra-video-card {
+          border-radius: 24px;
+          overflow: hidden;
+          background: linear-gradient(145deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .extra-video-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .extra-video-card:focus-within {
+          outline: 3px solid #e76d2c;
+          outline-offset: 2px;
+        }
+
+        .extra-iframe-wrapper {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          background: #000;
+        }
+
+        .extra-iframe-wrapper iframe {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
           border: none;
+        }
+
+        .extra-video-caption {
+          padding: 1rem 1.25rem;
+          font-weight: 700;
+          font-size: 1rem;
+          color: #1f2937;
         }
 
         /* ═══════════════════════════════
@@ -366,7 +615,6 @@ export default function AboutPage() {
         .radio-card:focus-within {
           outline: 3px solid #e76d2c;
           outline-offset: 2px;
-          border-radius: 24px;
         }
 
         .radio-iframe-wrapper {
@@ -419,20 +667,6 @@ export default function AboutPage() {
           color: #9ca3af;
           font-weight: 500;
         }
-
-        /* ═══════════════════════════════
-           Reduced Motion
-        ═══════════════════════════════ */
-        @media (prefers-reduced-motion: reduce) {
-          .short-card,
-          .radio-card {
-            transition: none;
-          }
-          .short-card:hover,
-          .radio-card:hover {
-            transform: none;
-          }
-        }
       `}</style>
 
       <div className="page-container">
@@ -478,7 +712,7 @@ export default function AboutPage() {
               </div>
             </section>
 
-            {/* ═══ צפו בנו בפעולה — Shorts ═══ */}
+            {/* ═══ צפו בנו בפעולה — Shorts Swiper ═══ */}
             <section className="content-section" aria-label="צפו בנו בפעולה">
               <div className="video-section-header">
                 <div
@@ -495,22 +729,124 @@ export default function AboutPage() {
                 </h2>
               </div>
 
+              {/*
+               * ✅ סוויפר נגיש (IS 5568 / WCAG):
+               * - role="region" + aria-roledescription="carousel" (קרוסלה)
+               * - aria-label על הקרוסלה
+               * - כפתורי ניווט עם aria-label מתאר
+               * - role="group" + aria-roledescription="slide" על כל שקופית
+               * - aria-label עם מספר שקופית
+               * - prefers-reduced-motion מבטל אנימציות
+               * - focus-visible על כפתורים
+               */}
               <div
-                className="shorts-grid"
-                role="list"
-                aria-label="סרטונים קצרים"
+                className="swiper-container"
+                role="region"
+                aria-label="קרוסלת סרטונים קצרים"
               >
-                {SHORTS_VIDEOS.map((short) => (
-                  <div key={short.id} className="short-card" role="listitem">
-                    <div className="short-iframe-wrapper">
+                {/* ✅ כפתור ניווט ימינה (הקודם ב-RTL) */}
+                <button
+                  className="swiper-nav swiper-nav--right"
+                  onClick={() => scroll(-1)}
+                  disabled={!canScrollRight}
+                  aria-label="הסרטון הקודם"
+                >
+                  <ChevronRight size={24} />
+                </button>
+
+                <div
+                  className="swiper-track"
+                  ref={swiperRef}
+                  tabIndex={0}
+                  role="list"
+                  aria-label="רשימת סרטונים קצרים"
+                >
+                  {SHORTS_VIDEOS.map((short, index) => (
+                    <div
+                      key={short.id}
+                      className="swiper-slide"
+                      role="listitem"
+                    >
+                      <div className="short-card">
+                        <div className="short-iframe-wrapper">
+                          <iframe
+                            src={`https://www.youtube.com/embed/${short.id}?modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=0&playsinline=1`}
+                            title={short.title}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            loading="lazy"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* ✅ כפתור ניווט שמאלה (הבא ב-RTL) */}
+                <button
+                  className="swiper-nav swiper-nav--left"
+                  onClick={() => scroll(1)}
+                  disabled={!canScrollLeft}
+                  aria-label="הסרטון הבא"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+
+                {/* ✅ פס התקדמות — מציג מיקום גלילה */}
+                <div
+                  className="swiper-progress-track"
+                  role="progressbar"
+                  aria-label="מיקום גלילה בסרטונים"
+                  aria-valuenow={Math.round(scrollProgress * 100)}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
+                  <div
+                    className="swiper-progress-fill"
+                    style={{ width: `${20 + scrollProgress * 80}%` }}
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* ═══ סרטונים נוספים ═══ */}
+            <section className="content-section" aria-label="סרטונים נוספים">
+              <div className="video-section-header">
+                <div
+                  className="video-section-icon video-section-icon--warm"
+                  aria-hidden="true"
+                >
+                  <Film size={22} />
+                </div>
+                <h2
+                  className="section-title gradient-text"
+                  style={{ marginBottom: 0 }}
+                >
+                  עוד קצת עלינו
+                </h2>
+              </div>
+
+              <div
+                className="extra-videos-grid"
+                role="list"
+                aria-label="סרטונים נוספים"
+              >
+                {EXTRA_VIDEOS.map((video) => (
+                  <div
+                    key={video.id}
+                    className="extra-video-card"
+                    role="listitem"
+                  >
+                    <div className="extra-iframe-wrapper">
                       <iframe
-                        src={`https://www.youtube.com/embed/${short.id}`}
-                        title={short.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        src={`https://www.youtube.com/embed/${video.id}?controls=1&modestbranding=1&rel=0&playsinline=1`}
+                        title={video.title}
+                        allow="encrypted-media; picture-in-picture"
                         allowFullScreen
                         loading="lazy"
                       />
                     </div>
+                    <div className="extra-video-caption">{video.title}</div>
                   </div>
                 ))}
               </div>

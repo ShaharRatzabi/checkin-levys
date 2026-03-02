@@ -65,7 +65,7 @@ const FlightCardsShowcase = () => {
       <div className="showcase-content">
         <div className="showcase-header">
           {/* ✅ h2 במקום h1 */}
-          <h2 className="showcase-title">יעדי חלומות</h2>
+          <h2 className="showcase-title">יעדי החלומות שלכם</h2>
           <p className="showcase-description">
             גלה הצעות מדהימות ליעדים החביבים עליך. הזמן עכשיו וחסוך בהרפתקה הבאה
             שלך!
