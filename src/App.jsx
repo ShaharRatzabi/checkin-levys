@@ -27,8 +27,12 @@ import AccessibilityPage from "./pages/AcccessibilityPage/AccessibilityPage";
 // import PrivacyPage from "./pages/PrivacyPage/PrivacyPage.jsx";
 // import TermsPage from "./pages/TermsPage/TermsPage.jsx";
 
-const authorizedUsers = ["shaharatzabi@gmail.com"];
-
+const authorizedUsers = [
+  "shaharatzabi@gmail.com",
+  "checkinota24@gmail.com",
+  "checkinota25@gmail.com",
+  // הוסף כאן אדמינים נוספים במידת הצורך
+];
 const PAGE_NAMES = {
   "/": "עמוד הבית",
   "/deals": "דילים",
@@ -54,11 +58,15 @@ function AppContent() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setIsAuthorized(
-        !!currentUser && authorizedUsers.includes(currentUser.email),
-      );
+
+      const authorized =
+        !!currentUser &&
+        authorizedUsers.includes(currentUser.email?.toLowerCase());
+
+      setIsAuthorized(authorized);
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
 
