@@ -249,7 +249,6 @@ export default function AboutPage() {
           font-size: 2rem;
         }
 
-        .background-img { opacity: 0.75; }
 
         .about-hero-subtitle {
           font-size: 1.5rem;
