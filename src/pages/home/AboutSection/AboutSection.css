@@ -160,8 +160,8 @@
 }
 
 .info-btn {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   background-image: url("../../../assets/images/info-button.png");
   background-size: contain;
   background-repeat: no-repeat;
@@ -174,7 +174,7 @@
 }
 
 .info-btn:hover {
-  transform: scale(1.3);
+  filter: brightness(1.4);
 }
 
 .info-btn:focus-visible {

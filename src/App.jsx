@@ -24,8 +24,8 @@ import LoginPage from "./pages/LoginPage/LoginPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ScrollToTop from "./components/ScrollToTop";
 import AccessibilityPage from "./pages/AcccessibilityPage/AccessibilityPage";
-// import PrivacyPage from "./pages/PrivacyPage/PrivacyPage.jsx";
-// import TermsPage from "./pages/TermsPage/TermsPage.jsx";
+import PrivacyPage from "./pages/PrivacyPage/PrivacyPage.jsx";
+import TermsPage from "./pages/TermsPage/TermsPage.jsx";
 
 const authorizedUsers = [
   "shaharatzabi@gmail.com",
@@ -174,10 +174,10 @@ function AppContent() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/visas" element={<VisasPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/terms" element={<TermsPage />} />
 
           <Route path="/accessibility" element={<AccessibilityPage />} />
-          {/* <Route path="/privacy-policy" element={<PrivacyPage />} />
-          <Route path="/terms" element={<TermsPage />} />  */}
+          <Route path="/privacy-policy" element={<PrivacyPage />} />
 
           <Route
             path="/admin"

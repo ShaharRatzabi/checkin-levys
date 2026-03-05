@@ -169,11 +169,6 @@
   transition: opacity 0.2s ease;
 }
 
-.submit-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 /* ✅ focus-visible */
 .input-group input:focus-visible,
 .input-group textarea:focus-visible {
@@ -293,6 +288,59 @@
 }
 
 /* ✅ prefers-reduced-motion */
+/* ✅ תיבת הסכמה */
+.consent-group {
+  margin-bottom: 1.5rem;
+}
+
+.consent-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.7);
+  line-height: 1.6;
+}
+
+.consent-checkbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  accent-color: #e76d2c;
+  cursor: pointer;
+}
+
+.consent-checkbox:focus-visible {
+  outline: 3px solid #e76d2c;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.consent-link {
+  color: #e76d2c;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.consent-link:hover {
+  color: #c2410c;
+}
+
+.consent-link:focus-visible {
+  outline: 3px solid #e76d2c;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* כפתור שליחה מושבת כשאין הסכמה */
+.submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .submit-button {
     transition: none;

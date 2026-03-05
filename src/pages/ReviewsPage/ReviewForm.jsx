@@ -13,13 +13,13 @@ export default function ReviewForm() {
     review_text: "",
     rating: 0,
     will_book_again: "",
-    flight_date: "",
   });
 
   const [uploadedImages, setUploadedImages] = useState([]);
   const [dragActive, setDragActive] = useState(false);
+  // ✅ הודעת סטטוס נגישה במקום alert()
   const [statusMessage, setStatusMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [consentGiven, setConsentGiven] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,7 +35,6 @@ export default function ReviewForm() {
     const imageUrls = imageFiles.map((file) => ({
       url: URL.createObjectURL(file),
       name: file.name,
-      file,
     }));
     setUploadedImages((prev) => [...prev, ...imageUrls]);
   };
@@ -56,29 +55,27 @@ export default function ReviewForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const {
-      reviewer_name,
-      destination,
-      review_text,
-      rating,
-      will_book_again,
-      flight_date,
-    } = formData;
+    const { reviewer_name, destination, review_text, rating, will_book_again } =
+      formData;
 
     if (
       !reviewer_name ||
       !destination ||
       !review_text ||
       !rating ||
-      !will_book_again ||
-      !flight_date
+      !will_book_again
     ) {
+      // ✅ הודעת שגיאה נגישה
       setStatusMessage("אנא מלא את כל השדות");
       return;
     }
 
+    if (!consentGiven) {
+      setStatusMessage("יש לאשר את תנאי השימוש לפני השליחה");
+      return;
+    }
+
     try {
-      setIsSubmitting(true);
       const uploadedImageUrls = [];
       for (const image of uploadedImages) {
         const response = await fetch(image.url);
@@ -95,30 +92,23 @@ export default function ReviewForm() {
         review_text,
         rating,
         will_book_again,
-        flight_date,
         image_urls: uploadedImageUrls,
         createdAt: serverTimestamp(),
         approved: true,
       });
 
-      setStatusMessage("תודה רבה! הביקורת שלכם פורסמה באתר 🙏");
+      setStatusMessage("תודה! הביקורת נשלחה לאישור 🙏");
       setFormData({
         reviewer_name: "",
         destination: "",
         review_text: "",
         rating: 0,
         will_book_again: "",
-        flight_date: "",
       });
       setUploadedImages([]);
-      // ✅ רענון הדף אחרי 2.5 שניות כדי שהמשתמש יספיק לראות את ההודעה
-      setTimeout(() => {
-        window.location.reload();
-      }, 2500);
     } catch (error) {
       console.error("Error submitting review:", error);
       setStatusMessage("אירעה שגיאה בשליחת הביקורת");
-      setIsSubmitting(false);
     }
   };
 
@@ -129,10 +119,12 @@ export default function ReviewForm() {
         <p>נשמח לשמוע חוות דעת על השירות שקיבלתם מאיתנו</p>
       </div>
 
+      {/* ✅ הסבר שדות חובה */}
       <p className="required-note">
         <span aria-hidden="true">*</span> שדות חובה
       </p>
 
+      {/* ✅ הודעת סטטוס כמודאל מרכזי */}
       {statusMessage && (
         <div className="status-modal-overlay" aria-hidden="true">
           <div className="status-modal" role="alert" aria-live="assertive">
@@ -150,6 +142,7 @@ export default function ReviewForm() {
 
       <div className="form-grid">
         <div className="input-group">
+          {/* ✅ label מקושר עם htmlFor */}
           <label htmlFor="reviewer_name">
             שם מלא{" "}
             <span aria-hidden="true" className="required-star">
@@ -189,25 +182,7 @@ export default function ReviewForm() {
         </div>
       </div>
 
-      {/* ✅ שדה תאריך טיסה חדש */}
-      <div className="input-group">
-        <label htmlFor="flight_date">
-          תאריך טיסה{" "}
-          <span aria-hidden="true" className="required-star">
-            *
-          </span>
-        </label>
-        <input
-          id="flight_date"
-          name="flight_date"
-          type="date"
-          value={formData.flight_date}
-          onChange={handleInputChange}
-          required
-          aria-required="true"
-        />
-      </div>
-
+      {/* ✅ כוכבי דירוג נגישים */}
       <div className="input-group">
         <label id="rating-label">
           דירוג{" "}
@@ -256,7 +231,7 @@ export default function ReviewForm() {
 
       <div className="input-group">
         <label id="will-book-label">
-          האם תסגרו דרכנו את החופשה הבאה שלכם?{" "}
+          האם תסגרו דרכנו שוב?{" "}
           <span aria-hidden="true" className="required-star">
             *
           </span>
@@ -306,6 +281,7 @@ export default function ReviewForm() {
             {uploadedImages.map((image, index) => (
               <div key={index} className="uploaded-image" role="listitem">
                 <img src={image.url} alt={`תמונה שהועלתה: ${image.name}`} />
+                {/* ✅ aria-label על כפתור הסרה */}
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
@@ -320,13 +296,42 @@ export default function ReviewForm() {
         )}
       </div>
 
+      {/* ✅ תיבת הסכמה */}
+      <div className="consent-group">
+        <label className="consent-label">
+          <input
+            type="checkbox"
+            className="consent-checkbox"
+            checked={consentGiven}
+            onChange={(e) => setConsentGiven(e.target.checked)}
+            required
+            aria-required="true"
+            aria-describedby="consent-description"
+          />
+          <span id="consent-description">
+            אני מאשר/ת שימוש בפרטים ליצירת קשר, דיוור וסטטיסטיקה. ניתן להסרה בכל
+            עת. בכפוף ל־
+            <a
+              href="/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="consent-link"
+              aria-label="מדיניות הפרטיות (נפתח בלשונית חדשה)"
+            >
+              מדיניות הפרטיות
+            </a>
+            .
+          </span>
+        </label>
+      </div>
+
       <button
         type="submit"
         className="submit-button"
-        disabled={isSubmitting}
-        aria-busy={isSubmitting}
+        disabled={!consentGiven}
+        aria-disabled={!consentGiven}
       >
-        {isSubmitting ? "שולח..." : "שליחה"}
+        שליחה
       </button>
     </form>
   );
