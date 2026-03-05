@@ -33,8 +33,8 @@
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
-  overflow-y: auto;
-  max-height: 77vh;
+  max-height: 90vh;
+  overflow: hidden;
   position: relative;
 }
 
@@ -43,12 +43,12 @@
 ========================= */
 
 .dealcard-image-wrapper {
-  width: 60%;
+  width: 50%;
   flex-shrink: 0;
   display: flex;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
-  background: #ffffff;
+  background: transparent;
   box-sizing: border-box;
   overflow: hidden;
   border-radius: 0 30px 30px 0;
@@ -58,9 +58,10 @@
 /* ✅ כפתור לחיצה על התמונה */
 .dealcard-image-button {
   all: unset;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  height: 100%;
   cursor: zoom-in;
   position: relative;
 }
@@ -98,8 +99,7 @@
 
 .dealcard-image {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
   display: block;
   border-radius: 0 30px 30px 0;
 }
@@ -112,6 +112,7 @@
   flex: 1;
   padding: 30px;
   position: relative;
+  min-width: 0;
 }
 
 /* =========================
@@ -345,50 +346,93 @@
 
 /* =========================
    🖥️ DESKTOP (1201px+)
+   Image drives the card height.
+   Content is absolute-positioned and scrolls.
 ========================= */
 
 @media (min-width: 1201px) {
   .dealcard-container {
-    align-items: stretch;
-    height: 77vh;
+    position: relative;
+    max-height: 90vh;
     overflow: hidden;
   }
 
-  .dealcard-content {
-    overflow-y: auto;
-    max-height: 100%;
-    scrollbar-width: thin;
+  /* Image in flow — its natural height sets the container height */
+  .dealcard-image-wrapper {
+    width: 50%;
+    flex-shrink: 0;
+    background: transparent;
   }
 
-  .dealcard-image-wrapper {
-    align-self: stretch;
+  .dealcard-image-button {
+    display: block;
+    width: 100%;
   }
 
   .dealcard-image {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    display: block;
+    border-radius: 0 30px 30px 0;
+  }
+
+  /* Content floats over the left half, scrolls within image height */
+  .dealcard-content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 50%;
+    padding: 30px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  }
+
+  .dealcard-content::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .dealcard-content::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
   }
 }
 
 /* =========================
-   📱 TABLET
+   📱 TABLET & MOBILE (≤1200px)
+   Card width follows the image.
+   Image displays fully, no cropping.
 ========================= */
 
 @media (max-width: 1200px) {
   .dealcard-container {
     flex-direction: column;
-    width: 65%;
+    width: auto;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 
   .dealcard-image-wrapper {
     width: 100%;
-    height: auto;
+    flex-shrink: 0;
     border-radius: 30px 30px 0 0;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  .dealcard-image-button {
+    display: block;
+    width: 100%;
   }
 
   .dealcard-image {
     border-radius: 30px 30px 0 0;
+    width: 100%;
+    height: auto;
+    display: block;
   }
 
   .dealcard-image-button:focus-visible {
@@ -408,7 +452,21 @@
 @media (max-width: 768px) {
   .dealcard-container {
     flex-direction: column;
-    width: 100%;
+    width: 90%;
+    max-width: 100%;
+    max-height: 92vh;
+  }
+
+  .dealcard-title {
+    font-size: 26px;
+  }
+
+  .price-value {
+    font-size: 22px;
+  }
+
+  .dealcard-content {
+    padding: 20px;
   }
 }
 

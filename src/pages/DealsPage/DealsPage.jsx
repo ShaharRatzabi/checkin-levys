@@ -1,44 +1,195 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { A11y, Keyboard, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/a11y";
+import "swiper/css/pagination";
 import FlightCard from "../home/FlightCard/FlightCard.jsx";
 import DealCard from "../home/DealCard/DealCard.jsx";
 import { db } from "../../firebase";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { Search, X } from "lucide-react";
+import { Search, X, ChevronDown, ChevronUp } from "lucide-react";
 import planeVideo from "../../assets/videos/overlay.mp4";
 
-const CountrySection = ({ country, deals, onDealClick }) => {
+const MOBILE_BREAKPOINT = 768;
+
+function useIsMobile(breakpoint) {
+  const [isMobile, setIsMobile] = useState(
+    () => window.innerWidth <= breakpoint,
+  );
+
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: " + breakpoint + "px)");
+    const handler = (e) => setIsMobile(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
+const POPULAR_LIMIT = 4;
+
+const CountrySection = ({ country, deals, onDealClick, isMobile }) => {
+  const liveRegionRef = useRef(null);
+  const swiperRef = useRef(null);
+  const countrySlug = country.replace(/\s/g, "-").replace(/['"]/g, "");
+
+  const handleSlideChange = useCallback(
+    (swiper) => {
+      const idx = swiper.activeIndex;
+
+      // Announce to screen readers
+      if (liveRegionRef.current && deals[idx]) {
+        liveRegionRef.current.textContent =
+          "דיל " +
+          (idx + 1) +
+          " מתוך " +
+          deals.length +
+          ": " +
+          deals[idx].title;
+      }
+
+      // tabIndex management: only visible slides are focusable
+      if (swiper.slides) {
+        swiper.slides.forEach((slide, i) => {
+          const focusables = slide.querySelectorAll("button, a, [tabindex]");
+          const isVisible = i >= idx && i <= idx + 1;
+          focusables.forEach((el) => {
+            el.setAttribute("tabindex", isVisible ? "0" : "-1");
+          });
+        });
+      }
+    },
+    [deals],
+  );
+
+  const dealCards = deals.map((deal) => (
+    <button
+      key={deal.id}
+      className="deal-card-trigger"
+      onClick={() => onDealClick(deal)}
+      aria-label={"פתח פרטים על " + deal.title}
+      aria-haspopup="dialog"
+    >
+      <FlightCard
+        destination={deal.title}
+        imageUrl={deal.mainImage}
+        priceFrom={deal.priceFrom}
+        period={deal.datesRange}
+        departureTime={deal.flight?.departure}
+        arrivalTime={deal.flight?.return}
+      />
+    </button>
+  ));
+
   return (
-    <section className="country-section" aria-label={`דילים ל${country}`}>
+    <section className="country-section" aria-label={"דילים ל" + country}>
       <div className="country-header-container">
         <div className="country-line" aria-hidden="true"></div>
         <div className="country-header">
           <h2 className="country-title">{country}</h2>
-          <span className="deals-tag" aria-label={`${deals.length} דילים חמים`}>
+          <span className="deals-tag" aria-label={deals.length + " דילים חמים"}>
             {deals.length} דילים חמים
           </span>
         </div>
       </div>
-      <div className="deals-grid">
-        {deals.map((deal) => (
-          <button
-            key={deal.id}
-            className="deal-card-trigger"
-            onClick={() => onDealClick(deal)}
-            aria-label={`פתח פרטים על ${deal.title}`}
-            aria-haspopup="dialog"
+
+      {isMobile ? (
+        <React.Fragment>
+          {/* Live region — announces slide changes to screen readers (WCAG 4.1.3) */}
+          <div
+            ref={liveRegionRef}
+            className="sr-only"
+            aria-live="polite"
+            aria-atomic="true"
+          ></div>
+
+          <Swiper
+            className="deals-swiper"
+            modules={[A11y, Keyboard, Pagination]}
+            dir="rtl"
+            slidesPerView={"auto"}
+            spaceBetween={12}
+            centeredSlides={false}
+            grabCursor={true}
+            watchSlidesProgress={true}
+            keyboard={{ enabled: true, onlyInViewport: true }}
+            pagination={{
+              clickable: true,
+              el: ".swiper-pagination-" + countrySlug,
+              bulletActiveClass: "swiper-pagination-bullet-active",
+              renderBullet: function (index, className) {
+                return (
+                  '<button class="' +
+                  className +
+                  '" aria-label="עבור לדיל ' +
+                  (index + 1) +
+                  " מתוך " +
+                  deals.length +
+                  '"></button>'
+                );
+              },
+            }}
+            a11y={{
+              prevSlideMessage: "דיל קודם",
+              nextSlideMessage: "דיל הבא",
+              containerRoleDescriptionMessage: "קרוסלת דילים ל" + country,
+              itemRoleDescriptionMessage: "דיל",
+              paginationBulletMessage: "עבור לדיל {{index}}",
+            }}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+              handleSlideChange(swiper);
+            }}
+            onSlideChange={handleSlideChange}
+            aria-roledescription="קרוסלה"
+            aria-label={"קרוסלת דילים ל" + country}
           >
-            <FlightCard
-              destination={deal.title}
-              imageUrl={deal.mainImage}
-              priceFrom={deal.priceFrom}
-              airportCode={deal.airportCode || "TLV"}
-              departureTime={deal.departureTime || "08:00"}
-              arrivalTime={deal.arrivalTime || "12:00"}
-              flightClass={deal.flightClass || "מחלקת תיירים"}
-            />
-          </button>
-        ))}
-      </div>
+            {deals.map((deal, index) => (
+              <SwiperSlide
+                key={deal.id}
+                role="group"
+                aria-roledescription="שקופית"
+                aria-label={
+                  "דיל " +
+                  (index + 1) +
+                  " מתוך " +
+                  deals.length +
+                  ": " +
+                  deal.title
+                }
+              >
+                <button
+                  className="deal-card-trigger"
+                  onClick={() => onDealClick(deal)}
+                  aria-label={"פתח פרטים על " + deal.title}
+                  aria-haspopup="dialog"
+                >
+                  <FlightCard
+                    destination={deal.title}
+                    imageUrl={deal.mainImage}
+                    priceFrom={deal.priceFrom}
+                    period={deal.datesRange}
+                    departureTime={deal.flight?.departure}
+                    arrivalTime={deal.flight?.return}
+                  />
+                </button>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          {/* Visible pagination dots (WCAG 1.3.3) */}
+          <div
+            className={
+              "swiper-custom-pagination swiper-pagination-" + countrySlug
+            }
+            aria-label={"ניווט דילים ל" + country}
+          ></div>
+        </React.Fragment>
+      ) : (
+        <div className="deals-grid">{dealCards}</div>
+      )}
     </section>
   );
 };
@@ -52,10 +203,11 @@ export default function Deals() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [videoPlaying, setVideoPlaying] = useState(true);
+  const [showAllCountries, setShowAllCountries] = useState(false);
   const videoRef = useRef(null);
+  const isMobile = useIsMobile(MOBILE_BREAKPOINT);
 
   useEffect(() => {
-    // אם המשתמש מעדיף הפחתת תנועה — לא מנגן אוטומטית
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
@@ -96,7 +248,9 @@ export default function Deals() {
           return acc;
         }, {});
 
-        const countryList = Object.keys(dealsByCountry);
+        const countryList = Object.keys(dealsByCountry).sort(
+          (a, b) => dealsByCountry[b].length - dealsByCountry[a].length,
+        );
         setGroupedDeals(dealsByCountry);
         setCountries(countryList);
         setFilteredCountries(countryList);
@@ -119,12 +273,23 @@ export default function Deals() {
     }
   }, [searchTerm, countries]);
 
-  if (loading)
+  const visibleFilterCountries =
+    searchTerm !== ""
+      ? filteredCountries
+      : showAllCountries
+        ? filteredCountries
+        : filteredCountries.slice(0, POPULAR_LIMIT);
+
+  const hasMoreCountries =
+    searchTerm === "" && filteredCountries.length > POPULAR_LIMIT;
+
+  if (loading) {
     return (
       <div className="loader" role="status" aria-live="polite">
         טוען חוויות חדשות...
       </div>
     );
+  }
 
   return (
     <div className="deals-page-wrapper" style={{ direction: "rtl" }}>
@@ -139,12 +304,14 @@ export default function Deals() {
           background-color: #f8f9fa;
           min-height: 100vh;
           font-family: 'Assistant', sans-serif;
+          overflow-x: hidden;
         }
 
         /* ===== Hero ===== */
         .hero-viewport {
           position: relative;
-          height: 60vh;
+          height: 55vh;
+          min-height: 280px;
           width: 100%;
           display: flex;
           align-items: center;
@@ -165,16 +332,19 @@ export default function Deals() {
         .hero-content {
           position: relative;
           z-index: 3;
-          padding: 0 20px;
+          padding: 0 24px;
           text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .hero-main-title {
-          font-size: clamp(2.5rem, 8vw, 4.5rem);
+          font-size: clamp(1.75rem, 7vw, 4.5rem);
           font-weight: 900;
           margin: 0;
-          line-height: 1.1;
+          line-height: 1.15;
           color: white;
+          word-break: keep-all;
         }
 
         .orange-text { color: var(--primary-orange); }
@@ -182,7 +352,7 @@ export default function Deals() {
         .hero-animation {
           position: absolute;
           inset: 0;
-          z-index: 2;
+          z-index: 1;
           pointer-events: none;
         }
 
@@ -194,7 +364,6 @@ export default function Deals() {
           mix-blend-mode: screen;
         }
 
-        /* ✅ WCAG 2.2.2 — כפתור השהיית סרטון */
         .hero-video-toggle {
           position: absolute;
           bottom: 1rem;
@@ -227,11 +396,11 @@ export default function Deals() {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 14px;
-          margin: -24px auto 30px;
-          padding: 14px 28px;
+          gap: 12px;
+          margin: -22px auto 24px;
+          padding: 12px 22px;
           width: fit-content;
-          max-width: 90%;
+          max-width: calc(100% - 32px);
           background: linear-gradient(135deg, #25d366, #128c7e);
           color: white;
           border-radius: 60px;
@@ -253,9 +422,7 @@ export default function Deals() {
           outline-offset: 3px;
         }
 
-        .whatsapp-icon {
-          flex-shrink: 0;
-        }
+        .whatsapp-icon { flex-shrink: 0; }
 
         .whatsapp-text {
           display: flex;
@@ -266,22 +433,23 @@ export default function Deals() {
 
         .whatsapp-title {
           font-weight: 800;
-          font-size: 1.05rem;
+          font-size: 1rem;
           line-height: 1.3;
         }
 
         .whatsapp-subtitle {
-          font-size: 0.85rem;
+          font-size: 0.82rem;
           opacity: 0.9;
           font-weight: 600;
         }
 
         .whatsapp-pulse {
           position: absolute;
-          inset: 0;
+          inset: -2px;
           border-radius: 60px;
           border: 2px solid rgba(37, 211, 102, 0.6);
           animation: wa-pulse 2s ease-out infinite;
+          pointer-events: none;
         }
 
         @keyframes wa-pulse {
@@ -292,15 +460,15 @@ export default function Deals() {
         /* ===== Filter ===== */
         .filter-wrapper {
           position: sticky;
-          top: 20px;
+          top: 12px;
           z-index: 100;
-          margin: -40px auto 40px;
-          width: 90%;
+          margin: -36px auto 32px;
+          width: calc(100% - 32px);
           max-width: 800px;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 15px;
+          gap: 12px;
         }
 
         .search-container {
@@ -314,7 +482,7 @@ export default function Deals() {
           padding: 12px 45px 12px 45px;
           border-radius: 50px;
           border: 1px solid rgba(255, 255, 255, 0.8);
-          background: rgba(255, 255, 255, 0.9);
+          background: rgba(255, 255, 255, 0.92);
           backdrop-filter: blur(20px);
           font-size: 1rem;
           color: var(--dark-text);
@@ -365,37 +533,33 @@ export default function Deals() {
           outline-offset: 2px;
         }
 
-        .filter-scroll-container {
+        /* Filter chips — wrap instead of horizontal scroll */
+        .filter-chips-container {
           width: 100%;
-          background: rgba(255, 255, 255, 0.8);
+          background: rgba(255, 255, 255, 0.85);
           backdrop-filter: blur(20px);
           padding: 10px;
-          border-radius: 20px;
+          border-radius: 16px;
           display: flex;
-          gap: 10px;
+          flex-wrap: wrap;
+          gap: 8px;
+          justify-content: center;
           border: 1px solid rgba(255,255,255,0.6);
           box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-          overflow-x: auto;
-          white-space: nowrap;
-        }
-
-        .filter-scroll-container::-webkit-scrollbar { height: 4px; }
-        .filter-scroll-container::-webkit-scrollbar-thumb {
-          background: #ccc;
-          border-radius: 4px;
         }
 
         .filter-nav-item {
-          padding: 8px 20px;
+          padding: 8px 18px;
           border-radius: 40px;
           border: 1px solid transparent;
-          background: rgba(255,255,255,0.5);
+          background: rgba(255,255,255,0.6);
           color: var(--dark-text);
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.3s ease;
-          font-size: 0.95rem;
-          flex-shrink: 0;
+          transition: all 0.2s ease;
+          font-size: 0.9rem;
+          white-space: nowrap;
+          font-family: inherit;
         }
 
         .filter-nav-item:hover {
@@ -403,7 +567,7 @@ export default function Deals() {
           border-color: #ddd;
         }
 
-        /* ✅ תוקן: רקע כהה יותר לניגודיות 4.61:1 */
+        /* contrast ratio 4.61:1 on white */
         .filter-nav-item.active {
           background: #b8521b;
           color: white;
@@ -415,6 +579,38 @@ export default function Deals() {
           outline-offset: 3px;
         }
 
+        /* "Show more" toggle button */
+        .show-more-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 8px 18px;
+          border-radius: 40px;
+          border: 1.5px dashed #c0c0c0;
+          background: rgba(255, 255, 255, 0.5);
+          color: #555;
+          font-weight: 600;
+          cursor: pointer;
+          font-size: 0.85rem;
+          font-family: inherit;
+          transition: all 0.2s ease;
+        }
+
+        .show-more-btn:hover {
+          background: white;
+          border-color: var(--primary-orange);
+          color: var(--primary-orange);
+        }
+
+        .show-more-btn:focus-visible {
+          outline: 3px solid var(--primary-orange);
+          outline-offset: 3px;
+        }
+
+        .show-more-btn svg {
+          flex-shrink: 0;
+        }
+
         /* ===== Deal Card Trigger ===== */
         .deal-card-trigger {
           background: none;
@@ -423,62 +619,151 @@ export default function Deals() {
           cursor: pointer;
           display: block;
           text-align: inherit;
+          width: 100%;
         }
 
         .deal-card-trigger:focus-visible {
           outline: 3px solid var(--primary-orange);
           outline-offset: 4px;
-          border-radius: 34px;
+          border-radius: 20px;
         }
 
         /* ===== Layout ===== */
         .container-custom {
           max-width: 1300px;
           margin: 0 auto;
-          padding: 0 20px;
+          padding: 0 16px;
           position: relative;
           z-index: 4;
         }
 
-        .country-section { margin-bottom: 80px; }
+        .country-section {
+          margin-bottom: 60px;
+          overflow: hidden;
+        }
 
         .country-header-container {
           display: flex;
           align-items: center;
-          gap: 20px;
-          margin-bottom: 30px;
+          gap: 16px;
+          margin-bottom: 24px;
+          flex-wrap: wrap;
+        }
+
+        .country-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
         }
 
         .country-line {
           height: 4px;
-          width: 50px;
+          width: 40px;
           background: var(--primary-orange);
           border-radius: 2px;
+          flex-shrink: 0;
         }
 
         .country-title {
-          font-size: 2.2rem;
+          font-size: clamp(1.6rem, 5vw, 2.2rem);
           font-weight: 800;
           margin: 0;
           color: #2d3748;
         }
 
-        /* ✅ תוקן: טקסט כהה יותר לניגודיות 5.2:1 */
+        /* contrast ratio 5.2:1 */
         .deals-tag {
           background: rgba(255, 107, 53, 0.14);
           color: #9a4a1b;
-          padding: 6px 14px;
+          padding: 5px 12px;
           border-radius: 8px;
-          font-size: 0.95rem;
+          font-size: 0.88rem;
           font-weight: 700;
           border: 1px solid rgba(255, 107, 53, 0.25);
+          white-space: nowrap;
         }
 
         .deals-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-          gap: 30px;
+          grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+          gap: 24px;
           justify-items: center;
+        }
+
+        /* ===== Mobile Swiper ===== */
+        .deals-swiper {
+          width: 100%;
+          padding: 4px 0 8px;
+        }
+
+        .deals-swiper .swiper-wrapper {
+          display: flex;
+        }
+
+        .deals-swiper .swiper-slide {
+          width: 85%;
+          flex-shrink: 0;
+          height: auto;
+        }
+
+        .deals-swiper .deal-card-trigger {
+          width: 100%;
+        }
+
+        .deals-swiper .swiper-slide:focus-within {
+          outline: 3px solid var(--primary-orange);
+          outline-offset: 4px;
+          border-radius: 20px;
+        }
+
+        /* Screen reader only — visually hidden */
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+
+        /* ===== Pagination Dots ===== */
+        .swiper-custom-pagination {
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+          padding: 14px 0 4px;
+        }
+
+        .swiper-custom-pagination .swiper-pagination-bullet {
+          display: inline-block;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: #c5c5c5;
+          border: 2px solid transparent;
+          cursor: pointer;
+          padding: 0;
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+        }
+
+        .swiper-custom-pagination .swiper-pagination-bullet:hover {
+          background: #999;
+        }
+
+        /* Active dot — contrast 3.1:1 minimum on #f8f9fa background */
+        .swiper-custom-pagination .swiper-pagination-bullet-active {
+          background: var(--primary-orange);
+          transform: scale(1.25);
+        }
+
+        .swiper-custom-pagination .swiper-pagination-bullet:focus-visible {
+          outline: 3px solid var(--primary-orange);
+          outline-offset: 3px;
         }
 
         .loader {
@@ -493,9 +778,9 @@ export default function Deals() {
 
         .no-results {
           text-align: center;
-          padding: 50px;
-          font-size: 1.2rem;
-          color: #666;
+          padding: 50px 20px;
+          font-size: 1.1rem;
+          color: #555;
         }
 
         /* ===== Accessibility & Responsive ===== */
@@ -503,18 +788,60 @@ export default function Deals() {
           .search-input,
           .filter-nav-item,
           .whatsapp-banner,
-          .hero-video-toggle { transition: none; }
+          .hero-video-toggle,
+          .show-more-btn,
+          .swiper-custom-pagination .swiper-pagination-bullet { transition: none; }
           .whatsapp-pulse { animation: none; display: none; }
         }
 
-        @media (max-width: 768px) {
-          .hero-viewport { height: 50vh; }
-          .hero-main-title { font-size: 2.5rem; }
-          .filter-wrapper { width: 95%; top: 10px; }
-          .deals-grid { grid-template-columns: 1fr; }
-          .whatsapp-banner { padding: 12px 20px; gap: 10px; }
-          .whatsapp-title { font-size: 0.95rem; }
-          .whatsapp-subtitle { font-size: 0.8rem; }
+        @media (max-width: 480px) {
+          .hero-viewport {
+            height: 45vh;
+            min-height: 240px;
+          }
+          .hero-content {
+            padding: 0 16px;
+          }
+          .filter-wrapper {
+            margin-top: -28px;
+            gap: 10px;
+          }
+          .filter-chips-container {
+            padding: 8px;
+            gap: 6px;
+          }
+          .filter-nav-item {
+            padding: 7px 14px;
+            font-size: 0.82rem;
+          }
+          .country-section { margin-bottom: 40px; }
+          .country-header-container {
+            margin-bottom: 16px;
+            gap: 10px;
+          }
+          .country-title {
+            font-size: 1.4rem;
+          }
+          .deals-swiper .swiper-slide {
+            width: 80%;
+          }
+          .whatsapp-banner {
+            padding: 10px 16px;
+            gap: 8px;
+          }
+          .whatsapp-title { font-size: 0.9rem; }
+          .whatsapp-subtitle { font-size: 0.75rem; }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+          .hero-viewport { height: 48vh; }
+          .deals-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+          }
+          .deals-swiper .swiper-slide {
+            width: 65%;
+          }
         }
       `}</style>
 
@@ -538,8 +865,6 @@ export default function Deals() {
             לאן תרצו <span className="orange-text">לטוס</span> הפעם?
           </h1>
         </div>
-
-        {/* ✅ WCAG 2.2.2 — כפתור השהיה/הפעלה לסרטון דקורטיבי */}
         <button
           className="hero-video-toggle"
           onClick={handleVideoToggle}
@@ -559,13 +884,13 @@ export default function Deals() {
         className="whatsapp-banner"
         aria-label="הצטרפו לקבוצת הווצאפ שלנו לדילים לחו״ל"
       >
-        <span className="whatsapp-pulse" aria-hidden="true" />
+        <span className="whatsapp-pulse" aria-hidden="true"></span>
         <svg
           className="whatsapp-icon"
           viewBox="0 0 24 24"
           fill="currentColor"
-          width="28"
-          height="28"
+          width="26"
+          height="26"
           aria-hidden="true"
         >
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
@@ -576,6 +901,7 @@ export default function Deals() {
         </div>
       </a>
 
+      {/* Main Content */}
       <div className="container-custom">
         <div className="filter-wrapper">
           <div className="search-container">
@@ -600,7 +926,7 @@ export default function Deals() {
           </div>
 
           <nav aria-label="סינון לפי מדינה">
-            <div className="filter-scroll-container">
+            <div className="filter-chips-container" role="group">
               <button
                 className={`filter-nav-item ${selectedCountry === "all" ? "active" : ""}`}
                 onClick={() => setSelectedCountry("all")}
@@ -608,7 +934,7 @@ export default function Deals() {
               >
                 הכל
               </button>
-              {filteredCountries.map((country) => (
+              {visibleFilterCountries.map((country) => (
                 <button
                   key={country}
                   className={`filter-nav-item ${selectedCountry === country ? "active" : ""}`}
@@ -618,6 +944,34 @@ export default function Deals() {
                   {country}
                 </button>
               ))}
+              {hasMoreCountries && (
+                <button
+                  className="show-more-btn"
+                  onClick={() => setShowAllCountries(!showAllCountries)}
+                  aria-expanded={showAllCountries}
+                  aria-label={
+                    showAllCountries
+                      ? "הצג פחות מדינות"
+                      : "הצג עוד " +
+                        (filteredCountries.length - POPULAR_LIMIT) +
+                        " מדינות"
+                  }
+                >
+                  {showAllCountries ? (
+                    <React.Fragment>
+                      {"פחות"}
+                      <ChevronUp size={16} aria-hidden="true" />
+                    </React.Fragment>
+                  ) : (
+                    <React.Fragment>
+                      {"עוד " +
+                        (filteredCountries.length - POPULAR_LIMIT) +
+                        " מדינות"}
+                      <ChevronDown size={16} aria-hidden="true" />
+                    </React.Fragment>
+                  )}
+                </button>
+              )}
             </div>
           </nav>
         </div>
@@ -625,7 +979,7 @@ export default function Deals() {
         <main className="deals-main">
           {filteredCountries.length === 0 && (
             <div className="no-results" role="status" aria-live="polite">
-              לא מצאנו דילים למדינה "{searchTerm}" 😔
+              {'לא מצאנו דילים למדינה "' + searchTerm + '" 😔'}
             </div>
           )}
 
@@ -636,6 +990,7 @@ export default function Deals() {
                   country={country}
                   deals={groupedDeals[country]}
                   onDealClick={(deal) => setSelectedDeal(deal)}
+                  isMobile={isMobile}
                 />
               ))
             : groupedDeals[selectedCountry] && (
@@ -643,6 +998,7 @@ export default function Deals() {
                   country={selectedCountry}
                   deals={groupedDeals[selectedCountry]}
                   onDealClick={(deal) => setSelectedDeal(deal)}
+                  isMobile={isMobile}
                 />
               )}
         </main>

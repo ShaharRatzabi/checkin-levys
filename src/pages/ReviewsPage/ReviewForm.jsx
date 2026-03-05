@@ -256,7 +256,7 @@ export default function ReviewForm() {
 
       <div className="input-group">
         <label id="will-book-label">
-          האם תסגרו דרכנו שוב?{" "}
+          האם תסגרו דרכנו את החופשה הבאה שלכם?{" "}
           <span aria-hidden="true" className="required-star">
             *
           </span>

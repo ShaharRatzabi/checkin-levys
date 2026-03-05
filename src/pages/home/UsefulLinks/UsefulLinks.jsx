@@ -9,23 +9,22 @@ const LINKS_DATA = [
     desc: "שירות לקוחות בעברית • שת״פ רשמי איתנו",
   },
   {
+    href: "https://did.li/SIM-checkin10",
+    Icon: Wifi,
+    title: "eSIM לחו״ל",
+    desc: "הכי זול והכי קל | קוד קופון עם הנחה: Checkin10",
+  },
+  {
     href: "https://bit.ly/3VCTp0E",
     Icon: ShieldCheck,
     title: "Trip Guarantee",
-    desc: "הגנה מלאה על ההזמנה שלכם",
+    desc: "הגנה מלאה על ההזמנה שלכם • שירות ומענה מהיר ללקוחות שלנו",
   },
   {
     href: "https://link.passportcard.co.il/1042089_dlMCtRPT0=",
     Icon: CreditCard,
     title: "PassportCard",
-    desc: "ביטוח נסיעות דיגיטלי ומהיר",
-  },
-  {
-    href: "https://did.li/SIM-checkin10",
-    Icon: Wifi,
-    title: "eSIM לחו״ל",
-    desc: "הכי זול והכי קל | קוד: Checkin10",
-    highlight: true,
+    desc: "ביטוח נסיעות דיגיטלי ומהיר • שירות ומענה מהיר ללקוחות שלנו",
   },
 ];
 
@@ -212,21 +211,6 @@ export default function UsefulLinks() {
           outline-offset: 3px;
         }
 
-        /* Highlighted card — eSIM */
-        .ul-glass-card.ul-highlighted {
-          border-color: var(--brand-orange-border);
-          background: linear-gradient(
-            145deg,
-            rgba(255, 255, 255, 0.35),
-            rgba(231, 109, 44, 0.06)
-          );
-        }
-
-        .ul-glass-card.ul-highlighted:hover {
-          border-color: var(--brand-orange);
-          box-shadow: 0 20px 40px -10px rgba(231, 109, 44, 0.25);
-        }
-
         /* Shine Effect */
         .ul-card-shine {
           position: absolute;
@@ -266,13 +250,6 @@ export default function UsefulLinks() {
           border: 1px solid rgba(255, 255, 255, 0.5);
           box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
           color: var(--brand-orange);
-        }
-
-        .ul-highlighted .ul-icon-wrapper {
-          background: linear-gradient(135deg, #e76d2c, #c55a24);
-          border: none;
-          box-shadow: 0 6px 20px rgba(231, 109, 44, 0.3);
-          color: white;
         }
 
         /* =====================
@@ -350,7 +327,7 @@ export default function UsefulLinks() {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`ul-glass-card ${link.highlight ? "ul-highlighted" : ""}`}
+                  className="ul-glass-card"
                   aria-label={`${link.title} — ${link.desc} (נפתח בלשונית חדשה)`}
                 >
                   {/* ✅ אייקון דקורטיבי — מוסתר מקוראי מסך */}
