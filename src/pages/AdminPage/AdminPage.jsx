@@ -14,6 +14,17 @@ import {
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
+// ─── אפשרויות הרכב ─────────────────────────────────────────────────────────
+export const COMPOSITION_OPTIONS = [
+  { value: "יחיד", label: "יחיד" },
+  { value: "זוג", label: "זוג" },
+  { value: "זוג + ילד", label: "זוג + ילד" },
+  { value: "זוג + 2 ילדים", label: "זוג + 2 ילדים" },
+  { value: "זוג + 3 ילדים", label: "זוג + 3 ילדים" },
+  { value: "משפחה מורחבת", label: "משפחה מורחבת" },
+  { value: "קבוצה", label: "קבוצה" },
+];
+
 // ─── שדות חובה לדילים ──────────────────────────────────────────────────────
 const REQUIRED_FIELDS = {
   title: "שם החבילה",
@@ -25,15 +36,12 @@ const REQUIRED_FIELDS = {
   "flight.airline": "חברת תעופה",
   "flight.departure": "שעת המראה",
   "flight.return": "שעת חזרה",
-  "hotel.name": "שם המלון",
-  "hotel.stars": "דירוג מלון",
-  "hotel.room": "סוג חדר",
-  "hotel.meals": "בסיס אירוח",
   mainImage: "תמונה",
 };
 
 const initialFormState = {
   title: "",
+  composition: "",
   priceFrom: "",
   country: "",
   mainImage: "",
@@ -41,6 +49,7 @@ const initialFormState = {
   datesRange: "",
   luggage: "",
   notes: "",
+  extraAttraction: "",
   flight: { airline: "", departure: "", return: "" },
   hotel: { name: "", stars: "", room: "", meals: "" },
 };
@@ -574,7 +583,13 @@ function AdminPage() {
     try {
       const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"));
       const s = await getDocs(q);
-      setReviews(s.docs.map((d) => ({ id: d.id, ...d.data() })));
+      const fetched = s.docs.map((d, i) => ({
+        id: d.id,
+        ...d.data(),
+        displayOrder: d.data().displayOrder ?? i,
+      }));
+      fetched.sort((a, b) => a.displayOrder - b.displayOrder);
+      setReviews(fetched);
     } catch (err) {
       console.error(err);
     } finally {
@@ -630,6 +645,27 @@ function AdminPage() {
     } catch (err) {
       console.error(err);
       setToastMessage("שגיאה בשמירת הביקורת");
+    }
+  };
+
+  // ─── סידור ביקורות ────────────────────────────────────────────────────────
+  const handleMoveReview = async (index, direction) => {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= reviews.length) return;
+
+    const current = reviews[index];
+    const target = reviews[targetIndex];
+
+    try {
+      await updateDoc(doc(db, "reviews", current.id), {
+        displayOrder: target.displayOrder,
+      });
+      await updateDoc(doc(db, "reviews", target.id), {
+        displayOrder: current.displayOrder,
+      });
+      fetchReviews();
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -786,7 +822,7 @@ function AdminPage() {
 
   // ─── Helper: format flight date ──────────────────────────────────────────
   const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
+    if (!dateStr) return "-";
     try {
       return new Date(dateStr).toLocaleDateString("he-IL");
     } catch {
@@ -848,6 +884,7 @@ function AdminPage() {
               <thead>
                 <tr>
                   <th scope="col">שם החבילה</th>
+                  <th scope="col">הרכב</th>
                   <th scope="col">מדינה</th>
                   <th scope="col">מחיר</th>
                   <th scope="col">ימים</th>
@@ -858,6 +895,7 @@ function AdminPage() {
                 {deals.map((deal) => (
                   <tr key={deal.id}>
                     <td>{deal.title}</td>
+                    <td>{deal.composition || "-"}</td>
                     <td>{deal.country}</td>
                     <td>₪{deal.priceFrom}</td>
                     <td>{deal.days}</td>
@@ -896,6 +934,7 @@ function AdminPage() {
               <caption className="sr-only">רשימת ביקורות לקוחות</caption>
               <thead>
                 <tr>
+                  <th scope="col">סדר</th>
                   <th scope="col">שם</th>
                   <th scope="col">יעד</th>
                   <th scope="col">דירוג</th>
@@ -906,8 +945,28 @@ function AdminPage() {
                 </tr>
               </thead>
               <tbody>
-                {reviews.map((review) => (
+                {reviews.map((review, reviewIndex) => (
                   <tr key={review.id}>
+                    <td className="actions-cell">
+                      <button
+                        className="action-btn edit"
+                        onClick={() => handleMoveReview(reviewIndex, -1)}
+                        disabled={reviewIndex === 0}
+                        aria-label={`העבר למעלה: ${review.reviewer_name}`}
+                        style={{ padding: "6px 10px", fontSize: "1.1rem" }}
+                      >
+                        ▲
+                      </button>
+                      <button
+                        className="action-btn edit"
+                        onClick={() => handleMoveReview(reviewIndex, 1)}
+                        disabled={reviewIndex === reviews.length - 1}
+                        aria-label={`העבר למטה: ${review.reviewer_name}`}
+                        style={{ padding: "6px 10px", fontSize: "1.1rem" }}
+                      >
+                        ▼
+                      </button>
+                    </td>
                     <td>{review.reviewer_name}</td>
                     <td>{review.destination}</td>
                     <td aria-label={`דירוג: ${review.rating} כוכבים`}>
@@ -1025,6 +1084,25 @@ function AdminPage() {
                     {fieldErrors.title}
                   </span>
                 )}
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="composition">
+                  הרכב <span className="optional">(אופציונלי)</span>
+                </label>
+                <select
+                  id="composition"
+                  name="composition"
+                  value={formData.composition}
+                  onChange={handleInputChange}
+                >
+                  <option value="">בחר הרכב</option>
+                  {COMPOSITION_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="form-field">
@@ -1154,6 +1232,19 @@ function AdminPage() {
                     {fieldErrors.luggage}
                   </span>
                 )}
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="extraAttraction">
+                  תוספת מיוחדת <span className="optional">(אופציונלי)</span>
+                </label>
+                <input
+                  id="extraAttraction"
+                  name="extraAttraction"
+                  value={formData.extraAttraction}
+                  onChange={handleInputChange}
+                  placeholder="תוספת מיוחדת (לדוגמה: כרטיסים למשחק כדורגל, סיור מודרך, כניסה לפארק מים)"
+                />
               </div>
 
               <div className="form-field">
@@ -1304,34 +1395,22 @@ function AdminPage() {
 
               <fieldset>
                 <legend>
-                  פרטי מלון{" "}
-                  <span className="req" aria-hidden="true">
-                    *
-                  </span>
+                  פרטי מלון <span className="optional">(אופציונלי)</span>
                 </legend>
                 <div className="form-field">
                   <label htmlFor="hotelName">שם המלון</label>
                   <input
-                    {...nfp("hotelName", "hotel", "name")}
+                    id="hotelName"
                     name="name"
                     value={formData.hotel.name}
                     onChange={(e) => handleNestedInputChange("hotel", e)}
                     placeholder="שם המלון"
                   />
-                  {submitted && fieldErrors["hotel.name"] && (
-                    <span
-                      id="hotelName-error"
-                      className="field-error-msg"
-                      role="alert"
-                    >
-                      {fieldErrors["hotel.name"]}
-                    </span>
-                  )}
                 </div>
                 <div className="form-field">
                   <label htmlFor="hotelStars">דירוג (כוכבים)</label>
                   <input
-                    {...nfp("hotelStars", "hotel", "stars")}
+                    id="hotelStars"
                     name="stars"
                     type="number"
                     min="1"
@@ -1340,53 +1419,26 @@ function AdminPage() {
                     onChange={(e) => handleNestedInputChange("hotel", e)}
                     placeholder="דירוג (כוכבים)"
                   />
-                  {submitted && fieldErrors["hotel.stars"] && (
-                    <span
-                      id="hotelStars-error"
-                      className="field-error-msg"
-                      role="alert"
-                    >
-                      {fieldErrors["hotel.stars"]}
-                    </span>
-                  )}
                 </div>
                 <div className="form-field">
                   <label htmlFor="hotelRoom">סוג חדר</label>
                   <input
-                    {...nfp("hotelRoom", "hotel", "room")}
+                    id="hotelRoom"
                     name="room"
                     value={formData.hotel.room}
                     onChange={(e) => handleNestedInputChange("hotel", e)}
                     placeholder="סוג חדר"
                   />
-                  {submitted && fieldErrors["hotel.room"] && (
-                    <span
-                      id="hotelRoom-error"
-                      className="field-error-msg"
-                      role="alert"
-                    >
-                      {fieldErrors["hotel.room"]}
-                    </span>
-                  )}
                 </div>
                 <div className="form-field">
                   <label htmlFor="hotelMeals">בסיס אירוח</label>
                   <input
-                    {...nfp("hotelMeals", "hotel", "meals")}
+                    id="hotelMeals"
                     name="meals"
                     value={formData.hotel.meals}
                     onChange={(e) => handleNestedInputChange("hotel", e)}
                     placeholder="בסיס אירוח"
                   />
-                  {submitted && fieldErrors["hotel.meals"] && (
-                    <span
-                      id="hotelMeals-error"
-                      className="field-error-msg"
-                      role="alert"
-                    >
-                      {fieldErrors["hotel.meals"]}
-                    </span>
-                  )}
                 </div>
               </fieldset>
 

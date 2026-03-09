@@ -278,7 +278,7 @@ export default function AccessibilityPage() {
                 section ו-footer, כדי לסייע לקוראי מסך לזהות את חלקי הדף
               </li>
               <li>
-                מבנה כותרות היררכי (h1 עד h3) — כל עמוד כולל כותרת ראשית אחת
+                מבנה כותרות היררכי (h1 עד h3) - כל עמוד כולל כותרת ראשית אחת
                 ותתי-כותרות מסודרות
               </li>
               <li>
@@ -301,7 +301,7 @@ export default function AccessibilityPage() {
             </p>
             <ul>
               <li>
-                ניווט באמצעות Tab ו-Shift+Tab בין כלל הרכיבים האינטראקטיביים —
+                ניווט באמצעות Tab ו-Shift+Tab בין כלל הרכיבים האינטראקטיביים -
                 קישורים, כפתורים, שדות טופס ומודאלים
               </li>
               <li>
@@ -309,7 +309,7 @@ export default function AccessibilityPage() {
                 פוקוס, כך שקל לדעת היכן נמצאים
               </li>
               <li>
-                מודאלים וחלונות קופצים כוללים "מלכודת פוקוס" — כלומר, הפוקוס
+                מודאלים וחלונות קופצים כוללים "מלכודת פוקוס" - כלומר, הפוקוס
                 נשאר בתוך החלון ולא בורח לרקע, וסגירה אפשרית באמצעות מקש ESC
               </li>
               <li>
@@ -363,7 +363,7 @@ export default function AccessibilityPage() {
             <ul>
               <li>
                 כל האנימציות מכבדות את הגדרת "הפחתת תנועה"
-                (prefers-reduced-motion) במערכת ההפעלה — משתמשים שהגדירו זאת
+                (prefers-reduced-motion) במערכת ההפעלה - משתמשים שהגדירו זאת
                 יראו את האתר ללא אנימציות
               </li>
               <li>
@@ -407,7 +407,7 @@ export default function AccessibilityPage() {
           <article className="access-card">
             <h2>התאמה למכשירים</h2>
             <p>
-              האתר רספונסיבי ומותאם לשימוש במכשירים שונים — מחשבים, טאבלטים
+              האתר רספונסיבי ומותאם לשימוש במכשירים שונים - מחשבים, טאבלטים
               וטלפונים ניידים. הממשק מתאים את עצמו לגודל המסך כדי לשמור על
               חוויית שימוש נוחה.
             </p>
@@ -434,7 +434,7 @@ export default function AccessibilityPage() {
                 חלקית בלבד
               </li>
               <li>
-                ייתכנו דפים או רכיבים שטרם נבדקו — אנו מבצעים בדיקות שוטפות
+                ייתכנו דפים או רכיבים שטרם נבדקו - אנו מבצעים בדיקות שוטפות
                 ומשתפרים בהתאם
               </li>
             </ul>
@@ -459,8 +459,8 @@ export default function AccessibilityPage() {
               <div className="access-contact-item">
                 <span className="access-contact-label">אימייל</span>
                 <span className="access-contact-value">
-                  <a href="mailto:Checkinota25@gmail.com">
-                    Checkinota25@gmail.com
+                  <a href="mailto:Checkinota24@gmail.com">
+                    Checkinota24@gmail.com
                   </a>
                 </span>
               </div>

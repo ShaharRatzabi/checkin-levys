@@ -11,6 +11,8 @@ import {
   Info,
   Luggage,
   ZoomIn,
+  Users,
+  Gift,
 } from "lucide-react";
 import "./DealCard.css";
 
@@ -164,6 +166,13 @@ const DealCard = ({ deal, onClose }) => {
     </div>
   );
 
+  // בדיקה אם יש נתוני מלון
+  const hasHotelData =
+    deal.hotel?.name ||
+    deal.hotel?.stars ||
+    deal.hotel?.room ||
+    deal.hotel?.meals;
+
   const handleWhatsAppClick = () => {
     const message = `
 היי 👋
@@ -171,8 +180,7 @@ const DealCard = ({ deal, onClose }) => {
 
  יעד: ${deal.title}
  מחיר: החל מ-${deal.priceFrom}₪ לאדם
- תאריכים: ${deal.datesRange}
- מלון: ${deal.hotel?.name || "—"}
+ תאריכים: ${deal.datesRange}${hasHotelData ? `\n מלון: ${deal.hotel?.name || "-"}` : ""}
 
 אשמח לפרטים נוספים 🙏
     `;
@@ -187,7 +195,7 @@ const DealCard = ({ deal, onClose }) => {
         month: "2-digit",
         year: "numeric",
       })
-    : "—";
+    : "-";
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) onClose();
@@ -195,7 +203,7 @@ const DealCard = ({ deal, onClose }) => {
 
   const imageAlt = `תמונה של יעד הטיסה: ${deal.title}`;
 
-  /* ✅ Portal — מרנדר ישירות ל-body, מעל כל stacking context כולל ההדר */
+  /* ✅ Portal - מרנדר ישירות ל-body, מעל כל stacking context כולל ההדר */
   return createPortal(
     <>
       <div className="dealcard-overlay" onClick={handleOverlayClick}>
@@ -240,10 +248,17 @@ const DealCard = ({ deal, onClose }) => {
               {deal.title}
             </h2>
 
+            {deal.composition && (
+              <div className="dealcard-composition">
+                <Users size={16} aria-hidden="true" />
+                <span>{deal.composition}</span>
+              </div>
+            )}
+
             <div className="dealcard-published">
               <Calendar size={16} aria-hidden="true" />
               <span>
-                פורסם ב־
+                פורסם ב-
                 <time dateTime={publishedDate?.toISOString()}>
                   {formattedDate}
                 </time>
@@ -300,36 +315,58 @@ const DealCard = ({ deal, onClose }) => {
               </Section>
             )}
 
-            <Section
-              icon={<Hotel size={22} color="#1d3557" />}
-              title={`מלון ${deal.hotel?.name}`}
-            >
-              <div
-                className="deal-stars"
-                aria-label={`דירוג: ${deal.hotel?.stars} כוכבים מתוך 5`}
-                role="img"
+            {hasHotelData && (
+              <Section
+                icon={<Hotel size={22} color="#1d3557" />}
+                title={`מלון${deal.hotel?.name ? ` ${deal.hotel.name}` : ""}`}
               >
-                {Array.from({ length: deal.hotel?.stars || 0 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    size={18}
-                    fill="#fca311"
-                    color="#fca311"
-                    aria-hidden="true"
-                  />
-                ))}
-              </div>
-              <InfoBox>
-                <div>
-                  <div className="info-label">ארוחות</div>
-                  <div className="info-value">{deal.hotel?.meals}</div>
+                {deal.hotel?.stars > 0 && (
+                  <div
+                    className="deal-stars"
+                    aria-label={`דירוג: ${deal.hotel.stars} כוכבים מתוך 5`}
+                    role="img"
+                  >
+                    {Array.from({ length: deal.hotel.stars }).map((_, i) => (
+                      <Star
+                        key={i}
+                        size={18}
+                        fill="#fca311"
+                        color="#fca311"
+                        aria-hidden="true"
+                      />
+                    ))}
+                  </div>
+                )}
+                <InfoBox>
+                  {deal.hotel?.meals && (
+                    <div>
+                      <div className="info-label">ארוחות</div>
+                      <div className="info-value">{deal.hotel.meals}</div>
+                    </div>
+                  )}
+                  {deal.hotel?.room && (
+                    <div style={{ textAlign: "left" }}>
+                      <div className="info-label">חדר</div>
+                      <div className="info-value">{deal.hotel.room}</div>
+                    </div>
+                  )}
+                </InfoBox>
+              </Section>
+            )}
+
+            {deal.extraAttraction && (
+              <Section
+                icon={<Gift size={22} color="#1d3557" />}
+                title="תוספת מיוחדת"
+              >
+                <div className="deal-included-box deal-extra-attraction-box">
+                  <CheckCircle size={18} aria-hidden="true" />
+                  <span className="deal-included-text">
+                    {deal.extraAttraction}
+                  </span>
                 </div>
-                <div style={{ textAlign: "left" }}>
-                  <div className="info-label">חדר</div>
-                  <div className="info-value">{deal.hotel?.room}</div>
-                </div>
-              </InfoBox>
-            </Section>
+              </Section>
+            )}
 
             <Section
               icon={<Info size={22} color="#1d3557" />}

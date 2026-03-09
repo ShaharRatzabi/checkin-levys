@@ -21,15 +21,16 @@ export default function ReviewsPage() {
           orderBy("createdAt", "desc"),
         );
         const snapshot = await getDocs(q);
-        const fetchedReviews = snapshot.docs.map((doc) => ({
+        const fetchedReviews = snapshot.docs.map((doc, i) => ({
           id: doc.id,
           ...doc.data(),
+          displayOrder: doc.data().displayOrder ?? i,
           created_date: doc.data().createdAt
             ? doc.data().createdAt.toDate().toISOString()
             : null,
-          // ✅ flight_date מועבר כפי שהוא (string YYYY-MM-DD)
           flight_date: doc.data().flight_date || null,
         }));
+        fetchedReviews.sort((a, b) => a.displayOrder - b.displayOrder);
         setReviews(fetchedReviews);
       } catch (error) {
         console.error("Error fetching reviews:", error);

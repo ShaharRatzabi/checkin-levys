@@ -8,8 +8,17 @@ import FlightCard from "../home/FlightCard/FlightCard.jsx";
 import DealCard from "../home/DealCard/DealCard.jsx";
 import { db } from "../../firebase";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { Search, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, X, ChevronDown, ChevronUp, Users } from "lucide-react";
 import planeVideo from "../../assets/videos/overlay.mp4";
+const COMPOSITION_OPTIONS = [
+  { value: "יחיד", label: "יחיד" },
+  { value: "זוג", label: "זוג" },
+  { value: "זוג + ילד", label: "זוג + ילד" },
+  { value: "זוג + 2 ילדים", label: "זוג + 2 ילדים" },
+  { value: "זוג + 3 ילדים", label: "זוג + 3 ילדים" },
+  { value: "משפחה מורחבת", label: "משפחה מורחבת" },
+  { value: "קבוצה", label: "קבוצה" },
+];
 
 const MOBILE_BREAKPOINT = 768;
 
@@ -39,7 +48,6 @@ const CountrySection = ({ country, deals, onDealClick, isMobile }) => {
     (swiper) => {
       const idx = swiper.activeIndex;
 
-      // Announce to screen readers
       if (liveRegionRef.current && deals[idx]) {
         liveRegionRef.current.textContent =
           "דיל " +
@@ -50,7 +58,6 @@ const CountrySection = ({ country, deals, onDealClick, isMobile }) => {
           deals[idx].title;
       }
 
-      // tabIndex management: only visible slides are focusable
       if (swiper.slides) {
         swiper.slides.forEach((slide, i) => {
           const focusables = slide.querySelectorAll("button, a, [tabindex]");
@@ -97,7 +104,6 @@ const CountrySection = ({ country, deals, onDealClick, isMobile }) => {
 
       {isMobile ? (
         <React.Fragment>
-          {/* Live region — announces slide changes to screen readers (WCAG 4.1.3) */}
           <div
             ref={liveRegionRef}
             className="sr-only"
@@ -179,7 +185,6 @@ const CountrySection = ({ country, deals, onDealClick, isMobile }) => {
             ))}
           </Swiper>
 
-          {/* Visible pagination dots (WCAG 1.3.3) */}
           <div
             className={
               "swiper-custom-pagination swiper-pagination-" + countrySlug
@@ -195,11 +200,13 @@ const CountrySection = ({ country, deals, onDealClick, isMobile }) => {
 };
 
 export default function Deals() {
+  const [allDeals, setAllDeals] = useState([]);
   const [groupedDeals, setGroupedDeals] = useState({});
   const [countries, setCountries] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState("all");
+  const [selectedComposition, setSelectedComposition] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [videoPlaying, setVideoPlaying] = useState(true);
@@ -241,19 +248,7 @@ export default function Deals() {
           id: doc.id,
         }));
 
-        const dealsByCountry = fetchedDeals.reduce((acc, deal) => {
-          const country = deal.country || "כללי";
-          if (!acc[country]) acc[country] = [];
-          acc[country].push(deal);
-          return acc;
-        }, {});
-
-        const countryList = Object.keys(dealsByCountry).sort(
-          (a, b) => dealsByCountry[b].length - dealsByCountry[a].length,
-        );
-        setGroupedDeals(dealsByCountry);
-        setCountries(countryList);
-        setFilteredCountries(countryList);
+        setAllDeals(fetchedDeals);
       } catch (error) {
         console.error("Error fetching deals:", error);
       } finally {
@@ -262,6 +257,37 @@ export default function Deals() {
     };
     fetchDeals();
   }, []);
+
+  // ─── חישוב הרכבים זמינים מתוך הדילים ──────────────────────────────────
+  const availableCompositions = React.useMemo(() => {
+    const comps = new Set();
+    allDeals.forEach((deal) => {
+      if (deal.composition) comps.add(deal.composition);
+    });
+    return COMPOSITION_OPTIONS.filter((opt) => comps.has(opt.value));
+  }, [allDeals]);
+
+  // ─── סינון דילים לפי הרכב ────────────────────────────────────────────────
+  const filteredDeals = React.useMemo(() => {
+    if (selectedComposition === "all") return allDeals;
+    return allDeals.filter((deal) => deal.composition === selectedComposition);
+  }, [allDeals, selectedComposition]);
+
+  // ─── קיבוץ לפי מדינה (מהדילים המסוננים) ─────────────────────────────────
+  useEffect(() => {
+    const dealsByCountry = filteredDeals.reduce((acc, deal) => {
+      const country = (deal.country || "כללי").trim();
+      if (!acc[country]) acc[country] = [];
+      acc[country].push(deal);
+      return acc;
+    }, {});
+
+    const countryList = Object.keys(dealsByCountry).sort(
+      (a, b) => dealsByCountry[b].length - dealsByCountry[a].length,
+    );
+    setGroupedDeals(dealsByCountry);
+    setCountries(countryList);
+  }, [filteredDeals]);
 
   useEffect(() => {
     if (searchTerm === "") {
@@ -533,7 +559,7 @@ export default function Deals() {
           outline-offset: 2px;
         }
 
-        /* Filter chips — wrap instead of horizontal scroll */
+        /* Filter chips */
         .filter-chips-container {
           width: 100%;
           background: rgba(255, 255, 255, 0.85);
@@ -567,7 +593,6 @@ export default function Deals() {
           border-color: #ddd;
         }
 
-        /* contrast ratio 4.61:1 on white */
         .filter-nav-item.active {
           background: #b8521b;
           color: white;
@@ -609,6 +634,63 @@ export default function Deals() {
 
         .show-more-btn svg {
           flex-shrink: 0;
+        }
+
+        /* ===== Composition Filter ===== */
+        .filter-section-label {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: #555;
+          white-space: nowrap;
+          padding: 0 4px;
+        }
+
+        .composition-filter-container {
+          width: 100%;
+          background: rgba(255, 255, 255, 0.8);
+          backdrop-filter: blur(20px);
+          padding: 8px 10px;
+          border-radius: 14px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          justify-content: center;
+          align-items: center;
+          border: 1px solid rgba(255,255,255,0.5);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+        }
+
+        .comp-filter-item {
+          padding: 6px 16px;
+          border-radius: 40px;
+          border: 1px solid transparent;
+          background: rgba(255,255,255,0.6);
+          color: var(--dark-text);
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-size: 0.85rem;
+          white-space: nowrap;
+          font-family: inherit;
+        }
+
+        .comp-filter-item:hover {
+          background: white;
+          border-color: #ddd;
+        }
+
+        .comp-filter-item.active {
+          background: #1d3557;
+          color: white;
+          box-shadow: 0 4px 12px rgba(29, 53, 87, 0.25);
+        }
+
+        .comp-filter-item:focus-visible {
+          outline: 3px solid #1d3557;
+          outline-offset: 3px;
         }
 
         /* ===== Deal Card Trigger ===== */
@@ -672,7 +754,6 @@ export default function Deals() {
           color: #2d3748;
         }
 
-        /* contrast ratio 5.2:1 */
         .deals-tag {
           background: rgba(255, 107, 53, 0.14);
           color: #9a4a1b;
@@ -717,7 +798,6 @@ export default function Deals() {
           border-radius: 20px;
         }
 
-        /* Screen reader only — visually hidden */
         .sr-only {
           position: absolute;
           width: 1px;
@@ -755,7 +835,6 @@ export default function Deals() {
           background: #999;
         }
 
-        /* Active dot — contrast 3.1:1 minimum on #f8f9fa background */
         .swiper-custom-pagination .swiper-pagination-bullet-active {
           background: var(--primary-orange);
           transform: scale(1.25);
@@ -787,6 +866,7 @@ export default function Deals() {
         @media (prefers-reduced-motion: reduce) {
           .search-input,
           .filter-nav-item,
+          .comp-filter-item,
           .whatsapp-banner,
           .hero-video-toggle,
           .show-more-btn,
@@ -813,6 +893,10 @@ export default function Deals() {
           .filter-nav-item {
             padding: 7px 14px;
             font-size: 0.82rem;
+          }
+          .comp-filter-item {
+            padding: 5px 12px;
+            font-size: 0.8rem;
           }
           .country-section { margin-bottom: 40px; }
           .country-header-container {
@@ -974,6 +1058,41 @@ export default function Deals() {
               )}
             </div>
           </nav>
+
+          {/* ═══ סינון לפי הרכב ═══ */}
+          {availableCompositions.length > 0 && (
+            <nav aria-label="סינון לפי הרכב">
+              <div className="composition-filter-container" role="group">
+                <span className="filter-section-label" aria-hidden="true">
+                  <Users size={14} />
+                  הרכב
+                </span>
+                <button
+                  className={`comp-filter-item ${selectedComposition === "all" ? "active" : ""}`}
+                  onClick={() => {
+                    setSelectedComposition("all");
+                    setSelectedCountry("all");
+                  }}
+                  aria-pressed={selectedComposition === "all"}
+                >
+                  הכל
+                </button>
+                {availableCompositions.map((opt) => (
+                  <button
+                    key={opt.value}
+                    className={`comp-filter-item ${selectedComposition === opt.value ? "active" : ""}`}
+                    onClick={() => {
+                      setSelectedComposition(opt.value);
+                      setSelectedCountry("all");
+                    }}
+                    aria-pressed={selectedComposition === opt.value}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </nav>
+          )}
         </div>
 
         <main className="deals-main">
@@ -984,15 +1103,17 @@ export default function Deals() {
           )}
 
           {selectedCountry === "all"
-            ? filteredCountries.map((country) => (
-                <CountrySection
-                  key={country}
-                  country={country}
-                  deals={groupedDeals[country]}
-                  onDealClick={(deal) => setSelectedDeal(deal)}
-                  isMobile={isMobile}
-                />
-              ))
+            ? filteredCountries
+                .filter((country) => groupedDeals[country]?.length > 0)
+                .map((country) => (
+                  <CountrySection
+                    key={country}
+                    country={country}
+                    deals={groupedDeals[country]}
+                    onDealClick={(deal) => setSelectedDeal(deal)}
+                    isMobile={isMobile}
+                  />
+                ))
             : groupedDeals[selectedCountry] && (
                 <CountrySection
                   country={selectedCountry}

@@ -33,6 +33,7 @@ import backgroundImage from "../../assets/images/background-about.png";
 
 const SHORTS_VIDEOS = [
   { id: "4p_oA-xNzAc", title: "הצטרפו לצוות שלנו" },
+  { id: "Wl78NScFkHk", title: "הצטרפו לקבוצת הווצאפ" },
   { id: "iT40MbjMQQs", title: "הדיל הבא שלכם רק דרכנו" },
   { id: "e1QcBJ14Lbc", title: "הצטרפו לקבוצת הווצאפ" },
   { id: "XBXpZZllBPQ", title: "הצטרפו לקבוצת הווצאפ" },

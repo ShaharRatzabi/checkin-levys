@@ -1,30 +1,44 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { Star, MapPin, Calendar, Plane, X } from "lucide-react";
+import {
+  Star,
+  MapPin,
+  Calendar,
+  Plane,
+  X,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import "./ReviewDisplay.css";
 
 export default function ReviewDisplay({ reviews }) {
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [galleryState, setGalleryState] = useState(null);
   const modalRef = useRef(null);
   const triggerRef = useRef(null);
   const contentRef = useRef(null);
 
-  const openModal = (url, buttonEl) => {
+  const openGallery = (images, startIndex, buttonEl) => {
     triggerRef.current = buttonEl;
-    setSelectedImage(url);
+    setGalleryState({ images, currentIndex: startIndex });
   };
 
-  const closeModal = () => {
-    setSelectedImage(null);
+  const closeGallery = () => {
+    setGalleryState(null);
     setTimeout(() => triggerRef.current?.focus(), 50);
   };
 
-  // ✅ נעילת סקרול + inert על כל מה שמאחורי המודאל
+  const goToImage = (index) => {
+    if (!galleryState) return;
+    const len = galleryState.images.length;
+    const newIndex = ((index % len) + len) % len;
+    setGalleryState((prev) => ({ ...prev, currentIndex: newIndex }));
+  };
+
   useEffect(() => {
     const headerEl = document.querySelector("header");
     const bubbleEl = document.querySelector(".floating-bubble-wrapper");
 
-    if (selectedImage) {
+    if (galleryState) {
       document.body.style.overflow = "hidden";
       if (contentRef.current) contentRef.current.inert = true;
       if (headerEl) headerEl.inert = true;
@@ -42,11 +56,10 @@ export default function ReviewDisplay({ reviews }) {
       if (headerEl) headerEl.inert = false;
       if (bubbleEl) bubbleEl.inert = false;
     };
-  }, [selectedImage]);
+  }, [galleryState]);
 
-  // ✅ מלכודת פוקוס + סגירה ב-Escape
   useEffect(() => {
-    if (!selectedImage || !modalRef.current) return;
+    if (!galleryState || !modalRef.current) return;
 
     const focusableElements = modalRef.current.querySelectorAll(
       'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
@@ -58,7 +71,15 @@ export default function ReviewDisplay({ reviews }) {
 
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        closeModal();
+        closeGallery();
+        return;
+      }
+      if (e.key === "ArrowLeft") {
+        goToImage(galleryState.currentIndex + 1);
+        return;
+      }
+      if (e.key === "ArrowRight") {
+        goToImage(galleryState.currentIndex - 1);
         return;
       }
       if (e.key !== "Tab") return;
@@ -74,7 +95,7 @@ export default function ReviewDisplay({ reviews }) {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [selectedImage]);
+  }, [galleryState]);
 
   const formatFlightDate = (dateStr) => {
     if (!dateStr) return null;
@@ -91,41 +112,80 @@ export default function ReviewDisplay({ reviews }) {
 
   return (
     <div className="reviews-container">
-      {/*
-        ✅ Portal — מרנדר את המודאל ישירות ב-document.body
-        כדי שה-z-index שלו לא יהיה כלוא בתוך stacking context
-        של .reviews-content (z-index: 1)
-      */}
-      {selectedImage &&
+      {galleryState &&
         createPortal(
           <div
             className="image-modal-overlay"
-            onClick={closeModal}
+            onClick={closeGallery}
             role="presentation"
           >
             <div
               ref={modalRef}
-              className="image-modal-content"
+              className="image-modal-content gallery-modal"
               onClick={(e) => e.stopPropagation()}
               role="dialog"
               aria-modal="true"
-              aria-label="תצוגת תמונה מלאה"
+              aria-label={`תצוגת תמונה ${galleryState.currentIndex + 1} מתוך ${galleryState.images.length}`}
               tabIndex={-1}
             >
               <button
                 className="close-button"
-                onClick={closeModal}
-                aria-label="סגירת תמונה"
+                onClick={closeGallery}
+                aria-label="סגירת גלריה"
               >
                 <X aria-hidden="true" />
               </button>
-              <img src={selectedImage} alt="תמונה בתצוגה מלאה" />
+
+              <img
+                src={galleryState.images[galleryState.currentIndex]}
+                alt={`תמונה ${galleryState.currentIndex + 1} מתוך ${galleryState.images.length}`}
+              />
+
+              {galleryState.images.length > 1 && (
+                <>
+                  <button
+                    className="gallery-nav gallery-nav-prev"
+                    onClick={() => goToImage(galleryState.currentIndex - 1)}
+                    aria-label="תמונה קודמת"
+                  >
+                    <ChevronRight size={28} aria-hidden="true" />
+                  </button>
+                  <button
+                    className="gallery-nav gallery-nav-next"
+                    onClick={() => goToImage(galleryState.currentIndex + 1)}
+                    aria-label="תמונה הבאה"
+                  >
+                    <ChevronLeft size={28} aria-hidden="true" />
+                  </button>
+
+                  <div className="gallery-counter" aria-hidden="true">
+                    {galleryState.currentIndex + 1} /{" "}
+                    {galleryState.images.length}
+                  </div>
+
+                  <div
+                    className="gallery-dots"
+                    role="tablist"
+                    aria-label="ניווט תמונות"
+                  >
+                    {galleryState.images.map((_, i) => (
+                      <button
+                        key={i}
+                        className={`gallery-dot ${i === galleryState.currentIndex ? "active" : ""}`}
+                        onClick={() => goToImage(i)}
+                        role="tab"
+                        aria-selected={i === galleryState.currentIndex}
+                        aria-label={`תמונה ${i + 1}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </div>,
           document.body,
         )}
 
-      {/* ✅ כל התוכן עטוף ב-ref שנהפך ל-inert כשמודאל פתוח */}
       <div ref={contentRef}>
         <div className="reviews-header">
           <h2>תקשיבו ללקוחות שלנו</h2>
@@ -168,26 +228,25 @@ export default function ReviewDisplay({ reviews }) {
               </div>
 
               {review.image_urls?.length > 0 && (
-                <div
-                  className="review-images"
-                  role="list"
-                  aria-label="תמונות מהחופשה"
-                >
-                  {review.image_urls.map((url, index) => (
-                    <div key={index} className="review-image" role="listitem">
-                      <button
-                        className="image-button"
-                        onClick={(e) => openModal(url, e.currentTarget)}
-                        aria-label={`פתח תמונה ${index + 1} בתצוגה מלאה`}
-                        aria-haspopup="dialog"
-                      >
-                        <img
-                          src={url}
-                          alt={`תמונה ${index + 1} מחופשת ${review.reviewer_name} ב${review.destination}`}
-                        />
-                      </button>
-                    </div>
-                  ))}
+                <div className="review-images-preview">
+                  <button
+                    className="image-button review-thumbnail-btn"
+                    onClick={(e) =>
+                      openGallery(review.image_urls, 0, e.currentTarget)
+                    }
+                    aria-label={`פתח גלריית תמונות - ${review.image_urls.length} תמונות`}
+                    aria-haspopup="dialog"
+                  >
+                    <img
+                      src={review.image_urls[0]}
+                      alt={`תמונה מחופשת ${review.reviewer_name} ב${review.destination}`}
+                    />
+                    {review.image_urls.length > 1 && (
+                      <span className="image-count-badge" aria-hidden="true">
+                        +{review.image_urls.length - 1}
+                      </span>
+                    )}
+                  </button>
                 </div>
               )}
 
@@ -196,7 +255,7 @@ export default function ReviewDisplay({ reviews }) {
                   <div className="review-footer-item">
                     <Plane className="meta-icon" aria-hidden="true" />
                     <span>
-                      טס/ה ב־
+                      טס/ה ב-
                       <time dateTime={review.flight_date}>
                         {formatFlightDate(review.flight_date)}
                       </time>
@@ -207,7 +266,7 @@ export default function ReviewDisplay({ reviews }) {
                 <div className="review-footer-item">
                   <Calendar className="meta-icon" aria-hidden="true" />
                   <span>
-                    פורסם ב־
+                    פורסם ב-
                     <time dateTime={review.created_date}>
                       {new Date(review.created_date).toLocaleDateString(
                         "he-IL",
