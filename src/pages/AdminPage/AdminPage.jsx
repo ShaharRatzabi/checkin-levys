@@ -648,25 +648,52 @@ function AdminPage() {
     }
   };
 
-  // ─── סידור ביקורות ────────────────────────────────────────────────────────
-  const handleMoveReview = async (index, direction) => {
-    const targetIndex = index + direction;
-    if (targetIndex < 0 || targetIndex >= reviews.length) return;
+  // ─── סידור ביקורות בגרירה ─────────────────────────────────────────────────
+  const [dragReviewIdx, setDragReviewIdx] = useState(null);
+  const [dragOverIdx, setDragOverIdx] = useState(null);
 
-    const current = reviews[index];
-    const target = reviews[targetIndex];
+  const handleReviewDragStart = (index) => {
+    setDragReviewIdx(index);
+  };
+
+  const handleReviewDragOver = (e, index) => {
+    e.preventDefault();
+    if (index !== dragOverIdx) setDragOverIdx(index);
+  };
+
+  const handleReviewDrop = async (dropIndex) => {
+    if (dragReviewIdx === null || dragReviewIdx === dropIndex) {
+      setDragReviewIdx(null);
+      setDragOverIdx(null);
+      return;
+    }
+
+    const reordered = [...reviews];
+    const [moved] = reordered.splice(dragReviewIdx, 1);
+    reordered.splice(dropIndex, 0, moved);
+
+    setDragReviewIdx(null);
+    setDragOverIdx(null);
 
     try {
-      await updateDoc(doc(db, "reviews", current.id), {
-        displayOrder: target.displayOrder,
+      const batch = [];
+      reordered.forEach((review, i) => {
+        if (review.displayOrder !== i) {
+          batch.push(
+            updateDoc(doc(db, "reviews", review.id), { displayOrder: i }),
+          );
+        }
       });
-      await updateDoc(doc(db, "reviews", target.id), {
-        displayOrder: current.displayOrder,
-      });
+      await Promise.all(batch);
       fetchReviews();
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleReviewDragEnd = () => {
+    setDragReviewIdx(null);
+    setDragOverIdx(null);
   };
 
   // ─── Deal Modal ──────────────────────────────────────────────────────────
@@ -934,7 +961,9 @@ function AdminPage() {
               <caption className="sr-only">רשימת ביקורות לקוחות</caption>
               <thead>
                 <tr>
-                  <th scope="col">סדר</th>
+                  <th scope="col" style={{ width: "50px" }}>
+                    גרור
+                  </th>
                   <th scope="col">שם</th>
                   <th scope="col">יעד</th>
                   <th scope="col">דירוג</th>
@@ -946,26 +975,28 @@ function AdminPage() {
               </thead>
               <tbody>
                 {reviews.map((review, reviewIndex) => (
-                  <tr key={review.id}>
-                    <td className="actions-cell">
-                      <button
-                        className="action-btn edit"
-                        onClick={() => handleMoveReview(reviewIndex, -1)}
-                        disabled={reviewIndex === 0}
-                        aria-label={`העבר למעלה: ${review.reviewer_name}`}
-                        style={{ padding: "6px 10px", fontSize: "1.1rem" }}
-                      >
-                        ▲
-                      </button>
-                      <button
-                        className="action-btn edit"
-                        onClick={() => handleMoveReview(reviewIndex, 1)}
-                        disabled={reviewIndex === reviews.length - 1}
-                        aria-label={`העבר למטה: ${review.reviewer_name}`}
-                        style={{ padding: "6px 10px", fontSize: "1.1rem" }}
-                      >
-                        ▼
-                      </button>
+                  <tr
+                    key={review.id}
+                    draggable
+                    onDragStart={() => handleReviewDragStart(reviewIndex)}
+                    onDragOver={(e) => handleReviewDragOver(e, reviewIndex)}
+                    onDrop={() => handleReviewDrop(reviewIndex)}
+                    onDragEnd={handleReviewDragEnd}
+                    className={
+                      (dragReviewIdx === reviewIndex ? "dragging-row" : "") +
+                      (dragOverIdx === reviewIndex &&
+                      dragReviewIdx !== reviewIndex
+                        ? " drag-over-row"
+                        : "")
+                    }
+                  >
+                    <td
+                      className="drag-handle-cell"
+                      aria-label="גרור לשינוי סדר"
+                    >
+                      <span className="drag-handle" aria-hidden="true">
+                        ☰
+                      </span>
                     </td>
                     <td>{review.reviewer_name}</td>
                     <td>{review.destination}</td>

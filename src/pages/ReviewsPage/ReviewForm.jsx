@@ -99,6 +99,7 @@ export default function ReviewForm() {
         image_urls: uploadedImageUrls,
         createdAt: serverTimestamp(),
         approved: true,
+        displayOrder: 999999,
       });
 
       setStatusMessage("תודה! הביקורת נשלחה בהצלחה 🙏");

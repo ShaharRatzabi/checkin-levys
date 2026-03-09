@@ -548,7 +548,7 @@ tbody tr:hover {
 }
 
 /* ════════════════════════════════════════════
-   ✅ מודאל עריכת ביקורת — כוכבי דירוג
+   מודאל עריכת ביקורת - כוכבי דירוג
 ════════════════════════════════════════════ */
 .review-edit-stars {
   display: flex;
@@ -582,7 +582,7 @@ tbody tr:hover {
 }
 
 /* ════════════════════════════════════════════
-   ✅ מודאל עריכת ביקורת — ניהול תמונות
+   מודאל עריכת ביקורת - ניהול תמונות
 ════════════════════════════════════════════ */
 .review-images-fieldset {
   border: 1.5px solid #ddd;
@@ -690,7 +690,7 @@ tbody tr:hover {
 }
 
 /* ════════════════════════════════════════════
-   מודאל עריכת ביקורת — רוחב נוסף
+   מודאל עריכת ביקורת - רוחב נוסף
 ════════════════════════════════════════════ */
 .review-edit-modal {
   max-width: 650px;
@@ -702,6 +702,50 @@ tbody tr:hover {
 *:focus:not(:focus-visible) {
   outline: none;
 }
+
+/* ════════════════════════════════════════════
+   גרירת ביקורות - Drag & Drop
+════════════════════════════════════════════ */
+.drag-handle-cell {
+  width: 50px;
+  text-align: center;
+}
+
+.drag-handle {
+  cursor: grab;
+  font-size: 1.3rem;
+  color: #999;
+  user-select: none;
+  display: inline-block;
+  line-height: 1;
+}
+
+.drag-handle:hover {
+  color: #555;
+}
+
+tr[draggable="true"] {
+  cursor: grab;
+}
+
+tr[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.dragging-row {
+  opacity: 0.4;
+  background: rgba(74, 0, 224, 0.05);
+}
+
+.drag-over-row {
+  border-top: 3px solid var(--primary-color);
+}
+
+.drag-over-row td {
+  position: relative;
+}
+
+/* ════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
   .add-deal-btn,
