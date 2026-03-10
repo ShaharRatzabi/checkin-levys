@@ -58,3 +58,34 @@
     transition: none;
   }
 }
+
+/* הוסף לקובץ FlightCardsShowcase.css הקיים */
+
+.showcase-all-deals-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 10px 24px;
+  border-radius: 50px;
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-family: "Assistant", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+  text-decoration: none;
+}
+
+.showcase-all-deals-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.showcase-all-deals-btn:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}

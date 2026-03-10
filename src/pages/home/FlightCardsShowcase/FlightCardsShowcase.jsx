@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, A11y, Keyboard } from "swiper/modules";
+import { useNavigate } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/autoplay";
 import "swiper/css/a11y";
@@ -9,12 +10,13 @@ import DealCard from "../DealCard/DealCard.jsx";
 import "./FlightCardsShowcase.css";
 
 import { db } from "../../../firebase";
-import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 const FlightCardsShowcase = () => {
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDeal, setSelectedDeal] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDeals = async () => {
@@ -23,7 +25,6 @@ const FlightCardsShowcase = () => {
         const dealsQuery = query(
           dealsCollectionRef,
           orderBy("createdAt", "desc"),
-          limit(6),
         );
         const querySnapshot = await getDocs(dealsQuery);
         const fetchedDeals = querySnapshot.docs.map((doc) => ({
@@ -50,7 +51,6 @@ const FlightCardsShowcase = () => {
   const handleCardClick = (deal) => setSelectedDeal(deal);
   const closeCard = () => setSelectedDeal(null);
 
-  // ✅ מצב טעינה נגיש
   if (loading) {
     return (
       <div role="status" aria-live="polite" aria-label="טוען הצעות מיוחדות">
@@ -60,19 +60,56 @@ const FlightCardsShowcase = () => {
   }
 
   return (
-    // ✅ section במקום div + aria-label
     <section className="showcase-container" aria-label="יעדי חלומות">
       <div className="showcase-content">
         <div className="showcase-header">
-          {/* ✅ h2 במקום h1 */}
           <h2 className="showcase-title">יעדי החלומות שלכם</h2>
           <p className="showcase-description">
             גלה הצעות מדהימות ליעדים החביבים עליך. הזמן עכשיו וחסוך בהרפתקה הבאה
             שלך!
           </p>
+
+          {/* כפתור מעבר לעמוד דילים */}
+          <button
+            onClick={() => navigate("/deals")}
+            aria-label="עבור לעמוד כל הדילים"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              marginTop: "14px",
+              padding: "10px 28px",
+              borderRadius: "50px",
+              border: "none",
+              background: "linear-gradient(135deg, #E8692A, #c9521a)",
+              color: "#fff",
+              fontFamily: "Assistant, sans-serif",
+              fontSize: "0.95rem",
+              fontWeight: 700,
+              cursor: "pointer",
+              boxShadow: "0 4px 18px rgba(232,105,42,0.45)",
+              transition:
+                "transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-3px) scale(1.04)";
+              e.currentTarget.style.boxShadow =
+                "0 8px 28px rgba(232,105,42,0.6)";
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, #f0773a, #d95e20)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow =
+                "0 4px 18px rgba(232,105,42,0.45)";
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, #E8692A, #c9521a)";
+            }}
+          >
+            לכל הדילים ←
+          </button>
         </div>
 
-        {/* ✅ A11y + Keyboard modules לנגישות מקלדת */}
         <Swiper
           modules={[Autoplay, A11y, Keyboard]}
           loop={false}
@@ -92,7 +129,6 @@ const FlightCardsShowcase = () => {
         >
           {deals.map((deal) => (
             <SwiperSlide key={deal.id}>
-              {/* ✅ button במקום div — נגיש למקלדת */}
               <button
                 className="deal-card-trigger"
                 onClick={() => handleCardClick(deal)}
