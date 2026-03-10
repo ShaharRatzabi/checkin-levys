@@ -26,6 +26,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import AccessibilityPage from "./pages/AcccessibilityPage/AccessibilityPage";
 import PrivacyPage from "./pages/PrivacyPage/PrivacyPage.jsx";
 import TermsPage from "./pages/TermsPage/TermsPage.jsx";
+import CookieConsent from "./components/CookieConsent.jsx";
 
 const authorizedUsers = [
   "shaharatzabi@gmail.com",
@@ -79,12 +80,10 @@ function AppContent() {
 
   /* 🎯 איפוס פוקוס במעבר עמוד */
   useEffect(() => {
-    // ✅ הופך body לניתן לפוקוס זמנית — Tab הבא יתחיל מה-skip link
     document.body.setAttribute("tabindex", "-1");
     document.body.focus();
     document.body.removeAttribute("tabindex");
 
-    // ✅ הכרזה לקורא מסך
     const name = PAGE_NAMES[location.pathname] || "עמוד";
     setPageAnnouncement("");
     const timer = setTimeout(() => {
@@ -140,7 +139,7 @@ function AppContent() {
 
   return (
     <>
-      {/* ✅ הכרזה לקורא מסך — בלתי נראית */}
+      {/* ✅ הכרזה לקורא מסך */}
       <div
         role="status"
         aria-live="polite"
@@ -157,7 +156,7 @@ function AppContent() {
         {pageAnnouncement}
       </div>
 
-      {/* ✅ skip link — Tab ראשון מציג אותו */}
+      {/* ✅ skip link */}
       <a href="#main-content" className="skip-link">
         דלג לתוכן הראשי
       </a>
@@ -175,10 +174,8 @@ function AppContent() {
           <Route path="/visas" element={<VisasPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/terms" element={<TermsPage />} />
-
           <Route path="/accessibility" element={<AccessibilityPage />} />
           <Route path="/privacy-policy" element={<PrivacyPage />} />
-
           <Route
             path="/admin"
             element={
@@ -192,6 +189,9 @@ function AppContent() {
 
       <Footer />
       <FloatingBubble />
+
+      {/* 🍪 Cookie Consent — מוצג פעם אחת בלבד */}
+      <CookieConsent />
     </>
   );
 }
