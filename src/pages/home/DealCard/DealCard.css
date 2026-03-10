@@ -517,3 +517,117 @@
     transition: none;
   }
 }
+/* ════════════════════════════════════════════
+   הוסף לסוף DealCard.css
+════════════════════════════════════════════ */
+
+/* ─── בורר הרכבים ─── */
+.dealcard-composition-section {
+  margin: 0.75rem 0;
+  padding: 0.75rem 1rem;
+  background: rgba(29, 53, 87, 0.04);
+  border-radius: 12px;
+  border: 1px solid rgba(29, 53, 87, 0.1);
+}
+
+.dealcard-comp-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.dealcard-comp-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dealcard-comp-tab {
+  padding: 6px 14px;
+  border-radius: 30px;
+  border: 1.5px solid #d0d5dd;
+  background: white;
+  color: #344054;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.dealcard-comp-tab:hover {
+  border-color: #1d3557;
+  background: rgba(29, 53, 87, 0.05);
+}
+
+.dealcard-comp-tab.active {
+  background: #1d3557;
+  border-color: #1d3557;
+  color: white;
+  box-shadow: 0 3px 10px rgba(29, 53, 87, 0.25);
+}
+
+.dealcard-comp-tab:focus-visible {
+  outline: 3px solid #1d3557;
+  outline-offset: 2px;
+}
+
+/* ─── תווית הרכב ליד מחיר ─── */
+.price-comp-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0.75;
+  margin-right: 4px;
+}
+
+/* ─── כפתור וואטסאפ ─── */
+.dealcard-submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #25d366, #128c7e);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.35);
+}
+
+.dealcard-submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(37, 211, 102, 0.45);
+}
+
+.dealcard-submit-button:active {
+  transform: translateY(0);
+  opacity: 0.9;
+}
+
+.dealcard-submit-button:focus-visible {
+  outline: 3px solid #128c7e;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dealcard-comp-tab,
+  .dealcard-submit-button {
+    transition: none;
+  }
+  .dealcard-submit-button:hover {
+    transform: none;
+  }
+}

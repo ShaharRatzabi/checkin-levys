@@ -25,10 +25,17 @@ export const COMPOSITION_OPTIONS = [
   { value: "קבוצה", label: "קבוצה" },
 ];
 
+// ─── אפשרויות תווית מחיר ────────────────────────────────────────────────────
+export const PRICE_LABEL_OPTIONS = [
+  { value: "לאדם", label: "לאדם" },
+  { value: "לזוג", label: "לזוג" },
+  { value: "לחבילה", label: "לחבילה" },
+  { value: "לחדר", label: "לחדר" },
+];
+
 // ─── שדות חובה לדילים ──────────────────────────────────────────────────────
 const REQUIRED_FIELDS = {
   title: "שם החבילה",
-  priceFrom: "מחיר",
   country: "מדינה",
   days: "מספר ימים",
   datesRange: "טווח תאריכים",
@@ -41,8 +48,7 @@ const REQUIRED_FIELDS = {
 
 const initialFormState = {
   title: "",
-  composition: "",
-  priceFrom: "",
+  compositions: [], // [{ value: "יחיד", price: "", priceLabel: "לאדם" }, ...]
   country: "",
   mainImage: "",
   days: "",
@@ -143,7 +149,6 @@ function ConfirmModal({ message, onConfirm, onCancel }) {
 // ─── הודעת שגיאה נגישה ──────────────────────────────────────────────────────
 function StatusToast({ message, onClose }) {
   const closeRef = useRef(null);
-
   useEffect(() => {
     closeRef.current?.focus();
     const handleKey = (e) => {
@@ -171,8 +176,114 @@ function StatusToast({ message, onClose }) {
   );
 }
 
+// ─── בורר הרכבים + מחירים + תווית מחיר ────────────────────────────────────
+function CompositionPriceSelector({ compositions, onChange }) {
+  const selectedValues = compositions.map((c) => c.value);
+
+  const toggleComposition = (value) => {
+    if (selectedValues.includes(value)) {
+      onChange(compositions.filter((c) => c.value !== value));
+    } else {
+      onChange([...compositions, { value, price: "", priceLabel: "לאדם" }]);
+    }
+  };
+
+  const updatePrice = (value, price) => {
+    onChange(
+      compositions.map((c) => (c.value === value ? { ...c, price } : c)),
+    );
+  };
+
+  const updatePriceLabel = (value, priceLabel) => {
+    onChange(
+      compositions.map((c) => (c.value === value ? { ...c, priceLabel } : c)),
+    );
+  };
+
+  return (
+    <div className="composition-price-selector">
+      <p className="comp-selector-hint">
+        סמן את ההרכבים הרלוונטיים, הזן מחיר ובחר למי המחיר
+      </p>
+
+      <div
+        className="comp-options-grid"
+        role="group"
+        aria-label="בחירת הרכבים ומחירים"
+      >
+        {COMPOSITION_OPTIONS.map((opt) => {
+          const isSelected = selectedValues.includes(opt.value);
+          const comp = compositions.find((c) => c.value === opt.value);
+
+          return (
+            <div
+              key={opt.value}
+              className={`comp-option-card ${isSelected ? "selected" : ""}`}
+            >
+              <button
+                type="button"
+                className="comp-option-toggle"
+                aria-pressed={isSelected}
+                onClick={() => toggleComposition(opt.value)}
+              >
+                <span className="comp-option-check" aria-hidden="true">
+                  {isSelected ? "✓" : ""}
+                </span>
+                <span className="comp-option-label">{opt.label}</span>
+              </button>
+
+              {isSelected && (
+                <div className="comp-price-field">
+                  <label
+                    htmlFor={`price-${opt.value}`}
+                    className="comp-price-label"
+                  >
+                    מחיר (₪)
+                  </label>
+                  <input
+                    id={`price-${opt.value}`}
+                    type="number"
+                    min="0"
+                    placeholder="הזן מחיר"
+                    value={comp?.price ?? ""}
+                    onChange={(e) => updatePrice(opt.value, e.target.value)}
+                    aria-required="true"
+                    className="comp-price-input"
+                  />
+                  <label
+                    htmlFor={`pricelabel-${opt.value}`}
+                    className="comp-price-label"
+                    style={{ marginTop: "6px" }}
+                  >
+                    המחיר הוא
+                  </label>
+                  <select
+                    id={`pricelabel-${opt.value}`}
+                    value={comp?.priceLabel ?? "לאדם"}
+                    onChange={(e) =>
+                      updatePriceLabel(opt.value, e.target.value)
+                    }
+                    className="comp-price-input"
+                    style={{ cursor: "pointer" }}
+                  >
+                    {PRICE_LABEL_OPTIONS.map((pl) => (
+                      <option key={pl.value} value={pl.value}>
+                        {pl.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ─── מודאל עריכת ביקורת ─────────────────────────────────────────────────────
-function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
+function ReviewEditModal({ review, onSave, onCancel }) {
   const modalRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -185,9 +296,7 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
     flight_date: review.flight_date || "",
   });
 
-  // תמונות קיימות (URLs מ-Firebase)
   const [existingImages, setExistingImages] = useState(review.image_urls || []);
-  // תמונות חדשות (קבצים מקומיים)
   const [newImages, setNewImages] = useState([]);
   const [saving, setSaving] = useState(false);
 
@@ -228,37 +337,10 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleRatingClick = (rating) => {
-    setFormData((prev) => ({ ...prev, rating }));
-  };
-
-  const removeExistingImage = (index) => {
-    setExistingImages((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const removeNewImage = (index) => {
-    setNewImages((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleFileAdd = (e) => {
-    const files = Array.from(e.target.files).filter((f) =>
-      f.type.startsWith("image/"),
-    );
-    const mapped = files.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-      name: file.name,
-    }));
-    setNewImages((prev) => [...prev, ...mapped]);
-    e.target.value = "";
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-
     try {
-      // העלאת תמונות חדשות
       const uploadedUrls = [];
       for (const img of newImages) {
         const imgRef = ref(storage, `reviews/${Date.now()}-${img.name}`);
@@ -266,12 +348,9 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
         const url = await getDownloadURL(imgRef);
         uploadedUrls.push(url);
       }
-
-      const allImageUrls = [...existingImages, ...uploadedUrls];
-
       await onSave(review.id, {
         ...formData,
-        image_urls: allImageUrls,
+        image_urls: [...existingImages, ...uploadedUrls],
       });
     } catch (err) {
       console.error("Error saving review:", err);
@@ -292,7 +371,6 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id="review-edit-title">עריכת ביקורת</h2>
-
         <form onSubmit={handleSubmit} className="deal-form" noValidate>
           <div className="form-field">
             <label htmlFor="re-reviewer_name">שם מלא</label>
@@ -301,10 +379,8 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
               name="reviewer_name"
               value={formData.reviewer_name}
               onChange={handleChange}
-              placeholder="שם הלקוח"
             />
           </div>
-
           <div className="form-field">
             <label htmlFor="re-destination">יעד</label>
             <input
@@ -312,10 +388,8 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
               name="destination"
               value={formData.destination}
               onChange={handleChange}
-              placeholder="יעד"
             />
           </div>
-
           <div className="form-field">
             <label htmlFor="re-flight_date">תאריך טיסה</label>
             <input
@@ -326,7 +400,6 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
               onChange={handleChange}
             />
           </div>
-
           <div className="form-field">
             <label id="re-rating-label">דירוג</label>
             <div
@@ -338,7 +411,7 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
                 <button
                   type="button"
                   key={star}
-                  onClick={() => handleRatingClick(star)}
+                  onClick={() => setFormData((p) => ({ ...p, rating: star }))}
                   className={`review-edit-star ${formData.rating >= star ? "active" : ""}`}
                   aria-label={`דרג ${star} כוכבים`}
                   aria-pressed={formData.rating >= star}
@@ -348,7 +421,6 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
               ))}
             </div>
           </div>
-
           <div className="form-field">
             <label htmlFor="re-review_text">חוות דעת</label>
             <textarea
@@ -356,11 +428,9 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
               name="review_text"
               value={formData.review_text}
               onChange={handleChange}
-              placeholder="חוות דעת"
               rows="4"
             />
           </div>
-
           <div className="form-field">
             <label htmlFor="re-will_book_again">יסגור שוב?</label>
             <select
@@ -374,12 +444,8 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
               <option value="no">לא</option>
             </select>
           </div>
-
-          {/* ════ ניהול תמונות ════ */}
           <fieldset className="review-images-fieldset">
             <legend>תמונות</legend>
-
-            {/* תמונות קיימות */}
             {existingImages.length > 0 && (
               <div className="review-edit-images-grid">
                 {existingImages.map((url, index) => (
@@ -391,7 +457,11 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
                     <button
                       type="button"
                       className="review-edit-image-remove"
-                      onClick={() => removeExistingImage(index)}
+                      onClick={() =>
+                        setExistingImages((p) =>
+                          p.filter((_, i) => i !== index),
+                        )
+                      }
                       aria-label={`הסר תמונה ${index + 1}`}
                     >
                       ✕
@@ -400,8 +470,6 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
                 ))}
               </div>
             )}
-
-            {/* תמונות חדשות */}
             {newImages.length > 0 && (
               <div
                 className="review-edit-images-grid"
@@ -416,7 +484,9 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
                     <button
                       type="button"
                       className="review-edit-image-remove"
-                      onClick={() => removeNewImage(index)}
+                      onClick={() =>
+                        setNewImages((p) => p.filter((_, i) => i !== index))
+                      }
                       aria-label={`הסר תמונה חדשה ${img.name}`}
                     >
                       ✕
@@ -426,11 +496,23 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
                 ))}
               </div>
             )}
-
             <input
               type="file"
               ref={fileInputRef}
-              onChange={handleFileAdd}
+              onChange={(e) => {
+                const files = Array.from(e.target.files).filter((f) =>
+                  f.type.startsWith("image/"),
+                );
+                setNewImages((p) => [
+                  ...p,
+                  ...files.map((f) => ({
+                    file: f,
+                    preview: URL.createObjectURL(f),
+                    name: f.name,
+                  })),
+                ]);
+                e.target.value = "";
+              }}
               accept="image/*"
               multiple
               style={{ display: "none" }}
@@ -444,7 +526,6 @@ function ReviewEditModal({ review, onSave, onCancel, storageRef }) {
               + הוסף תמונות
             </button>
           </fieldset>
-
           <div className="modal-actions">
             <button type="button" onClick={onCancel}>
               ביטול
@@ -471,17 +552,10 @@ function AdminPage() {
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-
-  // ולידציה
   const [fieldErrors, setFieldErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
-
-  // מודאל אישור
   const [confirmState, setConfirmState] = useState(null);
-  // הודעת שגיאה
   const [toastMessage, setToastMessage] = useState(null);
-
-  // ✅ מודאל עריכת ביקורת
   const [editingReview, setEditingReview] = useState(null);
 
   const fileInputRef = useRef(null);
@@ -501,10 +575,17 @@ function AdminPage() {
         return;
       }
       const value = getFieldValue(data, key);
-      if (value === "" || value === null || value === undefined) {
+      if (value === "" || value === null || value === undefined)
         errors[key] = `${label} הוא שדה חובה`;
-      }
     });
+    if (!data.compositions || data.compositions.length === 0) {
+      errors.compositions = "יש לבחור לפחות הרכב אחד עם מחיר";
+    } else {
+      const missingPrice = data.compositions.some(
+        (c) => !c.price || c.price === "",
+      );
+      if (missingPrice) errors.compositions = "יש להזין מחיר לכל הרכב שנבחר";
+    }
     return errors;
   }, []);
 
@@ -611,7 +692,6 @@ function AdminPage() {
       console.error(err);
     }
   };
-
   const handleHideReview = async (id) => {
     try {
       await updateDoc(doc(db, "reviews", id), { approved: false });
@@ -620,10 +700,9 @@ function AdminPage() {
       console.error(err);
     }
   };
-
   const handleDeleteReview = (id, name) => {
     setConfirmState({
-      message: `האם אתה בטוח שברצונך למחוק לצמיתות את הביקורת של ${name}? פעולה זו אינה ניתנת לביטול.`,
+      message: `האם אתה בטוח שברצונך למחוק לצמיתות את הביקורת של ${name}?`,
       onConfirm: async () => {
         setConfirmState(null);
         try {
@@ -635,8 +714,6 @@ function AdminPage() {
       },
     });
   };
-
-  // ✅ שמירת עריכת ביקורת
   const handleSaveReview = async (reviewId, updatedData) => {
     try {
       await updateDoc(doc(db, "reviews", reviewId), updatedData);
@@ -648,18 +725,9 @@ function AdminPage() {
     }
   };
 
-  // ─── סידור ביקורות בגרירה ─────────────────────────────────────────────────
+  // ─── Drag & Drop ─────────────────────────────────────────────────────────
   const [dragReviewIdx, setDragReviewIdx] = useState(null);
   const [dragOverIdx, setDragOverIdx] = useState(null);
-
-  const handleReviewDragStart = (index) => {
-    setDragReviewIdx(index);
-  };
-
-  const handleReviewDragOver = (e, index) => {
-    e.preventDefault();
-    if (index !== dragOverIdx) setDragOverIdx(index);
-  };
 
   const handleReviewDrop = async (dropIndex) => {
     if (dragReviewIdx === null || dragReviewIdx === dropIndex) {
@@ -667,33 +735,24 @@ function AdminPage() {
       setDragOverIdx(null);
       return;
     }
-
     const reordered = [...reviews];
     const [moved] = reordered.splice(dragReviewIdx, 1);
     reordered.splice(dropIndex, 0, moved);
-
     setDragReviewIdx(null);
     setDragOverIdx(null);
-
     try {
       const batch = [];
       reordered.forEach((review, i) => {
-        if (review.displayOrder !== i) {
+        if (review.displayOrder !== i)
           batch.push(
             updateDoc(doc(db, "reviews", review.id), { displayOrder: i }),
           );
-        }
       });
       await Promise.all(batch);
       fetchReviews();
     } catch (err) {
       console.error(err);
     }
-  };
-
-  const handleReviewDragEnd = () => {
-    setDragReviewIdx(null);
-    setDragOverIdx(null);
   };
 
   // ─── Deal Modal ──────────────────────────────────────────────────────────
@@ -704,9 +763,25 @@ function AdminPage() {
     setImageFile(null);
     if (deal) {
       setEditingDeal(deal);
+      let compositions = deal.compositions || [];
+      if (!Array.isArray(compositions) && deal.composition) {
+        compositions = [
+          {
+            value: deal.composition,
+            price: deal.priceFrom || "",
+            priceLabel: deal.priceLabel || "לאדם",
+          },
+        ];
+      }
+      // Ensure all compositions have a priceLabel
+      compositions = compositions.map((c) => ({
+        ...c,
+        priceLabel: c.priceLabel || "לאדם",
+      }));
       setFormData({
         ...initialFormState,
         ...deal,
+        compositions,
         flight: deal.flight || initialFormState.flight,
         hotel: deal.hotel || initialFormState.hotel,
       });
@@ -731,7 +806,6 @@ function AdminPage() {
     }, 0);
   };
 
-  // ─── Input handlers ──────────────────────────────────────────────────────
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
@@ -751,7 +825,6 @@ function AdminPage() {
     }));
   };
 
-  // ─── Image upload ────────────────────────────────────────────────────────
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -787,6 +860,10 @@ function AdminPage() {
 
     setLoading(true);
     let dealData = { ...formData };
+    const prices = formData.compositions
+      .map((c) => Number(c.price))
+      .filter((p) => p > 0);
+    dealData.priceFrom = prices.length > 0 ? Math.min(...prices) : 0;
 
     if (imageFile) {
       const imgRef = ref(
@@ -834,7 +911,6 @@ function AdminPage() {
     });
   };
 
-  // ─── עזר: props נגישים לשדה ──────────────────────────────────────────────
   const fp = (id, key) => ({
     id,
     "data-field": key,
@@ -847,7 +923,6 @@ function AdminPage() {
 
   const nfp = (id, cat, name) => fp(id, `${cat}.${name}`);
 
-  // ─── Helper: format flight date ──────────────────────────────────────────
   const formatDate = (dateStr) => {
     if (!dateStr) return "-";
     try {
@@ -857,7 +932,6 @@ function AdminPage() {
     }
   };
 
-  // ─── JSX ─────────────────────────────────────────────────────────────────
   return (
     <div className="admin-container">
       {confirmState && (
@@ -867,15 +941,12 @@ function AdminPage() {
           onCancel={() => setConfirmState(null)}
         />
       )}
-
       {toastMessage && (
         <StatusToast
           message={toastMessage}
           onClose={() => setToastMessage(null)}
         />
       )}
-
-      {/* ✅ מודאל עריכת ביקורת */}
       {editingReview && (
         <ReviewEditModal
           review={editingReview}
@@ -884,7 +955,6 @@ function AdminPage() {
         />
       )}
 
-      {/* ══ תוכן ראשי ══ */}
       <div ref={mainContentRef}>
         <header className="admin-header">
           <h1>ניהול דילים</h1>
@@ -911,46 +981,72 @@ function AdminPage() {
               <thead>
                 <tr>
                   <th scope="col">שם החבילה</th>
-                  <th scope="col">הרכב</th>
+                  <th scope="col">הרכבים</th>
                   <th scope="col">מדינה</th>
-                  <th scope="col">מחיר</th>
+                  <th scope="col">מחיר מ-</th>
                   <th scope="col">ימים</th>
                   <th scope="col">פעולות</th>
                 </tr>
               </thead>
               <tbody>
-                {deals.map((deal) => (
-                  <tr key={deal.id}>
-                    <td>{deal.title}</td>
-                    <td>{deal.composition || "-"}</td>
-                    <td>{deal.country}</td>
-                    <td>₪{deal.priceFrom}</td>
-                    <td>{deal.days}</td>
-                    <td className="actions-cell">
-                      <button
-                        className="action-btn edit"
-                        onClick={(e) => handleOpenModal(deal, e.currentTarget)}
-                        aria-label={`ערוך דיל: ${deal.title}`}
-                      >
-                        ערוך
-                      </button>
-                      <button
-                        className="action-btn delete"
-                        onClick={() => handleDeleteDeal(deal.id, deal.title)}
-                        aria-label={`מחק דיל: ${deal.title}`}
-                      >
-                        מחק
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {deals.map((deal) => {
+                  const compositions =
+                    deal.compositions ||
+                    (deal.composition
+                      ? [
+                          {
+                            value: deal.composition,
+                            price: deal.priceFrom,
+                            priceLabel: deal.priceLabel || "לאדם",
+                          },
+                        ]
+                      : []);
+                  return (
+                    <tr key={deal.id}>
+                      <td>{deal.title}</td>
+                      <td>
+                        <div className="compositions-cell">
+                          {compositions.map((c) => (
+                            <span key={c.value} className="composition-badge">
+                              {c.value}
+                              {c.price ? ` — ₪${c.price}` : ""}
+                              {c.price && c.priceLabel
+                                ? ` ${c.priceLabel}`
+                                : ""}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td>{deal.country}</td>
+                      <td>₪{deal.priceFrom}</td>
+                      <td>{deal.days}</td>
+                      <td className="actions-cell">
+                        <button
+                          className="action-btn edit"
+                          onClick={(e) =>
+                            handleOpenModal(deal, e.currentTarget)
+                          }
+                          aria-label={`ערוך דיל: ${deal.title}`}
+                        >
+                          ערוך
+                        </button>
+                        <button
+                          className="action-btn delete"
+                          onClick={() => handleDeleteDeal(deal.id, deal.title)}
+                          aria-label={`מחק דיל: ${deal.title}`}
+                        >
+                          מחק
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         )}
 
         <h2>ניהול ביקורות</h2>
-
         {reviewsLoading ? (
           <p role="status">טוען ביקורות...</p>
         ) : reviews.length === 0 ? (
@@ -978,10 +1074,17 @@ function AdminPage() {
                   <tr
                     key={review.id}
                     draggable
-                    onDragStart={() => handleReviewDragStart(reviewIndex)}
-                    onDragOver={(e) => handleReviewDragOver(e, reviewIndex)}
+                    onDragStart={() => setDragReviewIdx(reviewIndex)}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      if (reviewIndex !== dragOverIdx)
+                        setDragOverIdx(reviewIndex);
+                    }}
                     onDrop={() => handleReviewDrop(reviewIndex)}
-                    onDragEnd={handleReviewDragEnd}
+                    onDragEnd={() => {
+                      setDragReviewIdx(null);
+                      setDragOverIdx(null);
+                    }}
                     className={
                       (dragReviewIdx === reviewIndex ? "dragging-row" : "") +
                       (dragOverIdx === reviewIndex &&
@@ -1017,7 +1120,6 @@ function AdminPage() {
                       )}
                     </td>
                     <td className="actions-cell">
-                      {/* ✅ כפתור עריכת ביקורת */}
                       <button
                         className="action-btn edit"
                         onClick={() => setEditingReview(review)}
@@ -1060,7 +1162,7 @@ function AdminPage() {
         )}
       </div>
 
-      {/* ════════════════════════ מודאל עריכה/הוספת דיל ════════════════════ */}
+      {/* ════ מודאל עריכה/הוספת דיל ════ */}
       {isModalOpen && (
         <div
           className="modal-overlay"
@@ -1092,6 +1194,27 @@ function AdminPage() {
             )}
 
             <form onSubmit={handleSaveDeal} className="deal-form" noValidate>
+              {/* ═══ הרכבים ומחירים ═══ */}
+              <div className="form-field">
+                <label>
+                  הרכבים ומחירים{" "}
+                  <span className="req" aria-hidden="true">
+                    *
+                  </span>
+                </label>
+                <CompositionPriceSelector
+                  compositions={formData.compositions}
+                  onChange={(val) =>
+                    setFormData((p) => ({ ...p, compositions: val }))
+                  }
+                />
+                {submitted && fieldErrors.compositions && (
+                  <span className="field-error-msg" role="alert">
+                    {fieldErrors.compositions}
+                  </span>
+                )}
+              </div>
+
               <div className="form-field">
                 <label htmlFor="title">
                   שם החבילה{" "}
@@ -1118,52 +1241,6 @@ function AdminPage() {
               </div>
 
               <div className="form-field">
-                <label htmlFor="composition">
-                  הרכב <span className="optional">(אופציונלי)</span>
-                </label>
-                <select
-                  id="composition"
-                  name="composition"
-                  value={formData.composition}
-                  onChange={handleInputChange}
-                >
-                  <option value="">בחר הרכב</option>
-                  {COMPOSITION_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-field">
-                <label htmlFor="priceFrom">
-                  מחיר החל מ-{" "}
-                  <span className="req" aria-hidden="true">
-                    *
-                  </span>
-                </label>
-                <input
-                  {...fp("priceFrom", "priceFrom")}
-                  name="priceFrom"
-                  type="number"
-                  min="0"
-                  value={formData.priceFrom}
-                  onChange={handleInputChange}
-                  placeholder="מחיר החל מ-"
-                />
-                {submitted && fieldErrors.priceFrom && (
-                  <span
-                    id="priceFrom-error"
-                    className="field-error-msg"
-                    role="alert"
-                  >
-                    {fieldErrors.priceFrom}
-                  </span>
-                )}
-              </div>
-
-              <div className="form-field">
                 <label htmlFor="country">
                   מדינה{" "}
                   <span className="req" aria-hidden="true">
@@ -1175,7 +1252,7 @@ function AdminPage() {
                   name="country"
                   value={formData.country}
                   onChange={handleInputChange}
-                  placeholder="מדינה (לדוגמה: יוון)"
+                  placeholder="מדינה"
                 />
                 {submitted && fieldErrors.country && (
                   <span
@@ -1252,7 +1329,7 @@ function AdminPage() {
                   name="luggage"
                   value={formData.luggage}
                   onChange={handleInputChange}
-                  placeholder="מידע על כבודה (לדוגמה: כולל טרולי ומזוודה)"
+                  placeholder="מידע על כבודה"
                 />
                 {submitted && fieldErrors.luggage && (
                   <span
@@ -1274,7 +1351,7 @@ function AdminPage() {
                   name="extraAttraction"
                   value={formData.extraAttraction}
                   onChange={handleInputChange}
-                  placeholder="תוספת מיוחדת (לדוגמה: כרטיסים למשחק כדורגל, סיור מודרך, כניסה לפארק מים)"
+                  placeholder="תוספת מיוחדת"
                 />
               </div>
 
@@ -1448,7 +1525,7 @@ function AdminPage() {
                     max="5"
                     value={formData.hotel.stars}
                     onChange={(e) => handleNestedInputChange("hotel", e)}
-                    placeholder="דירוג (כוכבים)"
+                    placeholder="כוכבים"
                   />
                 </div>
                 <div className="form-field">

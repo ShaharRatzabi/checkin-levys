@@ -17,9 +17,8 @@ import {
 import "./DealCard.css";
 
 /* =========================
-   🖼️ LIGHTBOX COMPONENT
+   🖼️ LIGHTBOX
 ========================= */
-
 const Lightbox = ({ src, alt, onClose }) => {
   const closeBtnRef = useRef(null);
   const previousFocusRef = useRef(null);
@@ -27,7 +26,6 @@ const Lightbox = ({ src, alt, onClose }) => {
   useEffect(() => {
     previousFocusRef.current = document.activeElement;
     closeBtnRef.current?.focus();
-
     const handleKey = (e) => {
       if (e.key === "Escape") onClose();
       if (e.key === "Tab") {
@@ -35,7 +33,6 @@ const Lightbox = ({ src, alt, onClose }) => {
         closeBtnRef.current?.focus();
       }
     };
-
     document.addEventListener("keydown", handleKey);
     return () => {
       document.removeEventListener("keydown", handleKey);
@@ -43,14 +40,12 @@ const Lightbox = ({ src, alt, onClose }) => {
     };
   }, [onClose]);
 
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) onClose();
-  };
-
   return createPortal(
     <div
       className="dealcard-lightbox-overlay"
-      onClick={handleOverlayClick}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
       role="dialog"
       aria-modal="true"
       aria-label="תצוגת תמונה מלאה"
@@ -75,12 +70,36 @@ const Lightbox = ({ src, alt, onClose }) => {
 };
 
 /* =========================
-   🃏 DEALCARD COMPONENT
+   🃏 DEALCARD
 ========================= */
-
 const DealCard = ({ deal, onClose }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  // ─── הרכב נבחר ─────────────────────────────────────────────────────────
+  const compositions =
+    deal.compositions && deal.compositions.length > 0
+      ? deal.compositions
+      : deal.composition
+        ? [
+            {
+              value: deal.composition,
+              price: deal.priceFrom || "",
+              priceLabel: deal.priceLabel || "לאדם",
+            },
+          ]
+        : [];
+
+  // Ensure all compositions have priceLabel
+  const normalizedCompositions = compositions.map((c) => ({
+    ...c,
+    priceLabel: c.priceLabel || "לאדם",
+  }));
+
+  const [selectedComp, setSelectedComp] = useState(
+    normalizedCompositions[0] || null,
+  );
+
   const closeButtonRef = useRef(null);
   const dialogRef = useRef(null);
   const previousFocusRef = useRef(null);
@@ -102,24 +121,19 @@ const DealCard = ({ deal, onClose }) => {
 
   useEffect(() => {
     if (!deal) return;
-
     const handleKeyDown = (e) => {
       if (lightboxOpen) return;
-
       if (e.key === "Escape") {
         onClose();
         return;
       }
       if (e.key !== "Tab") return;
-
       const focusableElements = dialogRef.current?.querySelectorAll(
         'a[href], button:not([disabled]), input, textarea, select, [tabindex="0"]',
       );
       if (!focusableElements?.length) return;
-
       const first = focusableElements[0];
       const last = focusableElements[focusableElements.length - 1];
-
       if (e.shiftKey && document.activeElement === first) {
         e.preventDefault();
         last.focus();
@@ -128,7 +142,6 @@ const DealCard = ({ deal, onClose }) => {
         first.focus();
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [deal, onClose, lightboxOpen]);
@@ -166,7 +179,6 @@ const DealCard = ({ deal, onClose }) => {
     </div>
   );
 
-  // בדיקה אם יש נתוני מלון
   const hasHotelData =
     deal.hotel?.name ||
     deal.hotel?.stars ||
@@ -174,15 +186,17 @@ const DealCard = ({ deal, onClose }) => {
     deal.hotel?.meals;
 
   const handleWhatsAppClick = () => {
+    const compLine = selectedComp
+      ? `\n הרכב: ${selectedComp.value}${selectedComp.price ? ` — ₪${selectedComp.price} ${selectedComp.priceLabel || "לאדם"}` : ""}`
+      : "";
     const message = `
 היי 👋
 אני מעוניין בדיל הבא:
 
- יעד: ${deal.title}
- מחיר: החל מ-${deal.priceFrom}₪ לאדם
+ יעד: ${deal.title}${compLine}
  תאריכים: ${deal.datesRange}${hasHotelData ? `\n מלון: ${deal.hotel?.name || "-"}` : ""}
 
-אשמח לפרטים נוספים 🙏
+אשמח לפרטים נוספים ולסגור דיל 🙏
     `;
     const whatsappUrl = `https://wa.me/972506514500?text=${encodeURIComponent(message.trim())}`;
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
@@ -197,16 +211,20 @@ const DealCard = ({ deal, onClose }) => {
       })
     : "-";
 
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) onClose();
-  };
-
   const imageAlt = `תמונה של יעד הטיסה: ${deal.title}`;
 
-  /* ✅ Portal - מרנדר ישירות ל-body, מעל כל stacking context כולל ההדר */
+  const currentPrice = selectedComp?.price || deal.priceFrom;
+  // ─── תווית מחיר דינמית ───────────────────────────────────────────────────
+  const currentPriceLabel = selectedComp?.priceLabel || "לאדם";
+
   return createPortal(
     <>
-      <div className="dealcard-overlay" onClick={handleOverlayClick}>
+      <div
+        className="dealcard-overlay"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onClose();
+        }}
+      >
         <div
           ref={dialogRef}
           className={`dealcard-container ${isMobile ? "mobile" : ""}`}
@@ -237,8 +255,7 @@ const DealCard = ({ deal, onClose }) => {
                 className="dealcard-image"
               />
               <span className="dealcard-image-zoom-hint" aria-hidden="true">
-                <ZoomIn size={16} />
-                תצוגה מלאה
+                <ZoomIn size={16} /> תצוגה מלאה
               </span>
             </button>
           </div>
@@ -247,13 +264,6 @@ const DealCard = ({ deal, onClose }) => {
             <h2 className="dealcard-title" id="dealcard-dialog-title">
               {deal.title}
             </h2>
-
-            {deal.composition && (
-              <div className="dealcard-composition">
-                <Users size={16} aria-hidden="true" />
-                <span>{deal.composition}</span>
-              </div>
-            )}
 
             <div className="dealcard-published">
               <Calendar size={16} aria-hidden="true" />
@@ -265,8 +275,44 @@ const DealCard = ({ deal, onClose }) => {
               </span>
             </div>
 
+            {/* ═══ בורר הרכבים ═══ */}
+            {normalizedCompositions.length > 0 && (
+              <div className="dealcard-composition-section">
+                <div className="dealcard-comp-header">
+                  <Users size={16} aria-hidden="true" />
+                  <span>בחר הרכב:</span>
+                </div>
+                <div
+                  className="dealcard-comp-tabs"
+                  role="group"
+                  aria-label="בחירת הרכב"
+                >
+                  {normalizedCompositions.map((comp) => (
+                    <button
+                      key={comp.value}
+                      type="button"
+                      className={`dealcard-comp-tab ${selectedComp?.value === comp.value ? "active" : ""}`}
+                      onClick={() => setSelectedComp(comp)}
+                      aria-pressed={selectedComp?.value === comp.value}
+                    >
+                      {comp.value}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ═══ מחיר לפי הרכב — תווית דינמית ═══ */}
             <div className="dealcard-price">
-              <div className="price-value">החל מ- {deal.priceFrom}₪ לאדם</div>
+              <div className="price-value">
+                החל מ- {currentPrice}₪ {currentPriceLabel}
+                {selectedComp && normalizedCompositions.length > 1 && (
+                  <span className="price-comp-label">
+                    {" "}
+                    ({selectedComp.value})
+                  </span>
+                )}
+              </div>
             </div>
 
             <Section
@@ -374,8 +420,8 @@ const DealCard = ({ deal, onClose }) => {
             >
               <p className="deal-notes-text">{deal.notes}</p>
               <p>
-                המחיר הינו לאדם, כפוף לזמינות, ועשוי להשתנות בהתאם למועדי הטיסה.
-                המחיר אינו כולל תוספות מיוחדות.
+                המחיר הינו {currentPriceLabel}, כפוף לזמינות, ועשוי להשתנות
+                בהתאם למועדי הטיסה.
               </p>
               <p>הפרטים שתמסור ישמשו ליצירת קשר בלבד ולא יועברו לצד שלישי.</p>
               <p>ט.ל.ח</p>
@@ -385,9 +431,19 @@ const DealCard = ({ deal, onClose }) => {
               <button
                 className="dealcard-submit-button"
                 onClick={handleWhatsAppClick}
-                aria-label={`פנייה בוואטסאפ לפרטים על הדיל ל${deal.title}`}
+                aria-label={`פנייה בוואטסאפ לפרטים נוספים ולסגירת דיל ל${deal.title}`}
               >
-                לפרטים נוספים
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  width="20"
+                  height="20"
+                  aria-hidden="true"
+                  style={{ flexShrink: 0 }}
+                >
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+                לפרטים נוספים וסגירת דיל
               </button>
             </div>
           </div>

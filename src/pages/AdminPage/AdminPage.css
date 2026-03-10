@@ -166,6 +166,27 @@ tbody tr:hover {
 }
 
 /* ════════════════════════════════════════════
+   תגיות הרכב בטבלה
+════════════════════════════════════════════ */
+.compositions-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.composition-badge {
+  display: inline-block;
+  background: rgba(74, 0, 224, 0.08);
+  color: #4a00e0;
+  border: 1px solid rgba(74, 0, 224, 0.2);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════════════════
    מודאל
 ════════════════════════════════════════════ */
 .modal-overlay {
@@ -449,6 +470,128 @@ tbody tr:hover {
   color: #333;
   font-weight: 700;
   font-size: 1rem;
+}
+
+/* ════════════════════════════════════════════
+   בורר הרכבים ומחירים
+════════════════════════════════════════════ */
+.composition-price-selector {
+  border: 1.5px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fafafa;
+}
+
+.comp-selector-hint {
+  font-size: 0.85rem;
+  color: #777;
+  margin: 0 0 12px;
+}
+
+.comp-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.comp-option-card {
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.comp-option-card.selected {
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(74, 0, 224, 0.12);
+}
+
+.comp-option-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: "Assistant", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+  text-align: right;
+  transition: background 0.15s ease;
+}
+
+.comp-option-toggle:hover {
+  background: rgba(74, 0, 224, 0.05);
+}
+
+.comp-option-toggle:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: -2px;
+}
+
+.comp-option-card.selected .comp-option-toggle {
+  background: rgba(74, 0, 224, 0.06);
+  color: var(--primary-color);
+}
+
+.comp-option-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  background: transparent;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.comp-option-card.selected .comp-option-check {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.comp-price-field {
+  padding: 0 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.comp-price-label {
+  font-size: 0.8rem;
+  color: #555;
+  font-weight: 600;
+}
+
+.comp-price-input {
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1.5px solid #ccc;
+  font-family: "Assistant", sans-serif;
+  font-size: 0.95rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  background: white;
+}
+
+.comp-price-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(74, 0, 224, 0.15);
 }
 
 /* ════════════════════════════════════════════
@@ -751,7 +894,11 @@ tr[draggable="true"]:active {
   .add-deal-btn,
   .action-btn,
   .modal-actions button,
-  .review-edit-star {
+  .review-edit-star,
+  .comp-option-card,
+  .comp-option-toggle,
+  .comp-option-check,
+  .comp-price-input {
     transition: none;
   }
   .add-deal-btn:hover,

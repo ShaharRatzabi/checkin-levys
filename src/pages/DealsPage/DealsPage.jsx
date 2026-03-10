@@ -10,6 +10,7 @@ import { db } from "../../firebase";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { Search, X, ChevronDown, ChevronUp, Users } from "lucide-react";
 import planeVideo from "../../assets/videos/overlay.mp4";
+
 const COMPOSITION_OPTIONS = [
   { value: "יחיד", label: "יחיד" },
   { value: "זוג", label: "זוג" },
@@ -39,7 +40,37 @@ function useIsMobile(breakpoint) {
 
 const POPULAR_LIMIT = 4;
 
-const CountrySection = ({ country, deals, onDealClick, isMobile }) => {
+// CompTags component
+const CompTags = ({ comps }) => {
+  const [expanded, setExpanded] = React.useState(false);
+  const VISIBLE = 2;
+  const hidden = comps.length - VISIBLE;
+  const shown = expanded ? comps : comps.slice(0, VISIBLE);
+  return (
+    <div className="deal-comp-tags" aria-label="הרכבים זמינים">
+      {shown.map((c) => (
+        <span key={c.value} className="deal-comp-tag">
+          {c.value}
+        </span>
+      ))}
+      {!expanded && hidden > 0 && (
+        <button
+          className="deal-comp-tag deal-comp-tag-more"
+          onClick={(e) => {
+            e.stopPropagation();
+            setExpanded(true);
+          }}
+          aria-label={"הצג עוד " + hidden + " הרכבים"}
+        >
+          {"+" + hidden + " עוד"}
+        </button>
+      )}
+    </div>
+  );
+};
+
+// ─── CountrySection — כל מדינה מוצגת ב-Swiper ───────────────────────────────
+const CountrySection = ({ country, deals, onDealClick }) => {
   const liveRegionRef = useRef(null);
   const swiperRef = useRef(null);
   const countrySlug = country.replace(/\s/g, "-").replace(/['"]/g, "");
@@ -71,24 +102,22 @@ const CountrySection = ({ country, deals, onDealClick, isMobile }) => {
     [deals],
   );
 
-  const dealCards = deals.map((deal) => (
-    <button
-      key={deal.id}
-      className="deal-card-trigger"
-      onClick={() => onDealClick(deal)}
-      aria-label={"פתח פרטים על " + deal.title}
-      aria-haspopup="dialog"
-    >
-      <FlightCard
-        destination={deal.title}
-        imageUrl={deal.mainImage}
-        priceFrom={deal.priceFrom}
-        period={deal.datesRange}
-        departureTime={deal.flight?.departure}
-        arrivalTime={deal.flight?.return}
-      />
-    </button>
-  ));
+  const getCompositions = (deal) => {
+    if (deal.compositions && deal.compositions.length > 0)
+      return deal.compositions.map((c) => ({
+        ...c,
+        priceLabel: c.priceLabel || "לאדם",
+      }));
+    if (deal.composition)
+      return [
+        {
+          value: deal.composition,
+          price: deal.priceFrom,
+          priceLabel: deal.priceLabel || "לאדם",
+        },
+      ];
+    return [];
+  };
 
   return (
     <section className="country-section" aria-label={"דילים ל" + country}>
@@ -102,70 +131,72 @@ const CountrySection = ({ country, deals, onDealClick, isMobile }) => {
         </div>
       </div>
 
-      {isMobile ? (
-        <React.Fragment>
-          <div
-            ref={liveRegionRef}
-            className="sr-only"
-            aria-live="polite"
-            aria-atomic="true"
-          ></div>
+      <div
+        ref={liveRegionRef}
+        className="sr-only"
+        aria-live="polite"
+        aria-atomic="true"
+      ></div>
 
-          <Swiper
-            className="deals-swiper"
-            modules={[A11y, Keyboard, Pagination]}
-            dir="rtl"
-            slidesPerView={"auto"}
-            spaceBetween={12}
-            centeredSlides={false}
-            grabCursor={true}
-            watchSlidesProgress={true}
-            keyboard={{ enabled: true, onlyInViewport: true }}
-            pagination={{
-              clickable: true,
-              el: ".swiper-pagination-" + countrySlug,
-              bulletActiveClass: "swiper-pagination-bullet-active",
-              renderBullet: function (index, className) {
-                return (
-                  '<button class="' +
-                  className +
-                  '" aria-label="עבור לדיל ' +
-                  (index + 1) +
-                  " מתוך " +
-                  deals.length +
-                  '"></button>'
-                );
-              },
-            }}
-            a11y={{
-              prevSlideMessage: "דיל קודם",
-              nextSlideMessage: "דיל הבא",
-              containerRoleDescriptionMessage: "קרוסלת דילים ל" + country,
-              itemRoleDescriptionMessage: "דיל",
-              paginationBulletMessage: "עבור לדיל {{index}}",
-            }}
-            onSwiper={(swiper) => {
-              swiperRef.current = swiper;
-              handleSlideChange(swiper);
-            }}
-            onSlideChange={handleSlideChange}
-            aria-roledescription="קרוסלה"
-            aria-label={"קרוסלת דילים ל" + country}
-          >
-            {deals.map((deal, index) => (
-              <SwiperSlide
-                key={deal.id}
-                role="group"
-                aria-roledescription="שקופית"
-                aria-label={
-                  "דיל " +
-                  (index + 1) +
-                  " מתוך " +
-                  deals.length +
-                  ": " +
-                  deal.title
-                }
-              >
+      <Swiper
+        className="deals-swiper"
+        modules={[A11y, Keyboard, Pagination]}
+        dir="rtl"
+        slidesPerView={"auto"}
+        spaceBetween={16}
+        centeredSlides={false}
+        grabCursor={true}
+        watchSlidesProgress={true}
+        keyboard={{ enabled: true, onlyInViewport: true }}
+        pagination={{
+          clickable: true,
+          el: ".swiper-pagination-" + countrySlug,
+          bulletActiveClass: "swiper-pagination-bullet-active",
+          renderBullet: function (index, className) {
+            return (
+              '<button class="' +
+              className +
+              '" aria-label="עבור לדיל ' +
+              (index + 1) +
+              " מתוך " +
+              deals.length +
+              '"></button>'
+            );
+          },
+        }}
+        a11y={{
+          prevSlideMessage: "דיל קודם",
+          nextSlideMessage: "דיל הבא",
+          containerRoleDescriptionMessage: "קרוסלת דילים ל" + country,
+          itemRoleDescriptionMessage: "דיל",
+          paginationBulletMessage: "עבור לדיל {{index}}",
+        }}
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+          handleSlideChange(swiper);
+        }}
+        onSlideChange={handleSlideChange}
+        aria-roledescription="קרוסלה"
+        aria-label={"קרוסלת דילים ל" + country}
+      >
+        {deals.map((deal, index) => {
+          const comps = getCompositions(deal);
+          return (
+            <SwiperSlide
+              key={deal.id}
+              role="group"
+              aria-roledescription="שקופית"
+              aria-label={
+                "דיל " +
+                (index + 1) +
+                " מתוך " +
+                deals.length +
+                ": " +
+                deal.title
+              }
+            >
+              <div className="deal-card-with-tags">
+                {comps.length > 0 && <CompTags comps={comps} />}
                 <button
                   className="deal-card-trigger"
                   onClick={() => onDealClick(deal)}
@@ -181,20 +212,16 @@ const CountrySection = ({ country, deals, onDealClick, isMobile }) => {
                     arrivalTime={deal.flight?.return}
                   />
                 </button>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+              </div>
+            </SwiperSlide>
+          );
+        })}
+      </Swiper>
 
-          <div
-            className={
-              "swiper-custom-pagination swiper-pagination-" + countrySlug
-            }
-            aria-label={"ניווט דילים ל" + country}
-          ></div>
-        </React.Fragment>
-      ) : (
-        <div className="deals-grid">{dealCards}</div>
-      )}
+      <div
+        className={"swiper-custom-pagination swiper-pagination-" + countrySlug}
+        aria-label={"ניווט דילים ל" + country}
+      ></div>
     </section>
   );
 };
@@ -262,7 +289,11 @@ export default function Deals() {
   const availableCompositions = React.useMemo(() => {
     const comps = new Set();
     allDeals.forEach((deal) => {
-      if (deal.composition) comps.add(deal.composition);
+      if (deal.compositions) {
+        deal.compositions.forEach((c) => comps.add(c.value));
+      } else if (deal.composition) {
+        comps.add(deal.composition);
+      }
     });
     return COMPOSITION_OPTIONS.filter((opt) => comps.has(opt.value));
   }, [allDeals]);
@@ -270,7 +301,12 @@ export default function Deals() {
   // ─── סינון דילים לפי הרכב ────────────────────────────────────────────────
   const filteredDeals = React.useMemo(() => {
     if (selectedComposition === "all") return allDeals;
-    return allDeals.filter((deal) => deal.composition === selectedComposition);
+    return allDeals.filter((deal) => {
+      if (deal.compositions && deal.compositions.length > 0) {
+        return deal.compositions.some((c) => c.value === selectedComposition);
+      }
+      return deal.composition === selectedComposition;
+    });
   }, [allDeals, selectedComposition]);
 
   // ─── קיבוץ לפי מדינה (מהדילים המסוננים) ─────────────────────────────────
@@ -765,17 +801,17 @@ export default function Deals() {
           white-space: nowrap;
         }
 
-        .deals-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-          gap: 24px;
-          justify-items: center;
-        }
-
-        /* ===== Mobile Swiper ===== */
+        /* ===== Swiper ===== */
         .deals-swiper {
           width: 100%;
           padding: 4px 0 8px;
+          /* Allow overflow for peek effect */
+          overflow: visible;
+        }
+
+        /* Clip overflow at the section level so cards don't bleed outside */
+        .country-section {
+          overflow: hidden;
         }
 
         .deals-swiper .swiper-wrapper {
@@ -783,9 +819,63 @@ export default function Deals() {
         }
 
         .deals-swiper .swiper-slide {
-          width: 85%;
+          width: 310px;
           flex-shrink: 0;
           height: auto;
+        }
+
+        /* ===== Composition tags above FlightCard ===== */
+        .deal-card-with-tags {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          width: 100%;
+        }
+
+        .deal-comp-tags {
+          display: flex;
+          flex-wrap: nowrap;
+          gap: 5px;
+          direction: rtl;
+          overflow-x: auto;
+          /* hide scrollbar visually but keep it functional */
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          /* slight horizontal padding so first/last tags don't clip */
+          padding: 2px 4px;
+          /* limit width to card width */
+          max-width: 100%;
+        }
+
+        .deal-comp-tags::-webkit-scrollbar {
+          display: none;
+        }
+
+        .deal-comp-tag {
+          display: inline-block;
+          background: rgba(255, 255, 255, 0.85);
+          color: #1d3557;
+          border: 1px solid rgba(29, 53, 87, 0.15);
+          border-radius: 20px;
+          padding: 3px 10px;
+          font-size: 0.72rem;
+          font-weight: 600;
+          white-space: nowrap;
+          flex-shrink: 0;
+          backdrop-filter: blur(8px);
+        }
+
+        .deal-comp-tag-more {
+          background: rgba(29, 53, 87, 0.1);
+          color: #1d3557;
+          border: 1px dashed rgba(29, 53, 87, 0.35);
+          cursor: pointer;
+          font-family: inherit;
+          font-weight: 700;
+        }
+        .deal-comp-tag-more:hover {
+          background: rgba(29, 53, 87, 0.22);
         }
 
         .deals-swiper .deal-card-trigger {
@@ -907,7 +997,7 @@ export default function Deals() {
             font-size: 1.4rem;
           }
           .deals-swiper .swiper-slide {
-            width: 80%;
+            width: 220px;
           }
           .whatsapp-banner {
             padding: 10px 16px;
@@ -919,12 +1009,8 @@ export default function Deals() {
 
         @media (min-width: 481px) and (max-width: 768px) {
           .hero-viewport { height: 48vh; }
-          .deals-grid {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-          }
           .deals-swiper .swiper-slide {
-            width: 65%;
+            width: 290px;
           }
         }
       `}</style>
@@ -1111,7 +1197,6 @@ export default function Deals() {
                     country={country}
                     deals={groupedDeals[country]}
                     onDealClick={(deal) => setSelectedDeal(deal)}
-                    isMobile={isMobile}
                   />
                 ))
             : groupedDeals[selectedCountry] && (
@@ -1119,7 +1204,6 @@ export default function Deals() {
                   country={selectedCountry}
                   deals={groupedDeals[selectedCountry]}
                   onDealClick={(deal) => setSelectedDeal(deal)}
-                  isMobile={isMobile}
                 />
               )}
         </main>
