@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -192,6 +193,7 @@ function AppContent() {
 
       {/* 🍪 Cookie Consent — מוצג פעם אחת בלבד */}
       <CookieConsent />
+      <Analytics />
     </>
   );
 }
