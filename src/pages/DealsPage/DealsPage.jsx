@@ -409,6 +409,23 @@ export default function Deals() {
           word-break: keep-all;
         }
 
+        .hero-subtitle-link {
+          display: inline-block;
+          margin-top: 16px;
+          font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.9);
+          text-decoration: none;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.5);
+          transition: color 0.2s ease, border-color 0.2s ease;
+          text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+        }
+
+        .hero-subtitle-link:hover {
+          color: var(--primary-orange);
+          border-color: var(--primary-orange);
+        }
+
         .orange-text { color: var(--primary-orange); }
 
         .hero-animation {
@@ -1034,6 +1051,15 @@ export default function Deals() {
           <h1 className="hero-main-title">
             לאן תרצו <span className="orange-text">לטוס</span> הפעם?
           </h1>
+          <a
+            href="https://api.whatsapp.com/send?phone=972506514500"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hero-subtitle-link"
+            aria-label="לא מצאתם דיל שמתאים לכם? שלחו לנו הודעה בווטסאפ וקבלו חופשה בהתאמה אישית"
+          >
+            לא מצאתם דיל שמתאים לכם? שלחו לנו הודעה וקבלו חופשה בהתאמה אישית
+          </a>
         </div>
         <button
           className="hero-video-toggle"
