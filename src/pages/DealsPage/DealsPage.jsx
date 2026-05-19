@@ -14,6 +14,7 @@ import planeVideo from "../../assets/videos/overlay.mp4";
 const COMPOSITION_OPTIONS = [
   { value: "יחיד", label: "יחיד" },
   { value: "זוג", label: "זוג" },
+  { value: "טריפל", label: "טריפל" },
   { value: "זוג + ילד", label: "זוג + ילד" },
   { value: "זוג + 2 ילדים", label: "זוג + 2 ילדים" },
   { value: "זוג + 3 ילדים", label: "זוג + 3 ילדים" },
