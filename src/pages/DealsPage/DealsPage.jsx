@@ -318,8 +318,8 @@ export default function Deals() {
       return acc;
     }, {});
 
-    const countryList = Object.keys(dealsByCountry).sort(
-      (a, b) => dealsByCountry[b].length - dealsByCountry[a].length,
+    const countryList = Object.keys(dealsByCountry).sort((a, b) =>
+      a.localeCompare(b, "he"),
     );
     setGroupedDeals(dealsByCountry);
     setCountries(countryList);
