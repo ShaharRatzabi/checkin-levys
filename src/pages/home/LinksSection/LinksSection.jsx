@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaFacebook, FaInstagram, FaWhatsapp, FaTiktok } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaWhatsapp, FaTiktok, FaTelegram } from "react-icons/fa";
 import "./LinksSection.css";
 
 function LinksSection() {
@@ -49,6 +49,14 @@ function LinksSection() {
         aria-label="עמוד הטיקטוק שלנו (נפתח בלשונית חדשה)"
       >
         <FaTiktok aria-hidden="true" />
+      </a>
+      <a
+        href="https://t.me/checkin_levys_deals"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="ערוץ הטלגרם שלנו (נפתח בלשונית חדשה)"
+      >
+        <FaTelegram aria-hidden="true" />
       </a>
     </nav>
   );
