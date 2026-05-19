@@ -162,25 +162,38 @@
 .info-btn {
   width: 45px;
   height: 45px;
-  background-image: url("../../../assets/images/info-button.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  border: none;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 2.5px solid #f97316;
   cursor: pointer;
-  background-color: transparent;
   z-index: 2;
   opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.25);
 }
 
-.info-btn:hover {
-  filter: brightness(1.4);
+.info-btn::after {
+  content: "i";
+  font-size: 20px;
+  font-weight: 700;
+  font-style: italic;
+  color: #f97316;
+  line-height: 1;
+  font-family: Georgia, serif;
+}
+
+.info-btn:hover,
+.info-btn:focus-visible {
+  transform: scale(1.15);
+  box-shadow: 0 12px 35px rgba(249, 115, 22, 0.7);
 }
 
 .info-btn:focus-visible {
-  outline: 3px solid #000;
-  outline-offset: 4px;
-  border-radius: 50%;
+  outline: 3px solid #f97316;
+  outline-offset: 3px;
 }
 
 .about-section__image img {
