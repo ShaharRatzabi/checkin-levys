@@ -1,5 +1,5 @@
 import React from "react";
-import { Landmark, ShieldCheck, CreditCard, Wifi } from "lucide-react";
+import { Landmark, ShieldCheck, CreditCard, Wifi, Map } from "lucide-react";
 
 const LINKS_DATA = [
   {
@@ -25,6 +25,12 @@ const LINKS_DATA = [
     Icon: CreditCard,
     title: "PassportCard",
     desc: "ביטוח נסיעות דיגיטלי ומהיר • שירות ומענה מהיר ללקוחות שלנו",
+  },
+  {
+    href: "https://did.li/odedthemapper",
+    Icon: Map,
+    title: "ODED THE MAPPER",
+    desc: "מפות המלצות אישיות למטיילים | קוד קופון עם הנחה checkin30",
   },
 ];
 
