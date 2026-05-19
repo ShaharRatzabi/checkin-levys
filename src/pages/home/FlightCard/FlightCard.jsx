@@ -157,16 +157,17 @@ const FlightCard = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              direction: "rtl",
             }}
           >
             <div style={{ textAlign: "center" }}>
               <span
                 style={{ fontSize: isMobile ? "14px" : "18px", opacity: 0.8 }}
               >
-                חזור
+                הלוך
               </span>
               <div style={{ fontSize: sizes.textSize, fontWeight: "600" }}>
-                {arrivalTime}
+                {departureTime}
               </div>
             </div>
 
@@ -181,6 +182,7 @@ const FlightCard = ({
                 objectFit: "contain",
                 margin: "0 5px",
                 filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.7))",
+                transform: "scaleX(-1)",
               }}
             />
 
@@ -188,10 +190,10 @@ const FlightCard = ({
               <span
                 style={{ fontSize: isMobile ? "14px" : "18px", opacity: 0.8 }}
               >
-                הלוך
+                חזור
               </span>
               <div style={{ fontSize: sizes.textSize, fontWeight: "600" }}>
-                {departureTime}
+                {arrivalTime}
               </div>
             </div>
           </div>
