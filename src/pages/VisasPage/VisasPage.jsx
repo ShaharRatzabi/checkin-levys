@@ -43,7 +43,7 @@ const VISA_DATA = [
     subtitle: "הצהרת כניסה לתאילנד",
     image: ThailandImage,
     cost: "חינמי",
-    validity: "חודשיים",
+    validity: "30 יום",
     processingTime: "מינימום 3 ימים לפני ההגעה",
     requirements: [
       "כל אזרח בעל אזרחות לא תאילנדית מחויב למלאו",
