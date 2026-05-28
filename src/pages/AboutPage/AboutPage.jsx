@@ -32,6 +32,7 @@ import backgroundImage from "../../assets/images/background-about.png";
 */
 
 const SHORTS_VIDEOS = [
+  { id: "ZDUjGtp3I8A", title: "אתם חייבים חופשה" },
   { id: "FhI_yaE3xH0", title: "סרטון חדש" },
   { id: "8L4dv-Ed6cM", title: "סרטון חדש" },
   { id: "_I4wxm0aDnA", title: "הצטרפו לקבוצת הווצאפ" },
