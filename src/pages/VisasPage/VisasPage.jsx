@@ -162,7 +162,7 @@ const VISA_DATA = [
       "יש לשמור את אישור הויזה (מודפס או דיגיטלי)",
     ],
     links: [
-      { name: "הנפקת ויזה אלקטרונית", url: "https://did.li/VisaAzerbaijan" },
+      { name: "הנפקת ויזה אלקטרונית", url: "https://evisa.gov.az/en/?utm_source=chatgpt.com" },
     ],
   },
   {
