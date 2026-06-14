@@ -33,6 +33,14 @@ function AboutSection() {
         <div className="floating-orb orb-3"></div>
       </div>
 
+      <Link
+        to="/deals"
+        className="deals-teaser-link"
+        aria-label="לחצו כאן לדילים מטורפים לכל העולם"
+      >
+        🔥 לדילים מטורפים לכל העולם לחצו כאן!
+      </Link>
+
       <h2>
         נעים מאוד אנחנו <br />
         CHECK-IN

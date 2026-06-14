@@ -1,3 +1,24 @@
+.deals-teaser-link {
+  display: inline-block;
+  margin: 18px auto 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #e76d2c, #f97316);
+  color: #fff;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 800;
+  font-family: 'Assistant', sans-serif;
+  border-radius: 50px;
+  text-decoration: none;
+  box-shadow: 0 4px 18px rgba(231, 109, 44, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.deals-teaser-link:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 28px rgba(231, 109, 44, 0.55);
+}
+
 .about-section {
   display: flex;
   flex-direction: column;

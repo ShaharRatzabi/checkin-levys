@@ -32,6 +32,9 @@ import backgroundImage from "../../assets/images/background-about.png";
 */
 
 const SHORTS_VIDEOS = [
+  { id: "a-yZoa4cSPU", title: "סרטון חדש" },
+  { id: "Iuf73yh1QVU", title: "סרטון חדש" },
+  { id: "-W1vz1V-oBY", title: "סרטון חדש" },
   { id: "ZDUjGtp3I8A", title: "אתם חייבים חופשה" },
   { id: "FhI_yaE3xH0", title: "סרטון חדש" },
   { id: "8L4dv-Ed6cM", title: "סרטון חדש" },
@@ -688,8 +691,7 @@ export default function AboutPage() {
               <div className="hero-glass__flexbox">
                 <img src={logoImg} alt="לוגו Check-In" className="about-img" />
                 <p className="about-hero-subtitle">
-                  חברת תיירות מקצועית, חדשנית ודינמית. בונים חוויות, לא רק
-                  חופשות.
+                  החופשה שלכם, האחריות שלנו.
                 </p>
               </div>
             </div>

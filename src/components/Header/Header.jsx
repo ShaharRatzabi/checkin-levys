@@ -243,7 +243,7 @@ function Header() {
               <div className="logoText-icon" aria-hidden="true">
                 <img src={LogoText} alt="" className="logo-image-text" />
               </div>
-              <span className="logo-text">Check In</span>
+              <span className="logo-text">CHECK IN - סוכנות נסיעות</span>
             </Link>
 
             {/* ✅ ul/li במקום nav מקונן — סמנטיקה נכונה לרשימת ניווט */}
