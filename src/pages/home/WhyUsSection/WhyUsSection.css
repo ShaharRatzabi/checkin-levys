@@ -6,9 +6,53 @@
   margin: auto;
   max-width: 1200px;
 }
-.main-container img {
+.travel-photos-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex-shrink: 0;
   width: 600px;
-  height: 500px;
+  position: relative;
+}
+
+.travel-photo-main-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 18px;
+}
+
+.travel-photos-sub-col {
+  display: flex;
+  flex-direction: row;
+  gap: 34px;
+  justify-content: flex-start;
+  padding-right: 55px;
+  margin-top: -70px;
+  position: relative;
+  z-index: 1;
+}
+
+.travel-photo-sub {
+  width: 125px;
+  height: 185px;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+  flex: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+.travel-photo-sub:first-child {
+  height: 210px;
+  align-self: flex-end;
+}
+
+@media (max-width: 1023px) {
+  .travel-photos-group {
+    width: 100%;
+    max-width: 600px;
+  }
 }
 .why-us-container {
   position: relative;

@@ -4,6 +4,8 @@ import "aos/dist/aos.css";
 import { useEffect } from "react";
 import ProcessPage from "./ProcessSection";
 import LiranAndRoieImage from "../../../assets/images/roie-liran-travel.png";
+import photoSunset from "../../../assets/images/photo-sunset.jpeg";
+import photoBoat from "../../../assets/images/photo-boat.jpeg";
 
 export default function WhyUsSection() {
   useEffect(() => {
@@ -49,7 +51,13 @@ export default function WhyUsSection() {
         </div>
 
         {/* ✅ alt תיאורי בעברית */}
-        <img src={LiranAndRoieImage} alt="לירן ורועי בטיול" />
+        <div className="travel-photos-group">
+          <img src={LiranAndRoieImage} alt="לירן ורועי בטיול" className="travel-photo-main-img" />
+          <div className="travel-photos-sub-col">
+            <img src={photoSunset} alt="Check-In בפעולה" className="travel-photo-sub" loading="lazy" />
+            <img src={photoBoat} alt="Check-In בפעולה" className="travel-photo-sub" loading="lazy" />
+          </div>
+        </div>
       </div>
 
       <ProcessPage />

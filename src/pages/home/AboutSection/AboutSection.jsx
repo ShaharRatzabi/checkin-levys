@@ -149,6 +149,7 @@ function AboutSection() {
           </div>
         </div>
       </div>
+
     </section>
   );
 }

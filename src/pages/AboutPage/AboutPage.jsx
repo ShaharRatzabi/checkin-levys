@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import logoImg from "../../assets/images/logo.png";
 import backgroundImage from "../../assets/images/background-about.png";
+import photoTrain from "../../assets/images/photo-train.jpeg";
+import photoCoast from "../../assets/images/photo-coast.jpeg";
 
 /*
   ═══════════════════════════════════════════════════
@@ -298,6 +300,53 @@ export default function AboutPage() {
           .hero-glass { flex-direction: row; }
           .background-img {  width:498px;
         height:498px;  align-self: center; padding:30px;}
+        }
+
+        .about-vision-photos {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          margin-top: 1.5rem;
+          max-width: 490px;
+          position: relative;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .about-vision-photos .vision-collage-main {
+          width: 100%;
+          height: auto;
+          display: block;
+          border-radius: 16px;
+          padding: 0;
+          align-self: auto;
+        }
+
+        .about-vision-photos .vision-photos-col {
+          display: flex;
+          flex-direction: row;
+          gap: 22px;
+          justify-content: center;
+          margin-top: -45px;
+          position: relative;
+          z-index: 1;
+        }
+
+        .about-vision-photos .vision-photo-sub {
+          width: 148px;
+          height: 215px;
+          object-fit: cover;
+          border-radius: 16px;
+          display: block;
+          flex: none;
+          padding: 0;
+          align-self: flex-end;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+        }
+
+        .about-vision-photos .vision-photo-sub:first-child {
+          height: 185px;
+          align-self: flex-start;
         }
 
         .expertise-items-grid {
@@ -710,12 +759,28 @@ export default function AboutPage() {
                   בגובה העיניים אך מקצועי ברמה הגבוהה ביותר, ולהיות תמיד צעד אחד
                   קדימה.
                 </p>
-                <img
-                  src={backgroundImage}
-                  alt=""
-                  aria-hidden="true"
-                  className="background-img"
-                />
+                <div className="about-vision-photos">
+                  <img
+                    src={backgroundImage}
+                    alt=""
+                    aria-hidden="true"
+                    className="vision-collage-main"
+                  />
+                  <div className="vision-photos-col">
+                  <img
+                    src={photoTrain}
+                    alt="Check-In בפעולה"
+                    className="vision-photo-sub"
+                    loading="lazy"
+                  />
+                  <img
+                    src={photoCoast}
+                    alt="Check-In בפעולה"
+                    className="vision-photo-sub"
+                    loading="lazy"
+                  />
+                  </div>
+                </div>
               </div>
             </section>
 
