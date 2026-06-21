@@ -349,6 +349,27 @@ export default function AboutPage() {
           align-self: flex-start;
         }
 
+        @media (max-width: 600px) {
+          .about-vision-photos {
+            max-width: 100%;
+          }
+
+          .about-vision-photos .vision-photos-col {
+            gap: 12px;
+            margin-top: -30px;
+          }
+
+          .about-vision-photos .vision-photo-sub {
+            width: 90px;
+            height: 130px;
+            border-radius: 12px;
+          }
+
+          .about-vision-photos .vision-photo-sub:first-child {
+            height: 110px;
+          }
+        }
+
         .expertise-items-grid {
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));

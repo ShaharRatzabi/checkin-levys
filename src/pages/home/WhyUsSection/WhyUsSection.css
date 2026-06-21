@@ -54,6 +54,30 @@
     max-width: 600px;
   }
 }
+
+@media (max-width: 600px) {
+  .travel-photos-group {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .travel-photos-sub-col {
+    gap: 16px;
+    padding-right: 20px;
+    margin-top: -45px;
+    justify-content: flex-start;
+  }
+
+  .travel-photo-sub {
+    width: 80px;
+    height: 115px;
+    border-radius: 12px;
+  }
+
+  .travel-photo-sub:first-child {
+    height: 130px;
+  }
+}
 .why-us-container {
   position: relative;
   overflow: hidden;
