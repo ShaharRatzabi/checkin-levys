@@ -21,7 +21,7 @@ const VISA_DATA = [
     title: "טופס ETA",
     subtitle: "אישור כניסה אלקטרוני",
     image: LondonImage,
-    cost: "16 פאונד לאדם",
+    cost: "20 פאונד לאדם",
     validity: "שנתיים או עד תום תוקף הדרכון",
     processingTime: "3 ימים מינימום",
     requirements: [
