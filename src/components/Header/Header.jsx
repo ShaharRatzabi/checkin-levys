@@ -89,22 +89,6 @@ function Header() {
 
         .logo-image-text { width: 100%; }
 
-        .logo-mobile-group {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .logo-mobile-subtitle {
-          display: block;
-          font-size: 0.8rem;
-          font-weight: 700;
-          color: var(--primary-text);
-          text-align: center;
-          margin-top: -0.4rem;
-          letter-spacing: 0.05em;
-        }
-
         .logo-icon {
           width: 4rem;
           height: 4rem;
@@ -143,7 +127,6 @@ function Header() {
         @media (min-width: 1024px) {
           .hamburger-mobile { display: none; }
           .logo-image-text { display: none; }
-          .logo-mobile-subtitle { display: none; }
           .share-text { display: inline; }
           .nav-links {
             display: flex;
@@ -257,11 +240,8 @@ function Header() {
               <div className="logo-icon" aria-hidden="true">
                 <img src={LogoImg} alt="" />
               </div>
-              <div className="logo-mobile-group">
-                <div className="logoText-icon" aria-hidden="true">
-                  <img src={LogoText} alt="" className="logo-image-text" />
-                </div>
-                <span className="logo-mobile-subtitle">סוכנות נסיעות</span>
+              <div className="logoText-icon" aria-hidden="true">
+                <img src={LogoText} alt="" className="logo-image-text" />
               </div>
               <span className="logo-text">CHECK IN - סוכנות נסיעות</span>
             </Link>
