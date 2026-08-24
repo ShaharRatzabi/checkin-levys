@@ -63,6 +63,18 @@
   line-height: 1.6;
 }
 
+.scroll-hint {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #000000;
+  margin-top: 0.75rem;
+  text-align: center;
+  display: inline-block;
+  border: 2.5px solid #000000;
+  border-radius: 999px;
+  padding: 0.45rem 1.2rem;
+}
+
 @media (max-width: 1024px) {
   .reviews-content {
     padding: 1rem;

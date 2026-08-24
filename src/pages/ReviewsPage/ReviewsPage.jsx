@@ -53,6 +53,7 @@ export default function ReviewsPage() {
         <div className="form-chart-container">
           <header className="page-header">
             <img src={logoImg} alt="לוגו Check-In" />
+            <p className="scroll-hint">לביקורות עלינו - לגלול מטה ⬇</p>
           </header>
 
           <ReviewForm />
