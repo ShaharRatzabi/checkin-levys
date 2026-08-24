@@ -11,6 +11,8 @@ import {
   Loader2,
 } from "lucide-react";
 import "./ReviewDisplay.css";
+import ResizedImage from "../../components/ResizedImage";
+import { resolveResizedUrl } from "../../lib/firebaseImage";
 
 const MAX_IMAGES = 3;
 
@@ -84,10 +86,12 @@ function ReviewCard({ review, openModal, formatFlightDate }) {
                   }
                   aria-label={`פתח תמונה ${index + 1} מתוך ${review.image_urls.length} בתצוגה מלאה`}
                 >
-                  <img
-                    src={url}
+                  <ResizedImage
+                    originalUrl={url}
+                    size={400}
                     alt="תצוגה מקדימה מהחופשה"
                     loading="lazy"
+                    decoding="async"
                   />
                 </button>
               </div>
@@ -156,9 +160,12 @@ export default function ReviewDisplay({ reviews }) {
     }
     const img = new Image();
     preloadRef.current = img;
-    img.onload = () => onReady(images[index]);
-    img.onerror = () => onReady(images[index]);
-    img.src = images[index];
+    resolveResizedUrl(images[index], 1600).then((resolvedSrc) => {
+      if (preloadRef.current !== img) return;
+      img.onload = () => onReady(resolvedSrc);
+      img.onerror = () => onReady(resolvedSrc);
+      img.src = resolvedSrc;
+    });
   };
 
   const openModal = (imageUrls, index, buttonEl) => {
@@ -183,16 +190,19 @@ export default function ReviewDisplay({ reviews }) {
 
   const navigateModal = (e, direction) => {
     e.stopPropagation();
-    setModalData((prev) => {
-      if (!prev) return prev;
-      const nextIndex =
-        (prev.currentIndex + direction + prev.images.length) %
-        prev.images.length;
-      return {
-        ...prev,
-        currentIndex: nextIndex,
-        loadedSrc: prev.images[nextIndex],
-      };
+    if (!modalData) return;
+    const nextIndex =
+      (modalData.currentIndex + direction + modalData.images.length) %
+      modalData.images.length;
+    const nextOriginal = modalData.images[nextIndex];
+    setModalData((prev) =>
+      prev ? { ...prev, currentIndex: nextIndex } : prev,
+    );
+    resolveResizedUrl(nextOriginal, 1600).then((src) => {
+      setModalData((prev) => {
+        if (!prev || prev.currentIndex !== nextIndex) return prev;
+        return { ...prev, loadedSrc: src };
+      });
     });
   };
 
@@ -315,6 +325,7 @@ export default function ReviewDisplay({ reviews }) {
                     key={modalData.loadedSrc}
                     src={modalData.loadedSrc}
                     alt={`תמונה ${modalData.currentIndex + 1} מתוך ${modalData.images.length} מהחופשה`}
+                    decoding="async"
                   />
                 )}
               </div>
