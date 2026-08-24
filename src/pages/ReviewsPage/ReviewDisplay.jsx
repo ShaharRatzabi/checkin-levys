@@ -12,20 +12,144 @@ import {
 } from "lucide-react";
 import "./ReviewDisplay.css";
 
+const MAX_IMAGES = 3;
+
+function ReviewCard({ review, openModal, formatFlightDate }) {
+  const [expanded, setExpanded] = useState(false);
+  const [textClamped, setTextClamped] = useState(false);
+  const textRef = useRef(null);
+
+  const hasMoreImages = (review.image_urls?.length ?? 0) > MAX_IMAGES;
+  const visibleImages = expanded
+    ? review.image_urls
+    : review.image_urls?.slice(0, MAX_IMAGES);
+  const needsToggle = textClamped || hasMoreImages;
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (!el) return;
+    if (el.scrollHeight > el.clientHeight + 2) {
+      setTextClamped(true);
+    }
+  }, []);
+
+  return (
+    <article className="review-card">
+      <div className="review-main-body">
+        <div className="review-header">
+          <div className="reviewer-info">
+            <div className="reviewer-avatar" aria-hidden="true">
+              {review.reviewer_name.charAt(0).toUpperCase()}
+            </div>
+            <div className="reviewer-details">
+              <h3>{review.reviewer_name}</h3>
+              <div className="review-meta">
+                <MapPin className="meta-icon" aria-hidden="true" />
+                <span>{review.destination}</span>
+              </div>
+            </div>
+          </div>
+          <div
+            className="review-rating"
+            role="img"
+            aria-label={`דירוג ${review.rating} מתוך 5`}
+          >
+            {[1, 2, 3, 4, 5].map((star) => (
+              <Star
+                key={star}
+                className={`rating-star ${review.rating >= star ? "filled" : ""}`}
+                aria-hidden="true"
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="review-content">
+          <p
+            ref={textRef}
+            className={expanded ? "" : "review-text-clamped"}
+          >
+            {review.review_text}
+          </p>
+        </div>
+
+        {visibleImages?.length > 0 && (
+          <div className="review-images" role="list">
+            {visibleImages.map((url, index) => (
+              <div key={index} className="review-image" role="listitem">
+                <button
+                  className="image-button"
+                  onClick={(e) =>
+                    openModal(review.image_urls, index, e.currentTarget)
+                  }
+                  aria-label={`פתח תמונה ${index + 1} מתוך ${review.image_urls.length} בתצוגה מלאה`}
+                >
+                  <img
+                    src={url}
+                    alt="תצוגה מקדימה מהחופשה"
+                    loading="lazy"
+                  />
+                </button>
+              </div>
+            ))}
+            {!expanded && hasMoreImages && (
+              <div
+                className="review-image-more"
+                aria-hidden="true"
+                onClick={() => setExpanded(true)}
+              >
+                +{review.image_urls.length - MAX_IMAGES}
+              </div>
+            )}
+          </div>
+        )}
+
+        {needsToggle && (
+          <button
+            className="review-read-more-btn"
+            onClick={() => setExpanded((e) => !e)}
+            aria-expanded={expanded}
+          >
+            {expanded ? "קרא פחות ▲" : "קרא עוד ▼"}
+          </button>
+        )}
+      </div>
+
+      <div className="review-footer">
+        {review.flight_date && (
+          <div className="review-footer-item">
+            <Plane className="meta-icon" aria-hidden="true" />
+            <span>
+              טס/ה ב־
+              <time dateTime={review.flight_date}>
+                {formatFlightDate(review.flight_date)}
+              </time>
+            </span>
+          </div>
+        )}
+        <div className="review-footer-item">
+          <Calendar className="meta-icon" aria-hidden="true" />
+          <span>
+            פורסם ב־
+            <time dateTime={review.created_date}>
+              {new Date(review.created_date).toLocaleDateString("he-IL")}
+            </time>
+          </span>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default function ReviewDisplay({ reviews }) {
-  // modalData = { images, currentIndex, loadedSrc }
-  // loadedSrc=null → overlay פתוח, spinner מופיע, תמונה טוענת ברקע
-  // loadedSrc=url  → תמונה מוכנה, מציגים אותה
   const [modalData, setModalData] = useState(null);
 
   const modalRef = useRef(null);
   const triggerRef = useRef(null);
   const contentRef = useRef(null);
-  const preloadRef = useRef(null); // Image() object של הטעינה הנוכחית
+  const preloadRef = useRef(null);
 
-  // ✅ טעינה ב-Image() ברקע — מציגים overlay+spinner מיד, תמונה רק אחרי load
   const preloadAndShow = (images, index, onReady) => {
-    // ביטול טעינה קודמת
     if (preloadRef.current) {
       preloadRef.current.onload = null;
       preloadRef.current.onerror = null;
@@ -33,13 +157,12 @@ export default function ReviewDisplay({ reviews }) {
     const img = new Image();
     preloadRef.current = img;
     img.onload = () => onReady(images[index]);
-    img.onerror = () => onReady(images[index]); // גם בשגיאה — מציגים
+    img.onerror = () => onReady(images[index]);
     img.src = images[index];
   };
 
   const openModal = (imageUrls, index, buttonEl) => {
     triggerRef.current = buttonEl;
-    // פותחים overlay עם spinner, ללא תמונה עדיין
     setModalData({ images: imageUrls, currentIndex: index, loadedSrc: null });
     preloadAndShow(imageUrls, index, (src) => {
       setModalData((prev) => (prev ? { ...prev, loadedSrc: src } : prev));
@@ -51,7 +174,6 @@ export default function ReviewDisplay({ reviews }) {
       preloadRef.current.onload = null;
       preloadRef.current.onerror = null;
     }
-    // ✅ מציגים spinner בסגירה — מסירים את loadedSrc, ממתינים רגע ואז סוגרים
     setModalData((prev) => (prev ? { ...prev, loadedSrc: null } : null));
     setTimeout(() => {
       setModalData(null);
@@ -61,7 +183,6 @@ export default function ReviewDisplay({ reviews }) {
 
   const navigateModal = (e, direction) => {
     e.stopPropagation();
-    // ✅ דפדוף מיידי — ללא spinner, מחליפים תמונה ישירות
     setModalData((prev) => {
       if (!prev) return prev;
       const nextIndex =
@@ -75,7 +196,6 @@ export default function ReviewDisplay({ reviews }) {
     });
   };
 
-  // ✅ פוקוס על כפתור הסגירה בפתיחת המודאל
   useEffect(() => {
     if (modalData && modalRef.current) {
       const closeBtn = modalRef.current.querySelector(".modal-nav-btn.close");
@@ -83,7 +203,6 @@ export default function ReviewDisplay({ reviews }) {
     }
   }, [!!modalData]);
 
-  // נעילת סקרול ו-inert כשהמודאל פתוח
   useEffect(() => {
     const headerEl = document.querySelector("header");
     const bubbleEl = document.querySelector(".floating-bubble-wrapper");
@@ -99,7 +218,6 @@ export default function ReviewDisplay({ reviews }) {
     };
   }, [modalData]);
 
-  // טיפול במקלדת (Escape, חצים, Tab Trap)
   useEffect(() => {
     if (!modalData || !modalRef.current) return;
 
@@ -141,7 +259,6 @@ export default function ReviewDisplay({ reviews }) {
 
   return (
     <div className="reviews-container">
-      {/* תצוגת מודאל באמצעות Portal */}
       {modalData &&
         createPortal(
           <div
@@ -158,7 +275,6 @@ export default function ReviewDisplay({ reviews }) {
               aria-label="גלריית תמונות מהחופשה"
               aria-live="polite"
             >
-              {/* ✅ כפתור סגירה — קבוע, תמיד גלוי */}
               <button
                 className="modal-nav-btn close"
                 onClick={closeModal}
@@ -167,7 +283,6 @@ export default function ReviewDisplay({ reviews }) {
                 <X size={20} />
               </button>
 
-              {/* ✅ חצי ניווט — קבועים, לא זזים עם התמונה */}
               {modalData.images.length > 1 && (
                 <>
                   <button
@@ -187,7 +302,6 @@ export default function ReviewDisplay({ reviews }) {
                 </>
               )}
 
-              {/* ✅ wrapper: spinner כשעדיין טוען, תמונה אחרי load */}
               <div className="modal-image-wrapper">
                 {!modalData.loadedSrc && (
                   <Loader2
@@ -205,7 +319,6 @@ export default function ReviewDisplay({ reviews }) {
                 )}
               </div>
 
-              {/* ✅ מונה נגיש — aria-hidden כי המידע קיים ב-aria-label של כפתורי הניווט */}
               <div className="modal-counter" aria-hidden="true">
                 {modalData.currentIndex + 1} / {modalData.images.length}
               </div>
@@ -221,90 +334,12 @@ export default function ReviewDisplay({ reviews }) {
 
         <div className="reviews-grid">
           {reviews.map((review) => (
-            <article key={review.id} className="review-card">
-              {/* ✅ review-main-body נמתח, הפוטר נדחף לתחתית */}
-              <div className="review-main-body">
-                <div className="review-header">
-                  <div className="reviewer-info">
-                    <div className="reviewer-avatar" aria-hidden="true">
-                      {review.reviewer_name.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="reviewer-details">
-                      <h3>{review.reviewer_name}</h3>
-                      <div className="review-meta">
-                        <MapPin className="meta-icon" aria-hidden="true" />
-                        <span>{review.destination}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className="review-rating"
-                    role="img"
-                    aria-label={`דירוג ${review.rating} מתוך 5`}
-                  >
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`rating-star ${review.rating >= star ? "filled" : ""}`}
-                        aria-hidden="true"
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="review-content">
-                  <p>{review.review_text}</p>
-                </div>
-
-                {review.image_urls?.length > 0 && (
-                  <div className="review-images" role="list">
-                    {review.image_urls.map((url, index) => (
-                      <div key={index} className="review-image" role="listitem">
-                        <button
-                          className="image-button"
-                          onClick={(e) =>
-                            openModal(review.image_urls, index, e.currentTarget)
-                          }
-                          aria-label={`פתח תמונה ${index + 1} מתוך ${review.image_urls.length} בתצוגה מלאה`}
-                        >
-                          <img
-                            src={url}
-                            alt="תצוגה מקדימה מהחופשה"
-                            loading="lazy"
-                          />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* ✅ פוטר — תמיד צמוד לתחתית הכרטיס */}
-              <div className="review-footer">
-                {review.flight_date && (
-                  <div className="review-footer-item">
-                    <Plane className="meta-icon" aria-hidden="true" />
-                    <span>
-                      טס/ה ב־
-                      <time dateTime={review.flight_date}>
-                        {formatFlightDate(review.flight_date)}
-                      </time>
-                    </span>
-                  </div>
-                )}
-                <div className="review-footer-item">
-                  <Calendar className="meta-icon" aria-hidden="true" />
-                  <span>
-                    פורסם ב־
-                    <time dateTime={review.created_date}>
-                      {new Date(review.created_date).toLocaleDateString(
-                        "he-IL",
-                      )}
-                    </time>
-                  </span>
-                </div>
-              </div>
-            </article>
+            <ReviewCard
+              key={review.id}
+              review={review}
+              openModal={openModal}
+              formatFlightDate={formatFlightDate}
+            />
           ))}
         </div>
       </div>
