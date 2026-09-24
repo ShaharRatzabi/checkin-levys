@@ -34,6 +34,17 @@ import photoCoast from "../../assets/images/photo-coast.jpeg";
 */
 
 const SHORTS_VIDEOS = [
+  { id: "_63rV9pqQi4", title: "סרטון חדש" },
+  { id: "6EQ2tdBZfl8", title: "סרטון חדש" },
+  { id: "PHLTAnNplxA", title: "סרטון חדש" },
+  { id: "hGCGVf5WaUM", title: "סרטון חדש" },
+  { id: "-6dr5wWyzc4", title: "סרטון חדש" },
+  { id: "6GEXG7JaKik", title: "סרטון חדש" },
+  { id: "jO1zyyPCiNg", title: "סרטון חדש" },
+  { id: "NAjv3LR_QNE", title: "סרטון חדש" },
+  { id: "jV-hCB_RpaU", title: "סרטון חדש" },
+  { id: "d0bsvaYjk9E", title: "סרטון חדש" },
+  { id: "ydqlx5Ghef0", title: "סרטון חדש" },
   { id: "a-yZoa4cSPU", title: "סרטון חדש" },
   { id: "Iuf73yh1QVU", title: "סרטון חדש" },
   { id: "-W1vz1V-oBY", title: "סרטון חדש" },

@@ -1,18 +1,24 @@
 import React from "react";
-import { Landmark, ShieldCheck, CreditCard, Wifi, Map } from "lucide-react";
+import { Landmark, ShieldCheck, CreditCard, Wifi, Map, Compass } from "lucide-react";
 
 const LINKS_DATA = [
-  {
-    href: "https://tic.dubai.co.il/?sld=660",
-    Icon: Landmark,
-    title: "אטרקציות בדובאי",
-    desc: "שירות לקוחות בעברית | שת״פ רשמי איתנו",
-  },
   {
     href: "https://did.li/SIM-checkin10",
     Icon: Wifi,
     title: "eSIM לחו״ל",
     desc: "הכי זול והכי קל | קוד קופון עם הנחה Checkin10",
+  },
+  {
+    href: "https://tinyurl.com/CHECK-IN-Attractions",
+    Icon: Compass,
+    title: "אטרקציות בכל רחבי העולם",
+    desc: "האתר המוביל GetYourGuide | שירות בעברית ושת״פ רשמי איתנו",
+  },
+  {
+    href: "https://link.passportcard.co.il/1042089_dlMCtRPT0=",
+    Icon: CreditCard,
+    title: "PassportCard",
+    desc: "ביטוח נסיעות דיגיטלי ומהיר | שירות ומענה מהיר ללקוחות שלנו",
   },
   {
     href: "https://bit.ly/3VCTp0E",
@@ -21,10 +27,10 @@ const LINKS_DATA = [
     desc: "הגנה מלאה על ההזמנה שלכם | שירות ומענה מהיר ללקוחות שלנו",
   },
   {
-    href: "https://link.passportcard.co.il/1042089_dlMCtRPT0=",
-    Icon: CreditCard,
-    title: "PassportCard",
-    desc: "ביטוח נסיעות דיגיטלי ומהיר | שירות ומענה מהיר ללקוחות שלנו",
+    href: "https://tic.dubai.co.il/?sld=660",
+    Icon: Landmark,
+    title: "אטרקציות בדובאי",
+    desc: "שירות לקוחות בעברית | שת״פ רשמי איתנו",
   },
   {
     href: "https://did.li/odedthemapper",
