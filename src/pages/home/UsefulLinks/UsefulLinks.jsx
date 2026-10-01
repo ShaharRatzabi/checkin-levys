@@ -32,12 +32,6 @@ const LINKS_DATA = [
     title: "אטרקציות בדובאי",
     desc: "שירות לקוחות בעברית | שת״פ רשמי איתנו",
   },
-  {
-    href: "https://did.li/odedthemapper",
-    Icon: Map,
-    title: "ODED THE MAPPER",
-    desc: "מפות המלצות אישיות למטיילים | קוד קופון עם הנחה checkin30",
-  },
 ];
 
 export default function UsefulLinks() {
