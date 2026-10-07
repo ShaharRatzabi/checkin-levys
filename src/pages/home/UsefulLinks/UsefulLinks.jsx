@@ -1,5 +1,5 @@
 import React from "react";
-import { Landmark, ShieldCheck, CreditCard, Wifi, Map, Compass } from "lucide-react";
+import { Landmark, ShieldCheck, CreditCard, Wifi, Map, Compass, Ship } from "lucide-react";
 
 const LINKS_DATA = [
   {
@@ -31,6 +31,12 @@ const LINKS_DATA = [
     Icon: Landmark,
     title: "אטרקציות בדובאי",
     desc: "שירות לקוחות בעברית | שת״פ רשמי איתנו",
+  },
+  {
+    href: "https://tinyurl.com/12go-CHECK-IN-Transfers",
+    Icon: Ship,
+    title: "מעבורות בתאילנד",
+    desc: "המערכת המובילה 12go | מעבורות והסעות בכל רחבי אסיה | שת״פ רשמי איתנו",
   },
 ];
 
